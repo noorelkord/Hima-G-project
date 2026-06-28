@@ -3,32 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css?v=20260628-auth-tabs">
 <title>حمى | دخول المضيف</title>
 </head>
 <body>
 <div class="center-page">
-    <div class="card">
+    <div class="card auth-card">
         <div class="logo">حمى</div>
-        <h2>تسجيل دخول المضيف</h2>
+        <h2 id="auth-title">تسجيل دخول المضيف</h2>
+
+        <div class="auth-tabs" role="tablist">
+            <button class="auth-tab active" id="login-tab" type="button" onclick="setAuthMode('login')">تسجيل الدخول</button>
+            <button class="auth-tab" id="signup-tab" type="button" onclick="setAuthMode('signup')">كن مضيفا</button>
+        </div>
 
         <div id="msg"></div>
 
-        <input id="email" placeholder="البريد الإلكتروني">
-        <input id="password" type="password" placeholder="كلمة المرور">
+        <div class="auth-panel active" id="login-panel">
+            <div class="auth-context">
+                <i class="fas fa-home"></i>
+                <div>
+                    دخول المضيف
+                    <span>أدر عقاراتك وحجوزاتك من لوحة المضيف</span>
+                </div>
+            </div>
 
-        <button onclick="login()">تسجيل الدخول</button>
+            <input id="email" placeholder="البريد الإلكتروني">
+            <input id="password" type="password" placeholder="كلمة المرور">
 
-        <div class="center-text">
-            <a href="forgot-password.html">نسيت كلمة المرور؟</a>
+            <button onclick="login()">تسجيل الدخول</button>
+
+            <div class="center-text">
+                <a href="forgot-password.html">نسيت كلمة المرور؟</a>
+            </div>
+
+            <div class="auth-switch-row">
+                ليس لديك حساب؟ <button type="button" onclick="setAuthMode('signup')">سجّل كمضيف</button>
+            </div>
+
+            <div class="center-text">
+                <a href="tenant-login.html">الدخول كمستأجر</a>
+            </div>
         </div>
 
-        <div class="center-text">
-            <a href="register.html?role=host">ليس لديك حساب؟ سجّل كمضيف</a>
-        </div>
+        <div class="auth-panel" id="signup-panel">
+            <div class="auth-context">
+                <i class="fas fa-key"></i>
+                <div>
+                    إنشاء حساب مضيف
+                    <span>ابدأ بإضافة عقاراتك وإدارة طلبات الحجز</span>
+                </div>
+            </div>
 
-        <div class="center-text">
-            <a href="tenant-login.html">الدخول كمستأجر</a>
+            <input id="first_name" type="text" placeholder="الاسم الأول">
+            <input id="register_email" type="email" placeholder="البريد الإلكتروني">
+            <input id="register_password" type="password" placeholder="كلمة المرور">
+            <input id="confirm_password" type="password" placeholder="تأكيد كلمة المرور">
+
+            <button onclick="registerHost()">إنشاء حساب</button>
+
+            <div class="auth-switch-row">
+                لديك حساب؟ <button type="button" onclick="setAuthMode('login')">سجّل دخولك</button>
+            </div>
         </div>
     </div>
 </div>
@@ -37,8 +74,75 @@
 <script>
 captureLoginRedirect();
 
+function setAuthMode(mode){
+    const isSignup = mode === 'signup';
+    document.getElementById('login-tab').classList.toggle('active', !isSignup);
+    document.getElementById('signup-tab').classList.toggle('active', isSignup);
+    document.getElementById('login-panel').classList.toggle('active', !isSignup);
+    document.getElementById('signup-panel').classList.toggle('active', isSignup);
+    document.getElementById('auth-title').textContent = isSignup ? 'إنشاء حساب مضيف' : 'تسجيل دخول المضيف';
+    document.getElementById('msg').innerHTML = '';
+}
+
 async function login(){
     await loginWithRole('host');
+}
+
+async function registerHost(){
+    const first_name = document.getElementById('first_name').value.trim();
+    const email = document.getElementById('register_email').value.trim();
+    const password = document.getElementById('register_password').value;
+    const confirm_password = document.getElementById('confirm_password').value;
+    const msg = document.getElementById('msg');
+
+    if(!first_name || !email || !password || !confirm_password){
+        msg.innerHTML = '<div class="error">يرجى تعبئة جميع الحقول</div>';
+        return;
+    }
+    if(password.length < 8){
+        msg.innerHTML = '<div class="error">كلمة المرور يجب أن تكون 8 أحرف على الأقل</div>';
+        return;
+    }
+    if(password !== confirm_password){
+        msg.innerHTML = '<div class="error">كلمتا المرور غير متطابقتين</div>';
+        return;
+    }
+
+    try {
+        const response = await fetch(BASE_URL + '/register', {
+            method:'POST',
+            headers:{'Content-Type':'application/json','Accept':'application/json'},
+            body:JSON.stringify({
+                first_name,
+                email,
+                password,
+                password_confirmation:confirm_password,
+                role:'host'
+            })
+        });
+        const data = await response.json();
+
+        if(response.ok){
+            document.getElementById('email').value = email;
+            setAuthMode('login');
+            msg.innerHTML = '<div class="success">تم إنشاء الحساب. تحقق من بريدك الإلكتروني ثم سجّل الدخول.</div>';
+            return;
+        }
+        if(data.errors){
+            let errors = '';
+            Object.values(data.errors).forEach(arr => errors += arr[0] + '<br>');
+            msg.innerHTML = '<div class="error">' + errors + '</div>';
+            return;
+        }
+        msg.innerHTML = '<div class="error">' + (data.message || 'حدث خطأ') + '</div>';
+    } catch(e){
+        msg.innerHTML = '<div class="error">تعذر الاتصال بالسيرفر</div>';
+    }
+}
+
+const params = new URLSearchParams(window.location.search);
+if(params.get('mode') === 'signup'){
+    setAuthMode('signup');
 }
 </script>
 </body>
