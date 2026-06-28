@@ -21,6 +21,29 @@
             overflow: hidden;
         }
         .gallery-main img { width:100%; height:100%; object-fit:cover; object-position:center; }
+        .gallery-main.fit-contain {
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background-size:cover;
+            background-position:center;
+        }
+        .gallery-main.fit-contain::before {
+            content:'';
+            position:absolute;
+            inset:0;
+            background:rgba(13,43,31,0.18);
+            backdrop-filter:blur(14px);
+        }
+        .gallery-main.fit-contain img {
+            position:relative;
+            z-index:1;
+            width:auto;
+            height:100%;
+            max-width:100%;
+            object-fit:contain;
+            box-shadow:0 12px 34px rgba(13,43,31,0.28);
+        }
         .gallery-main .no-img {
             display:flex; align-items:center; justify-content:center;
             height:100%; font-size:5rem; color:rgba(255,255,255,0.1);
@@ -291,7 +314,7 @@ function render(p){
     // Gallery
     if(p.images?.length){
         const main = p.images.find(i=>i.is_main)||p.images[0];
-        document.getElementById('main-img').innerHTML = `<img src="${main.url}" alt="${p.title}">`;
+        setMainImage(main.url, p.title);
         const thumbs = document.getElementById('thumbs');
         p.images.forEach((img,i)=>{
             thumbs.innerHTML += `<div class="thumb ${i===0?'active':''}" onclick="switchImg('${img.url}',this)">
@@ -336,9 +359,25 @@ function render(p){
 }
 
 function switchImg(url, el){
-    document.getElementById('main-img').innerHTML = `<img src="${url}" alt="">`;
+    setMainImage(url, '');
     document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
+}
+
+function setMainImage(url, alt){
+    const holder = document.getElementById('main-img');
+    holder.classList.remove('fit-contain');
+    holder.style.backgroundImage = '';
+    holder.innerHTML = `<img src="${url}" alt="${alt}">`;
+
+    const img = holder.querySelector('img');
+    img.onload = () => {
+        const isPortrait = img.naturalHeight > img.naturalWidth;
+        if(isPortrait){
+            holder.classList.add('fit-contain');
+            holder.style.backgroundImage = `url("${url}")`;
+        }
+    };
 }
 
 async function loadReviews(){
