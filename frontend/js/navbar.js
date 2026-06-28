@@ -33,8 +33,8 @@ function renderNavbar() {
         <a class="drawer-link" href="my-bookings.html"><span><i class="fas fa-calendar-check"></i></span><b>حجوزاتي</b></a>
         <a class="drawer-link" href="my-favorites.html"><span><i class="fas fa-heart"></i></span><b>المفضلة</b></a>
         <a class="drawer-link" href="my-contracts.html"><span><i class="fas fa-file-signature"></i></span><b>عقودي</b></a>
-        <a class="drawer-link" href="notifications.html"><span><i class="fas fa-bell"></i></span><b>الإشعارات</b></a>
-        <a class="drawer-link" href="profile.html"><span><i class="fas fa-user"></i></span><b>الملف الشخصي</b></a>
+        <a class="drawer-link" href="notifications.html?v=role-sidebar"><span><i class="fas fa-bell"></i></span><b>الإشعارات</b></a>
+        <a class="drawer-link" href="profile.html?v=role-sidebar"><span><i class="fas fa-user"></i></span><b>الملف الشخصي</b></a>
         <div class="drawer-divider"></div>
         <button class="drawer-link drawer-button" onclick="logout()"><span><i class="fas fa-sign-out-alt"></i></span><b>تسجيل الخروج</b></button>
     `;
@@ -46,8 +46,8 @@ function renderNavbar() {
         <a class="drawer-link" href="my-properties.html"><span><i class="fas fa-building"></i></span><b>عقاراتي</b></a>
         <a class="drawer-link" href="host-bookings.html"><span><i class="fas fa-calendar-check"></i></span><b>طلبات الحجز</b></a>
         <a class="drawer-link" href="my-contracts-host.html"><span><i class="fas fa-file-signature"></i></span><b>العقود</b></a>
-        <a class="drawer-link" href="notifications.html"><span><i class="fas fa-bell"></i></span><b>الإشعارات</b></a>
-        <a class="drawer-link" href="profile.html"><span><i class="fas fa-user"></i></span><b>الملف الشخصي</b></a>
+        <a class="drawer-link" href="notifications.html?v=role-sidebar"><span><i class="fas fa-bell"></i></span><b>الإشعارات</b></a>
+        <a class="drawer-link" href="profile.html?v=role-sidebar"><span><i class="fas fa-user"></i></span><b>الملف الشخصي</b></a>
         <div class="drawer-divider"></div>
         <button class="drawer-link drawer-button" onclick="logout()"><span><i class="fas fa-sign-out-alt"></i></span><b>تسجيل الخروج</b></button>
     `;
@@ -56,8 +56,8 @@ function renderNavbar() {
         <a class="drawer-link" href="dashboard-admin.html"><span><i class="fas fa-chart-line"></i></span><b>لوحة المشرف</b></a>
         <a class="drawer-link" href="admin-properties.html"><span><i class="fas fa-building"></i></span><b>إدارة العقارات</b></a>
         <a class="drawer-link" href="admin-bookings.html"><span><i class="fas fa-calendar-check"></i></span><b>إدارة الحجوزات</b></a>
-        <a class="drawer-link" href="notifications.html"><span><i class="fas fa-bell"></i></span><b>الإشعارات</b></a>
-        <a class="drawer-link" href="profile.html"><span><i class="fas fa-user"></i></span><b>الملف الشخصي</b></a>
+        <a class="drawer-link" href="notifications.html?v=role-sidebar"><span><i class="fas fa-bell"></i></span><b>الإشعارات</b></a>
+        <a class="drawer-link" href="profile.html?v=role-sidebar"><span><i class="fas fa-user"></i></span><b>الملف الشخصي</b></a>
         <div class="drawer-divider"></div>
         <button class="drawer-link drawer-button" onclick="logout()"><span><i class="fas fa-sign-out-alt"></i></span><b>تسجيل الخروج</b></button>
     `;
