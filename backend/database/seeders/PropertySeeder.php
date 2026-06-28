@@ -53,7 +53,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => true,
-                'image' => 'apartment.svg',
+                'image' => 'apartment.jpeg',
             ],
             [
                 'title' => 'بيت مستقل في بيت لاهيا',
@@ -70,7 +70,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => false,
-                'image' => 'villa.svg',
+                'image' => 'villa.jpeg',
             ],
             [
                 'title' => 'شقة صغيرة في دير البلح',
