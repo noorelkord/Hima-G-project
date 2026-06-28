@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+</head>
+<body>
+
+<div class="card">
+    <div class="logo">حمى</div>
+    <h2>أكمل بياناتك للمتابعة</h2>
+
+    <div id="msg"></div>
+
+    <input id="second_name" placeholder="اسم الأب">
+    <input id="third_name" placeholder="اسم الجد">
+    <input id="last_name" placeholder="اسم العائلة">
+    <input id="national_id" placeholder="رقم الهوية">
+    <input id="phone" placeholder="رقم الهاتف">
+
+    <button onclick="completeProfile()">
+        حفظ ومتابعة
+    </button>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+
+<script>
+async function completeProfile(){
+
+const body={
+    second_name:second_name.value,
+    third_name:third_name.value,
+    last_name:last_name.value,
+    national_id:national_id.value,
+    phone:phone.value
+};
+
+const res=await fetch(
+    BASE_URL+"/profile/complete",
+    {
+        method:"POST",
+        headers:authHeaders(),
+        body:JSON.stringify(body)
+    }
+);
+
+if(res.ok){
+
+localStorage.setItem(
+    "is_profile_complete",
+    "true"
+);
+
+const redirectTo=
+localStorage.getItem(
+    "redirect_after_complete"
+);
+
+localStorage.removeItem("redirect_after_complete");
+
+if(redirectTo){
+    window.location.href = redirectTo;
+}else{
+    redirectToDashboard(localStorage.getItem("role"));
+}
+
+}else{
+msg.innerHTML=
+'<div class="error">فشل الحفظ</div>';
+}
+}
+</script>
+
+</body>
+</html>

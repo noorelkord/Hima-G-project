@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | حجوزاتي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body { margin:0; background:#F8F5F0; }
+        .layout { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+        .sidebar { background:#0D2B1F; padding:1.5rem 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+        .sidebar-logo { font-size:1.4rem; font-weight:900; color:#D4A853; padding:0 1.2rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; }
+        .sidebar-logo span { color:white; font-weight:300; font-size:0.85rem; display:block; }
+        .sidebar-user { padding:0.8rem 1.2rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; }
+        .user-avatar { width:44px; height:44px; border-radius:50%; background:#1B4332; border:2px solid #D4A853; display:flex; align-items:center; justify-content:center; color:#D4A853; font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; }
+        .user-name { color:white; font-size:0.9rem; font-weight:700; }
+        .user-role { color:rgba(255,255,255,0.4); font-size:0.75rem; }
+        .nav-section { font-size:0.68rem; color:rgba(255,255,255,0.3); padding:1rem 1.2rem 0.4rem; text-transform:uppercase; letter-spacing:0.8px; }
+        .nav-item { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 1.2rem; color:rgba(255,255,255,0.6); cursor:pointer; transition:all 0.2s; font-size:0.875rem; text-decoration:none; border-right:3px solid transparent; }
+        .nav-item:hover { color:white; background:rgba(255,255,255,0.05); }
+        .nav-item.active { color:#D4A853; background:rgba(212,168,83,0.1); border-right-color:#D4A853; }
+        .nav-item i { width:18px; text-align:center; }
+        .btn-logout { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 1.2rem; color:rgba(255,255,255,0.4); cursor:pointer; font-size:0.875rem; background:none; border:none; font-family:'Cairo',sans-serif; width:100%; text-align:right; margin-top:1rem; }
+        .btn-logout:hover { color:#E74C3C; }
+        .main { padding:2rem; }
+        .page-title { font-size:1.5rem; font-weight:900; color:#1B4332; margin-bottom:1.5rem; }
+        .tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
+        .tab { padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem; font-weight:600; cursor:pointer; border:1.5px solid #E5E0D8; background:white; color:#6B7280; font-family:'Cairo',sans-serif; transition:all 0.2s; }
+        .tab.active { background:#1B4332; color:white; border-color:#1B4332; }
+        .booking-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.3rem; margin-bottom:0.9rem; transition:box-shadow 0.2s; }
+        .booking-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.1); }
+        .booking-top { display:flex; gap:1rem; align-items:flex-start; margin-bottom:1rem; }
+        .booking-icon { width:52px; height:52px; border-radius:12px; background:linear-gradient(135deg,#1B4332,#2D6A4F); display:flex; align-items:center; justify-content:center; color:#D4A853; font-size:1.3rem; flex-shrink:0; }
+        .booking-info { flex:1; min-width:0; }
+        .prop-name { font-weight:700; font-size:0.95rem; color:#1A1A1A; margin-bottom:0.2rem; }
+        .prop-loc  { font-size:0.78rem; color:#6B7280; margin-bottom:0.4rem; }
+        .booking-dates { font-size:0.8rem; color:#6B7280; display:flex; align-items:center; gap:0.4rem; }
+        .booking-footer { display:flex; justify-content:space-between; align-items:center; padding-top:0.9rem; border-top:1px solid #F3F4F6; }
+        .booking-price { font-weight:700; color:#1B4332; font-size:0.95rem; }
+        .booking-actions { display:flex; gap:0.6rem; }
+        .badge { font-size:0.72rem; font-weight:700; padding:0.25rem 0.7rem; border-radius:12px; }
+        .badge-pending   { background:#FEF3C7; color:#92400E; }
+        .badge-accepted  { background:#D1FAE5; color:#065F46; }
+        .badge-rejected  { background:#FEE2E2; color:#991B1B; }
+        .badge-cancelled { background:#F3F4F6; color:#374151; }
+        .btn-cancel-booking { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.38rem 0.9rem; font-family:'Cairo',sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; transition:background 0.2s; }
+        .btn-cancel-booking:hover { background:#FECACA; }
+        .btn-edit-booking  { background:#EFF6FF; color:#2563EB; border:1px solid #BFDBFE; border-radius:8px; padding:0.38rem 0.9rem; font-family:'Cairo',sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; }
+        .empty-state { text-align:center; padding:3rem; color:#6B7280; }
+        .empty-state i { font-size:3rem; color:#E5E0D8; display:block; margin-bottom:1rem; }
+        .empty-state h3 { font-weight:700; color:#1A1A1A; margin-bottom:0.4rem; }
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:9999; }
+        .modal-overlay.show { display:flex; }
+        .modal { background:white; border-radius:16px; padding:1.5rem; width:90%; max-width:420px; }
+        .modal h3 { font-size:1rem; font-weight:700; color:#C0392B; margin-bottom:0.6rem; }
+        .modal p  { color:#6B7280; font-size:0.875rem; margin-bottom:1.2rem; }
+        .modal-actions { display:flex; gap:0.7rem; }
+        .btn-confirm { flex:1; background:#C0392B; color:white; border:none; border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer; }
+        .btn-cancel-modal { background:transparent; color:#6B7280; border:1.5px solid #E5E0D8; border-radius:10px; padding:0.7rem 1.2rem; font-family:'Cairo',sans-serif; cursor:pointer; }
+        @media(max-width:768px){
+            .layout{grid-template-columns:1fr;}
+            .sidebar{display:none;}
+            .booking-top,.booking-footer{flex-direction:column;align-items:flex-start;}
+            .booking-actions{width:100%;flex-wrap:wrap;}
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">حمى <span>منصة الإيجار الرقمي</span></div>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="avatar">م</div>
+            <div class="user-name" id="sidebar-name">...</div>
+            <div class="user-role">مستأجر</div>
+        </div>
+        <div class="nav-section">القائمة الرئيسية</div>
+        <a class="nav-item" href="dashboard-tenant.html"><i class="fas fa-th-large"></i> لوحة التحكم</a>
+        <a class="nav-item" href="tenant-properties.html"><i class="fas fa-search"></i> تصفح العقارات</a>
+        <div class="nav-section">حسابي</div>
+        <a class="nav-item active" href="my-bookings.html"><i class="fas fa-calendar-check"></i> حجوزاتي</a>
+        <a class="nav-item" href="my-contracts.html"><i class="fas fa-file-contract"></i> عقودي</a>
+        <a class="nav-item" href="my-favorites.html"><i class="fas fa-heart"></i> مفضلتي</a>
+        <a class="nav-item" href="notifications.html"><i class="fas fa-bell"></i> الإشعارات</a>
+        <a class="nav-item" href="profile.html"><i class="fas fa-user-cog"></i> الملف الشخصي</a>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </aside>
+
+    <main class="main">
+        <div class="page-title"><i class="fas fa-calendar-check me-2"></i>حجوزاتي</div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="filterTab('all',this)">الكل</button>
+            <button class="tab" onclick="filterTab('pending',this)">معلق</button>
+            <button class="tab" onclick="filterTab('accepted',this)">مقبول</button>
+            <button class="tab" onclick="filterTab('rejected',this)">مرفوض</button>
+            <button class="tab" onclick="filterTab('cancelled',this)">ملغي</button>
+        </div>
+
+        <div id="list"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جارٍ التحميل...</p></div></div>
+    </main>
+</div>
+
+<!-- Cancel Modal -->
+<div class="modal-overlay" id="cancel-modal">
+    <div class="modal">
+        <h3><i class="fas fa-times-circle me-2"></i>إلغاء الحجز</h3>
+        <p>هل أنت متأكد من إلغاء هذا الحجز؟ لا يمكن التراجع عن هذا الإجراء.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel-modal" onclick="closeModal()">تراجع</button>
+            <button class="btn-confirm" onclick="confirmCancel()">نعم، إلغاء الحجز</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const statusMap  = {pending:'معلق',accepted:'مقبول',rejected:'مرفوض',cancelled:'ملغي'};
+const statusCls  = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected',cancelled:'badge-cancelled'};
+let allBookings = [], cancelId = null, currentTab = 'all';
+
+async function init(){
+    requireAuth();
+    const name = localStorage.getItem('name')||'';
+    document.getElementById('sidebar-name').textContent = name;
+    document.getElementById('avatar').textContent = name.charAt(0)||'م';
+    const r = await fetch(BASE_URL+'/tenant/bookings',{headers:authHeaders()});
+    allBookings = await r.json();
+    render(allBookings);
+}
+
+function filterTab(status, el){
+    currentTab = status;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    const filtered = status==='all' ? allBookings : allBookings.filter(b=>b.status===status);
+    render(filtered);
+}
+
+function render(list){
+    const el = document.getElementById('list');
+    if(!list.length){
+        el.innerHTML=`<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>لا توجد حجوزات</h3><p>تصفح العقارات وابدأ حجزك الأول</p></div>`; return;
+    }
+    el.innerHTML = list.map(b=>{
+        const loc  = [b.property?.governorate?.name, b.property?.city?.name].filter(Boolean).join(' - ')||'غير محدد';
+        const isPending = b.status==='pending';
+        return `
+        <div class="booking-card">
+            <div class="booking-top">
+                <div class="booking-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="booking-info">
+                    <div class="prop-name">${b.property?.title||'عقار'}</div>
+                    <div class="prop-loc"><i class="fas fa-map-marker-alt me-1"></i>${loc}</div>
+                    <div class="booking-dates">
+                        <i class="fas fa-calendar-alt"></i>
+                        ${b.start_date?.split('T')[0]} → ${b.end_date?.split('T')[0]}
+                    </div>
+                </div>
+                <span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span>
+            </div>
+            <div class="booking-footer">
+                <div class="booking-price">${Number(b.price||0).toLocaleString('ar')} ₪ <span style="font-size:0.75rem;font-weight:400;color:#9CA3AF;">/ شهر</span></div>
+                <div class="booking-actions">
+                    ${isPending?`<button class="btn-cancel-booking" onclick="openCancel(${b.id})"><i class="fas fa-times me-1"></i>إلغاء</button>`:''}
+                    ${b.status==='accepted'&&b.contract_id?`<a href="my-contracts.html" style="background:#D1FAE5;color:#065F46;border:1px solid #BBF7D0;border-radius:8px;padding:0.38rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:600;text-decoration:none;">عرض العقد</a>`:''}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function openCancel(id){ cancelId=id; document.getElementById('cancel-modal').classList.add('show'); }
+function closeModal(){ cancelId=null; document.getElementById('cancel-modal').classList.remove('show'); }
+
+async function confirmCancel(){
+    const r = await fetch(`${BASE_URL}/tenant/bookings/${cancelId}`,{method:'DELETE',headers:authHeaders()});
+    closeModal();
+    if(r.ok){ allBookings = allBookings.map(b=>b.id===cancelId?{...b,status:'cancelled'}:b); filterTab(currentTab,document.querySelector('.tab.active')); }
+}
+
+init();
+</script>
+</body>
+</html>

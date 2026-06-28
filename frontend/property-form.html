@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | إضافة عقار</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body { margin:0; background:#F8F5F0; }
+        .container { max-width:800px; margin:0 auto; padding:2rem 1.5rem; }
+        .page-title { font-size:1.6rem; font-weight:900; color:#1B4332; margin-bottom:0.3rem; }
+        .page-sub   { color:#6B7280; font-size:0.9rem; margin-bottom:2rem; }
+
+        .form-section {
+            background:white;
+            border-radius:16px;
+            border:1px solid #E5E0D8;
+            padding:1.5rem;
+            margin-bottom:1.2rem;
+        }
+        .section-header {
+            font-size:1rem; font-weight:700; color:#1B4332;
+            margin-bottom:1.2rem; padding-bottom:0.7rem;
+            border-bottom:2px solid #E5E0D8;
+            display:flex; align-items:center; gap:0.5rem;
+        }
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        .form-grid.full { grid-template-columns:1fr; }
+        .form-group { display:flex; flex-direction:column; gap:0.4rem; }
+        .form-group label { font-size:0.85rem; font-weight:600; color:#374151; }
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            border:1.5px solid #E5E0D8;
+            border-radius:10px;
+            padding:0.65rem 0.9rem;
+            font-family:'Cairo',sans-serif;
+            font-size:0.9rem;
+            color:#1A1A1A;
+            outline:none;
+            transition:border-color 0.2s;
+            width:100%;
+            box-sizing:border-box;
+        }
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus { border-color:#2D6A4F; box-shadow:0 0 0 3px rgba(45,106,79,0.1); }
+        .form-group textarea { resize:vertical; min-height:100px; }
+
+        /* Damage cards */
+        .damage-cards { display:flex; gap:0.8rem; }
+        .damage-card {
+            flex:1; border:2px solid #E5E0D8; border-radius:12px;
+            padding:1rem; text-align:center; cursor:pointer; transition:all 0.2s;
+        }
+        .damage-card:hover { border-color:#2D6A4F; }
+        .damage-card.selected { border-color:#1B4332; background:#F0F7F4; }
+        .damage-card input { display:none; }
+        .damage-card i { font-size:1.5rem; color:#2D6A4F; display:block; margin-bottom:0.4rem; }
+        .damage-card span { font-size:0.85rem; font-weight:600; color:#1A1A1A; }
+
+        /* Toggle switches */
+        .toggles-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.8rem; }
+        .toggle-item {
+            display:flex; align-items:center; justify-content:space-between;
+            background:#F8F5F0; border-radius:10px; padding:0.8rem 1rem;
+        }
+        .toggle-label { display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; font-weight:600; }
+        .toggle-label i { color:#2D6A4F; }
+        .switch { position:relative; width:44px; height:24px; }
+        .switch input { opacity:0; width:0; height:0; }
+        .slider {
+            position:absolute; inset:0; background:#D1D5DB;
+            border-radius:24px; cursor:pointer; transition:0.3s;
+        }
+        .slider:before {
+            content:''; position:absolute;
+            width:18px; height:18px; left:3px; bottom:3px;
+            background:white; border-radius:50%; transition:0.3s;
+        }
+        input:checked + .slider { background:#1B4332; }
+        input:checked + .slider:before { transform:translateX(20px); }
+
+        /* Image upload */
+        .upload-area {
+            border:2px dashed #D4A853; border-radius:12px;
+            padding:2rem; text-align:center; cursor:pointer;
+            transition:all 0.2s; background:#FFFBE7;
+        }
+        .upload-area:hover { border-color:#1B4332; background:#F0F7F4; }
+        .upload-area i { font-size:2rem; color:#D4A853; margin-bottom:0.5rem; display:block; }
+        .upload-area p { color:#6B7280; font-size:0.85rem; margin:0; }
+        .upload-area input { display:none; }
+        .previews { display:flex; flex-wrap:wrap; gap:0.7rem; margin-top:1rem; }
+        .preview-item {
+            position:relative; width:90px; height:70px;
+            border-radius:8px; overflow:hidden; border:2px solid #E5E0D8;
+        }
+        .preview-item img { width:100%; height:100%; object-fit:cover; }
+        .preview-item .del-btn {
+            position:absolute; top:2px; left:2px;
+            background:rgba(192,57,43,0.9); color:white;
+            border:none; border-radius:4px; width:20px; height:20px;
+            font-size:0.7rem; cursor:pointer; display:flex;
+            align-items:center; justify-content:center;
+        }
+        .preview-item .main-lbl {
+            position:absolute; bottom:0; right:0; left:0;
+            background:rgba(27,67,50,0.85); color:#D4A853;
+            font-size:0.6rem; font-weight:700; text-align:center; padding:2px;
+        }
+
+        /* Buttons */
+        .form-actions { display:flex; gap:1rem; margin-top:1.5rem; }
+        .btn-submit {
+            flex:1; background:#1B4332; color:white;
+            border:none; border-radius:12px; padding:0.9rem;
+            font-family:'Cairo',sans-serif; font-weight:700; font-size:1rem;
+            cursor:pointer; transition:background 0.2s;
+        }
+        .btn-submit:hover { background:#2D6A4F; }
+        .btn-cancel {
+            background:transparent; color:#6B7280;
+            border:1.5px solid #E5E0D8; border-radius:12px; padding:0.9rem 1.5rem;
+            font-family:'Cairo',sans-serif; font-size:0.9rem; cursor:pointer;
+        }
+        .alert { padding:0.9rem 1rem; border-radius:10px; font-size:0.875rem; margin-bottom:1rem; display:none; }
+        .alert.show { display:flex; align-items:center; gap:0.5rem; }
+        .alert-error { background:#FEF2F2; border:1px solid #FECACA; color:#C0392B; }
+        .alert-success { background:#F0FDF4; border:1px solid #BBF7D0; color:#2D6A4F; }
+
+        @media(max-width:600px){
+            .form-grid { grid-template-columns:1fr; }
+            .toggles-grid { grid-template-columns:1fr; }
+            .damage-cards { flex-direction:column; }
+        }
+    </style>
+</head>
+<body>
+<div id="navbar"></div>
+<div class="container">
+    <div class="page-title"><i class="fas fa-plus-circle me-2"></i>إضافة عقار جديد</div>
+    <div class="page-sub">أضف تفاصيل عقارك ليتم مراجعته والموافقة عليه</div>
+
+    <div class="alert alert-error" id="err"><i class="fas fa-exclamation-circle"></i><span id="err-msg"></span></div>
+    <div class="alert alert-success" id="suc"><i class="fas fa-check-circle"></i><span id="suc-msg"></span></div>
+
+    <!-- Section 1: Basic -->
+    <div class="form-section">
+        <div class="section-header"><i class="fas fa-info-circle"></i> المعلومات الأساسية</div>
+        <div class="form-grid full" style="margin-bottom:1rem;">
+            <div class="form-group">
+                <label>عنوان العقار *</label>
+                <input id="title" type="text" placeholder="مثال: شقة فاخرة في الرمال">
+            </div>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>نوع العقار *</label>
+                <select id="type">
+                    <option value="">اختر النوع</option>
+                    <option value="apartment">شقة</option>
+                    <option value="villa">فيلا</option>
+                    <option value="land">أرض</option>
+                    <option value="chalet">شاليه</option>
+                    <option value="commercial">تجاري</option>
+                    <option value="parking">موقف سيارات</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>السعر الشهري (₪) *</label>
+                <input id="price" type="number" placeholder="500">
+            </div>
+        </div>
+        <div class="form-grid full" style="margin-top:1rem;">
+            <div class="form-group">
+                <label>وصف العقار</label>
+                <textarea id="description" placeholder="اكتب وصفاً تفصيلياً للعقار..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Location -->
+    <div class="form-section">
+        <div class="section-header"><i class="fas fa-map-marker-alt"></i> الموقع</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>المحافظة *</label>
+                <select id="governorate_id" onchange="loadCities()">
+                    <option value="">اختر المحافظة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>المدينة *</label>
+                <select id="city_id" onchange="loadNeighborhoods()">
+                    <option value="">اختر المدينة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>الحي</label>
+                <select id="neighborhood_id">
+                    <option value="">اختر الحي</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>الشارع</label>
+                <input id="street" type="text" placeholder="اسم الشارع">
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Details -->
+    <div class="form-section">
+        <div class="section-header"><i class="fas fa-list"></i> التفاصيل</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>عدد الغرف</label>
+                <input id="rooms" type="number" placeholder="3" min="0">
+            </div>
+            <div class="form-group">
+                <label>المساحة (م²)</label>
+                <input id="area_m2" type="number" placeholder="120" min="0">
+            </div>
+        </div>
+        <div class="form-group" style="margin-top:1rem;">
+            <label>حالة العقار *</label>
+            <div class="damage-cards">
+                <label class="damage-card selected" onclick="selectDamage('intact',this)">
+                    <input type="radio" name="damage" value="intact" checked>
+                    <i class="fas fa-shield-alt"></i>
+                    <span>سليم</span>
+                </label>
+                <label class="damage-card" onclick="selectDamage('partial',this)">
+                    <input type="radio" name="damage" value="partial">
+                    <i class="fas fa-tools"></i>
+                    <span>أضرار جزئية</span>
+                </label>
+                <label class="damage-card" onclick="selectDamage('renovated',this)">
+                    <input type="radio" name="damage" value="renovated">
+                    <i class="fas fa-home"></i>
+                    <span>مرمم</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Services -->
+    <div class="form-section">
+        <div class="section-header"><i class="fas fa-plug"></i> الخدمات والجاهزية</div>
+        <div class="toggles-grid">
+            <div class="toggle-item">
+                <div class="toggle-label"><i class="fas fa-tint"></i> ماء</div>
+                <label class="switch"><input type="checkbox" id="has_water"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label"><i class="fas fa-bolt"></i> كهرباء</div>
+                <label class="switch"><input type="checkbox" id="has_electricity"><span class="slider"></span></label>
+            </div>
+            <div class="toggle-item">
+                <div class="toggle-label"><i class="fas fa-check-circle"></i> جاهز للسكن</div>
+                <label class="switch"><input type="checkbox" id="is_ready"><span class="slider"></span></label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Images -->
+    <div class="form-section">
+        <div class="section-header"><i class="fas fa-images"></i> صور العقار</div>
+        <div class="upload-area" onclick="document.getElementById('img-input').click()">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>اضغط لرفع الصور (JPG, PNG — حتى 10 صور)</p>
+            <input type="file" id="img-input" multiple accept="image/*" onchange="previewImages(this)">
+        </div>
+        <div class="previews" id="previews"></div>
+        <p style="font-size:0.78rem;color:#9CA3AF;margin-top:0.5rem;">
+            * الصور ترفع بعد حفظ العقار — أول صورة تكون الرئيسية تلقائياً
+        </p>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn-cancel" onclick="history.back()">إلغاء</button>
+        <button class="btn-submit" onclick="submitProperty()">
+            <i class="fas fa-save me-1"></i> حفظ وإرسال للمراجعة
+        </button>
+    </div>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script src="js/navbar.js?v=20260628-live-fixes"></script>
+<script>
+let selectedDamage = 'intact';
+let selectedImages = [];
+let savedPropertyId = null;
+
+function selectDamage(val, el){
+    selectedDamage = val;
+    document.querySelectorAll('.damage-card').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+async function loadGovernorates(){
+    const r = await fetch(BASE_URL+'/governorates',{headers:{'Accept':'application/json'}});
+    const data = await r.json();
+    const sel = document.getElementById('governorate_id');
+    data.forEach(g=>sel.innerHTML+=`<option value="${g.id}">${g.name}</option>`);
+}
+
+async function loadCities(){
+    const govId = document.getElementById('governorate_id').value;
+    const sel = document.getElementById('city_id');
+    sel.innerHTML = '<option value="">اختر المدينة</option>';
+    document.getElementById('neighborhood_id').innerHTML='<option value="">اختر الحي</option>';
+    if(!govId) return;
+    const r = await fetch(`${BASE_URL}/governorates/${govId}/cities`,{headers:{'Accept':'application/json'}});
+    const data = await r.json();
+    data.forEach(c=>sel.innerHTML+=`<option value="${c.id}">${c.name}</option>`);
+}
+
+async function loadNeighborhoods(){
+    const cityId = document.getElementById('city_id').value;
+    const sel = document.getElementById('neighborhood_id');
+    sel.innerHTML='<option value="">اختر الحي</option>';
+    if(!cityId) return;
+    const r = await fetch(`${BASE_URL}/cities/${cityId}/neighborhoods`,{headers:{'Accept':'application/json'}});
+    const data = await r.json();
+    data.forEach(n=>sel.innerHTML+=`<option value="${n.id}">${n.name}</option>`);
+}
+
+function previewImages(input){
+    selectedImages = Array.from(input.files);
+    const prev = document.getElementById('previews');
+    prev.innerHTML = '';
+    selectedImages.forEach((file,i)=>{
+        const url = URL.createObjectURL(file);
+        prev.innerHTML += `
+            <div class="preview-item" id="prev-${i}">
+                <img src="${url}">
+                <button class="del-btn" onclick="removeImg(${i})"><i class="fas fa-times"></i></button>
+                ${i===0?'<div class="main-lbl">رئيسية</div>':''}
+            </div>`;
+    });
+}
+
+function removeImg(idx){
+    selectedImages.splice(idx,1);
+    document.getElementById(`prev-${idx}`)?.remove();
+}
+
+function showErr(msg){ const e=document.getElementById('err'); document.getElementById('err-msg').textContent=msg; e.classList.add('show'); }
+function showSuc(msg){ const s=document.getElementById('suc'); document.getElementById('suc-msg').textContent=msg; s.classList.add('show'); }
+function hideAlerts(){ document.getElementById('err').classList.remove('show'); document.getElementById('suc').classList.remove('show'); }
+
+async function submitProperty(){
+    hideAlerts();
+    const title = document.getElementById('title').value.trim();
+    const type  = document.getElementById('type').value;
+    const price = document.getElementById('price').value;
+    const govId = document.getElementById('governorate_id').value;
+    const cityId= document.getElementById('city_id').value;
+
+    if(!title||!type||!price||!govId||!cityId){
+        showErr('يرجى ملء جميع الحقول الإلزامية *'); return;
+    }
+
+    const body = {
+        title, type, price: Number(price),
+        governorate_id: Number(govId),
+        city_id: Number(cityId),
+        description: document.getElementById('description').value,
+        rooms: Number(document.getElementById('rooms').value)||null,
+        area_m2: Number(document.getElementById('area_m2').value)||null,
+        street: document.getElementById('street').value,
+        damage_status: selectedDamage,
+        has_water: document.getElementById('has_water').checked,
+        has_electricity: document.getElementById('has_electricity').checked,
+        is_ready: document.getElementById('is_ready').checked,
+    };
+    const nbr = document.getElementById('neighborhood_id').value;
+    if(nbr) body.neighborhood_id = Number(nbr);
+
+    const r = await fetch(BASE_URL+'/host/properties',{
+        method:'POST', headers:authHeaders(), body:JSON.stringify(body)
+    });
+    const data = await r.json();
+
+    if(r.ok){
+        savedPropertyId = data.property.id;
+        if(selectedImages.length) await uploadImages(savedPropertyId);
+        showSuc('تم إرسال العقار للمراجعة بنجاح ✅');
+        setTimeout(()=>window.location.href='my-properties.html', 2000);
+    } else if(r.status===403){
+        window.location.href='complete-profile.html';
+    } else {
+        showErr(Object.values(data.errors||{})[0]?.[0] || data.message || 'حدث خطأ');
+    }
+}
+
+async function uploadImages(propId){
+    const fd = new FormData();
+    selectedImages.forEach(f=>fd.append('images[]',f));
+    await fetch(`${BASE_URL}/host/properties/${propId}/images`,{
+        method:'POST',
+        headers:{'Accept':'application/json','Authorization':'Bearer '+localStorage.getItem('token')},
+        body: fd
+    });
+}
+
+requireAuth('host-login.html');
+loadGovernorates();
+</script>
+</body>
+</html>

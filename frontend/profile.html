@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | الملف الشخصي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body{margin:0;background:#F8F5F0;}
+        .layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+        .sidebar{background:#0D2B1F;padding:1.5rem 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+        .sidebar-logo{font-size:1.4rem;font-weight:900;color:#D4A853;padding:0 1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .sidebar-logo span{color:white;font-weight:300;font-size:0.85rem;display:block;}
+        .sidebar-user{padding:0.8rem 1.2rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .user-avatar-lg{width:56px;height:56px;border-radius:50%;background:#1B4332;border:2px solid #D4A853;display:flex;align-items:center;justify-content:center;color:#D4A853;font-size:1.4rem;font-weight:700;margin-bottom:0.5rem;}
+        .user-name{color:white;font-size:0.9rem;font-weight:700;}
+        .user-role{color:rgba(255,255,255,0.4);font-size:0.75rem;}
+        .nav-section{font-size:0.68rem;color:rgba(255,255,255,0.3);padding:1rem 1.2rem 0.4rem;text-transform:uppercase;letter-spacing:0.8px;}
+        .nav-item{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.2s;font-size:0.875rem;text-decoration:none;border-right:3px solid transparent;}
+        .nav-item:hover{color:white;background:rgba(255,255,255,0.05);}
+        .nav-item.active{color:#D4A853;background:rgba(212,168,83,0.1);border-right-color:#D4A853;}
+        .nav-item i{width:18px;text-align:center;}
+        .btn-logout{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.4);cursor:pointer;font-size:0.875rem;background:none;border:none;font-family:'Cairo',sans-serif;width:100%;text-align:right;margin-top:1rem;}
+        .btn-logout:hover{color:#E74C3C;}
+
+        .main{padding:2rem;max-width:750px;}
+        .page-title{font-size:1.5rem;font-weight:900;color:#1B4332;margin-bottom:1.5rem;}
+
+        /* Profile header card */
+        .profile-header{background:linear-gradient(135deg,#1B4332,#2D6A4F);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;}
+        .avatar-circle{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.15);border:3px solid #D4A853;display:flex;align-items:center;justify-content:center;color:#D4A853;font-size:1.8rem;font-weight:900;flex-shrink:0;}
+        .profile-header-info h2{color:white;font-size:1.2rem;font-weight:700;margin-bottom:0.2rem;}
+        .profile-header-info p{color:rgba(255,255,255,0.6);font-size:0.85rem;margin-bottom:0.4rem;}
+        .role-chip{background:rgba(212,168,83,0.2);color:#D4A853;border:1px solid rgba(212,168,83,0.4);border-radius:20px;padding:0.2rem 0.8rem;font-size:0.78rem;font-weight:600;display:inline-block;}
+
+        /* Section cards */
+        .section-card{background:white;border-radius:14px;border:1px solid #E5E0D8;padding:1.4rem;margin-bottom:1rem;}
+        .section-header{font-size:1rem;font-weight:700;color:#1B4332;margin-bottom:1.2rem;padding-bottom:0.7rem;border-bottom:2px solid #E5E0D8;display:flex;align-items:center;gap:0.5rem;}
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+        .form-grid.full{grid-template-columns:1fr;}
+        .form-group{display:flex;flex-direction:column;gap:0.4rem;}
+        .form-group label{font-size:0.82rem;font-weight:600;color:#374151;}
+        .form-group input{border:1.5px solid #E5E0D8;border-radius:10px;padding:0.65rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.9rem;color:#1A1A1A;outline:none;transition:border-color 0.2s;width:100%;box-sizing:border-box;}
+        .form-group input:focus{border-color:#2D6A4F;box-shadow:0 0 0 3px rgba(45,106,79,0.1);}
+        .form-group input:disabled{background:#F9FAFB;color:#9CA3AF;cursor:not-allowed;}
+
+        .alert{padding:0.8rem 1rem;border-radius:10px;font-size:0.875rem;margin-bottom:1rem;display:none;align-items:center;gap:0.5rem;}
+        .alert.show{display:flex;}
+        .alert-error{background:#FEF2F2;border:1px solid #FECACA;color:#C0392B;}
+        .alert-success{background:#F0FDF4;border:1px solid #BBF7D0;color:#2D6A4F;}
+
+        .btn-save{background:#1B4332;color:white;border:none;border-radius:10px;padding:0.7rem 1.8rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;gap:0.4rem;}
+        .btn-save:hover{background:#2D6A4F;}
+        .btn-save:disabled{opacity:0.6;cursor:not-allowed;}
+
+        .info-row{display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid #F3F4F6;font-size:0.875rem;}
+        .info-row:last-child{border-bottom:none;}
+        .info-label{color:#6B7280;font-weight:600;}
+        .info-value{color:#1A1A1A;font-weight:700;}
+
+        @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.form-grid{grid-template-columns:1fr;}}
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">حمى <span>منصة الإيجار الرقمي</span></div>
+        <div class="sidebar-user">
+            <div class="user-avatar-lg" id="avatar">م</div>
+            <div class="user-name" id="sidebar-name">...</div>
+            <div class="user-role" id="sidebar-role">...</div>
+        </div>
+        <div class="nav-section">القائمة الرئيسية</div>
+        <a class="nav-item" id="nav-dashboard" href="#"><i class="fas fa-th-large"></i> لوحة التحكم</a>
+        <a class="nav-item" href="tenant-properties.html"><i class="fas fa-search"></i> تصفح العقارات</a>
+        <div class="nav-section">حسابي</div>
+        <a class="nav-item" href="my-bookings.html"><i class="fas fa-calendar-check"></i> حجوزاتي</a>
+        <a class="nav-item" href="my-contracts.html"><i class="fas fa-file-contract"></i> عقودي</a>
+        <a class="nav-item" href="my-favorites.html"><i class="fas fa-heart"></i> مفضلتي</a>
+        <a class="nav-item" href="notifications.html"><i class="fas fa-bell"></i> الإشعارات</a>
+        <a class="nav-item active" href="profile.html"><i class="fas fa-user-cog"></i> الملف الشخصي</a>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </aside>
+
+    <main class="main">
+        <div class="page-title"><i class="fas fa-user-cog me-2"></i>الملف الشخصي</div>
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="avatar-circle" id="header-avatar">م</div>
+            <div class="profile-header-info">
+                <h2 id="header-name">...</h2>
+                <p id="header-email">...</p>
+                <span class="role-chip" id="header-role">...</span>
+            </div>
+        </div>
+
+        <!-- Basic Info -->
+        <div class="section-card">
+            <div class="section-header"><i class="fas fa-user"></i> المعلومات الأساسية</div>
+            <div class="alert alert-error" id="info-err"><i class="fas fa-exclamation-circle"></i><span id="info-err-msg"></span></div>
+            <div class="alert alert-success" id="info-suc"><i class="fas fa-check-circle"></i><span id="info-suc-msg"></span></div>
+            <div class="form-grid">
+                <div class="form-group"><label>الاسم الأول</label><input id="first_name" type="text"></div>
+                <div class="form-group"><label>اسم الأب</label><input id="second_name" type="text"></div>
+                <div class="form-group"><label>اسم الجد</label><input id="third_name" type="text"></div>
+                <div class="form-group"><label>اسم العائلة</label><input id="last_name" type="text"></div>
+                <div class="form-group"><label>رقم الهاتف</label><input id="phone" type="tel"></div>
+                <div class="form-group"><label>رقم الهوية</label><input id="national_id" type="text"></div>
+            </div>
+            <div style="margin-top:1rem;">
+                <button class="btn-save" onclick="saveInfo()"><i class="fas fa-save"></i> حفظ التغييرات</button>
+            </div>
+        </div>
+
+        <!-- Account Info (read only) -->
+        <div class="section-card">
+            <div class="section-header"><i class="fas fa-info-circle"></i> معلومات الحساب</div>
+            <div class="info-row"><span class="info-label">البريد الإلكتروني</span><span class="info-value" id="email-display">...</span></div>
+            <div class="info-row"><span class="info-label">الدور</span><span class="info-value" id="role-display">...</span></div>
+            <div class="info-row"><span class="info-label">حالة البيانات</span><span class="info-value" id="profile-status">...</span></div>
+        </div>
+
+        <!-- Change Email -->
+        <div class="section-card">
+            <div class="section-header"><i class="fas fa-envelope"></i> تغيير البريد الإلكتروني</div>
+            <div class="alert alert-error" id="email-err"><i class="fas fa-exclamation-circle"></i><span id="email-err-msg"></span></div>
+            <div class="alert alert-success" id="email-suc"><i class="fas fa-check-circle"></i><span id="email-suc-msg"></span></div>
+            <div class="form-grid">
+                <div class="form-group"><label>البريد الإلكتروني الجديد</label><input id="new_email" type="email" placeholder="example@email.com"></div>
+                <div class="form-group"><label>كلمة المرور الحالية</label><input id="email_password" type="password" placeholder="••••••••"></div>
+            </div>
+            <div style="margin-top:1rem;">
+                <button class="btn-save" onclick="changeEmail()"><i class="fas fa-envelope"></i> تغيير الإيميل</button>
+            </div>
+        </div>
+
+        <!-- Change Password -->
+        <div class="section-card">
+            <div class="section-header"><i class="fas fa-lock"></i> تغيير كلمة المرور</div>
+            <div class="alert alert-error" id="pass-err"><i class="fas fa-exclamation-circle"></i><span id="pass-err-msg"></span></div>
+            <div class="alert alert-success" id="pass-suc"><i class="fas fa-check-circle"></i><span id="pass-suc-msg"></span></div>
+            <div class="form-grid">
+                <div class="form-group form-grid full"><label>كلمة المرور الحالية</label><input id="current_password" type="password" placeholder="••••••••"></div>
+                <div class="form-group"><label>كلمة المرور الجديدة</label><input id="new_password" type="password" placeholder="8 أحرف على الأقل"></div>
+                <div class="form-group"><label>تأكيد كلمة المرور</label><input id="confirm_password" type="password" placeholder="••••••••"></div>
+            </div>
+            <div style="margin-top:1rem;">
+                <button class="btn-save" onclick="changePassword()"><i class="fas fa-key"></i> تغيير كلمة المرور</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const roleMap={admin:'مشرف النظام',host:'صاحب عقار',tenant:'مستأجر'};
+const dashMap={admin:'dashboard-admin.html',host:'dashboard-host.html',tenant:'dashboard-tenant.html'};
+
+async function init(){
+    requireAuth();
+    const role=localStorage.getItem('role')||'';
+    document.getElementById('nav-dashboard').href=dashMap[role]||'#';
+
+    const r=await fetch(BASE_URL+'/me',{headers:authHeaders()});
+    const data=await r.json();
+    const u=data.user||data;
+
+    // Sidebar
+    const fullName=u.first_name||'';
+    document.getElementById('sidebar-name').textContent=fullName;
+    document.getElementById('sidebar-role').textContent=roleMap[role]||role;
+    document.getElementById('avatar').textContent=fullName.charAt(0)||'م';
+
+    // Header
+    document.getElementById('header-avatar').textContent=fullName.charAt(0)||'م';
+    document.getElementById('header-name').textContent=[u.first_name,u.second_name,u.last_name].filter(Boolean).join(' ');
+    document.getElementById('header-email').textContent=u.email||'';
+    document.getElementById('header-role').textContent=roleMap[role]||role;
+
+    // Fields
+    ['first_name','second_name','third_name','last_name','phone','national_id'].forEach(f=>{
+        const el=document.getElementById(f);
+        if(el) el.value=u[f]||'';
+    });
+
+    // Account info
+    document.getElementById('email-display').textContent=u.email||'—';
+    document.getElementById('role-display').textContent=roleMap[role]||role;
+    const isComplete=localStorage.getItem('is_profile_complete')==='true';
+    document.getElementById('profile-status').innerHTML=isComplete
+        ?'<span style="color:#065F46;"><i class="fas fa-check-circle me-1"></i>مكتمل</span>'
+        :'<span style="color:#92400E;"><i class="fas fa-exclamation-circle me-1"></i>غير مكتمل</span>';
+}
+
+function showMsg(prefix,type,msg){
+    ['err','suc'].forEach(t=>{document.getElementById(`${prefix}-${t}`).classList.remove('show');});
+    const el=document.getElementById(`${prefix}-${type}`);
+    document.getElementById(`${prefix}-${type}-msg`).textContent=msg;
+    el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'),4000);
+}
+
+async function saveInfo(){
+    const body={
+        first_name:document.getElementById('first_name').value.trim(),
+        second_name:document.getElementById('second_name').value.trim(),
+        third_name:document.getElementById('third_name').value.trim(),
+        last_name:document.getElementById('last_name').value.trim(),
+        phone:document.getElementById('phone').value.trim(),
+        national_id:document.getElementById('national_id').value.trim(),
+    };
+    if(!body.first_name){showMsg('info','err','الاسم الأول مطلوب');return;}
+    const r=await fetch(BASE_URL+'/profile',{method:'PUT',headers:authHeaders(),body:JSON.stringify(body)});
+    const data=await r.json();
+    if(r.ok){
+        localStorage.setItem('name',body.first_name);
+        showMsg('info','suc','✅ تم حفظ البيانات بنجاح');
+        document.getElementById('header-name').textContent=[body.first_name,body.second_name,body.last_name].filter(Boolean).join(' ');
+    } else {
+        showMsg('info','err',Object.values(data.errors||{})[0]?.[0]||data.message||'حدث خطأ');
+    }
+}
+
+async function changeEmail(){
+    const email=document.getElementById('new_email').value.trim();
+    const password=document.getElementById('email_password').value;
+    if(!email||!password){showMsg('email','err','يرجى ملء جميع الحقول');return;}
+    const r=await fetch(BASE_URL+'/profile/change-email',{method:'PUT',headers:authHeaders(),body:JSON.stringify({email,password})});
+    const data=await r.json();
+    if(r.ok){
+        showMsg('email','suc','✅ تم تغيير الإيميل — ستحتاج إلى تسجيل الدخول مجدداً');
+        setTimeout(()=>{localStorage.clear();window.location.href='tenant-login.html';},2500);
+    } else {
+        showMsg('email','err',Object.values(data.errors||{})[0]?.[0]||data.message||'حدث خطأ');
+    }
+}
+
+async function changePassword(){
+    const current=document.getElementById('current_password').value;
+    const newPass=document.getElementById('new_password').value;
+    const confirm=document.getElementById('confirm_password').value;
+    if(!current||!newPass||!confirm){showMsg('pass','err','يرجى ملء جميع الحقول');return;}
+    if(newPass.length<8){showMsg('pass','err','كلمة المرور يجب أن تكون 8 أحرف على الأقل');return;}
+    if(newPass!==confirm){showMsg('pass','err','كلمتا المرور غير متطابقتين');return;}
+    const r=await fetch(BASE_URL+'/profile/change-password',{method:'PUT',headers:authHeaders(),body:JSON.stringify({current_password:current,password:newPass,password_confirmation:confirm})});
+    const data=await r.json();
+    if(r.ok){
+        showMsg('pass','suc','✅ تم تغيير كلمة المرور — ستحتاج إلى تسجيل الدخول مجدداً');
+        setTimeout(()=>{localStorage.clear();window.location.href='tenant-login.html';},2500);
+    } else {
+        showMsg('pass','err',Object.values(data.errors||{})[0]?.[0]||data.message||'حدث خطأ');
+    }
+}
+
+init();
+</script>
+</body>
+</html>

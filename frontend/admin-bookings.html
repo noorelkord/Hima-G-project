@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | إدارة الحجوزات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body{margin:0;background:#F8F5F0;}
+        .layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+        .sidebar{background:#0D2B1F;padding:1.5rem 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+        .sidebar-logo{font-size:1.4rem;font-weight:900;color:#D4A853;padding:0 1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .sidebar-logo span{color:white;font-weight:300;font-size:0.85rem;display:block;}
+        .sidebar-user{padding:0.8rem 1.2rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .user-avatar{width:44px;height:44px;border-radius:50%;background:#C0392B;border:2px solid #D4A853;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;}
+        .user-name{color:white;font-size:0.9rem;font-weight:700;}
+        .user-role{color:rgba(255,255,255,0.4);font-size:0.75rem;}
+        .nav-section{font-size:0.68rem;color:rgba(255,255,255,0.3);padding:1rem 1.2rem 0.4rem;text-transform:uppercase;letter-spacing:0.8px;}
+        .nav-item{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.2s;font-size:0.875rem;text-decoration:none;border-right:3px solid transparent;}
+        .nav-item:hover{color:white;background:rgba(255,255,255,0.05);}
+        .nav-item.active{color:#D4A853;background:rgba(212,168,83,0.1);border-right-color:#D4A853;}
+        .nav-item i{width:18px;text-align:center;}
+        .btn-logout{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.4);cursor:pointer;font-size:0.875rem;background:none;border:none;font-family:'Cairo',sans-serif;width:100%;text-align:right;margin-top:1rem;}
+        .btn-logout:hover{color:#E74C3C;}
+        .main{padding:2rem;}
+        .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;}
+        .page-title{font-size:1.5rem;font-weight:900;color:#1B4332;}
+        .btn-archive-stale{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;border-radius:10px;padding:0.6rem 1.2rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.875rem;cursor:pointer;}
+        .btn-archive-stale:hover{background:#FDE68A;}
+
+        /* Stats row */
+        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+        .stat-mini{background:white;border-radius:12px;border:1px solid #E5E0D8;padding:1rem;text-align:center;}
+        .stat-mini .num{font-size:1.6rem;font-weight:900;color:#1B4332;}
+        .stat-mini .lbl{font-size:0.75rem;color:#6B7280;margin-top:0.2rem;}
+
+        .tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+        .tab{padding:0.5rem 1.2rem;border-radius:20px;font-size:0.85rem;font-weight:600;cursor:pointer;border:1.5px solid #E5E0D8;background:white;color:#6B7280;font-family:'Cairo',sans-serif;}
+        .tab.active{background:#1B4332;color:white;border-color:#1B4332;}
+
+        /* Table */
+        .table-wrap{background:white;border-radius:14px;border:1px solid #E5E0D8;overflow:hidden;}
+        table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+        thead{background:#F0F7F4;}
+        thead th{padding:0.9rem 1rem;text-align:right;font-weight:700;color:#1B4332;font-size:0.8rem;}
+        tbody tr{border-top:1px solid #F3F4F6;transition:background 0.15s;}
+        tbody tr:hover{background:#FAFAFA;}
+        tbody td{padding:0.85rem 1rem;color:#374151;vertical-align:middle;}
+        .prop-cell{display:flex;align-items:center;gap:0.7rem;}
+        .prop-thumb-sm{width:50px;height:40px;border-radius:7px;background:linear-gradient(135deg,#1B4332,#2D6A4F);overflow:hidden;flex-shrink:0;}
+        .prop-thumb-sm img{width:100%;height:100%;object-fit:cover;}
+        .prop-thumb-sm .no-img{display:flex;align-items:center;justify-content:center;height:100%;font-size:1rem;color:rgba(255,255,255,0.2);}
+        .prop-cell-name{font-weight:700;font-size:0.85rem;color:#1A1A1A;}
+        .prop-cell-loc{font-size:0.72rem;color:#6B7280;}
+        .tenant-cell{font-size:0.82rem;}
+        .tenant-name-val{font-weight:600;color:#1A1A1A;}
+        .tenant-id{font-size:0.72rem;color:#9CA3AF;}
+
+        .badge{font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:12px;}
+        .badge-pending{background:#FEF3C7;color:#92400E;}
+        .badge-accepted{background:#D1FAE5;color:#065F46;}
+        .badge-rejected{background:#FEE2E2;color:#991B1B;}
+        .badge-cancelled{background:#F3F4F6;color:#374151;}
+
+        .btn-archive-row{background:#F3F4F6;color:#6B7280;border:1px solid #E5E0D8;border-radius:7px;padding:0.3rem 0.7rem;font-family:'Cairo',sans-serif;font-size:0.78rem;cursor:pointer;}
+        .btn-archive-row:hover{background:#E5E0D8;}
+
+        .empty-state{text-align:center;padding:3rem;color:#6B7280;}
+        .empty-state i{font-size:2.5rem;color:#E5E0D8;display:block;margin-bottom:1rem;}
+
+        .toast{position:fixed;bottom:2rem;left:2rem;background:#1B4332;color:white;padding:0.9rem 1.4rem;border-radius:10px;font-size:0.9rem;z-index:9999;display:none;align-items:center;gap:0.5rem;}
+        .toast.show{display:flex;}
+        @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">حمى <span>لوحة الإدارة</span></div>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="avatar">A</div>
+            <div class="user-name" id="sidebar-name">...</div>
+            <div class="user-role">مشرف النظام</div>
+        </div>
+        <div class="nav-section">الإدارة</div>
+        <a class="nav-item" href="dashboard-admin.html"><i class="fas fa-th-large"></i> لوحة التحكم</a>
+        <a class="nav-item" href="admin-properties.html"><i class="fas fa-building"></i> إدارة العقارات</a>
+        <a class="nav-item active" href="admin-bookings.html"><i class="fas fa-calendar-check"></i> إدارة الحجوزات</a>
+        <div class="nav-section">النظام</div>
+        <a class="nav-item" href="notifications.html"><i class="fas fa-bell"></i> الإشعارات</a>
+        <a class="nav-item" href="profile.html"><i class="fas fa-user-cog"></i> الملف الشخصي</a>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </aside>
+
+    <main class="main">
+        <div class="page-header">
+            <div class="page-title"><i class="fas fa-calendar-check me-2"></i>إدارة الحجوزات</div>
+            <button class="btn-archive-stale" onclick="archiveStale()">
+                <i class="fas fa-archive me-1"></i> أرشفة المعلقة +48 ساعة
+            </button>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-mini"><div class="num" id="s-total">0</div><div class="lbl">إجمالي الحجوزات</div></div>
+            <div class="stat-mini"><div class="num" id="s-pending" style="color:#92400E;">0</div><div class="lbl">معلقة</div></div>
+            <div class="stat-mini"><div class="num" id="s-accepted" style="color:#065F46;">0</div><div class="lbl">مقبولة</div></div>
+            <div class="stat-mini"><div class="num" id="s-cancelled" style="color:#6B7280;">0</div><div class="lbl">ملغية / مرفوضة</div></div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="filterTab('all',this)">الكل</button>
+            <button class="tab" onclick="filterTab('pending',this)">معلق</button>
+            <button class="tab" onclick="filterTab('accepted',this)">مقبول</button>
+            <button class="tab" onclick="filterTab('rejected',this)">مرفوض</button>
+            <button class="tab" onclick="filterTab('cancelled',this)">ملغي</button>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>العقار</th>
+                        <th>المستأجر</th>
+                        <th>التواريخ</th>
+                        <th>السعر</th>
+                        <th>الحالة</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg"></span></div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const statusMap={pending:'معلق',accepted:'مقبول',rejected:'مرفوض',cancelled:'ملغي'};
+const statusCls={pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected',cancelled:'badge-cancelled'};
+let allBookings=[],currentTab='all';
+
+async function init(){
+    requireAuth('login.html');
+    const name=localStorage.getItem('name')||'';
+    document.getElementById('sidebar-name').textContent=name;
+    document.getElementById('avatar').textContent=name.charAt(0)||'A';
+    const r=await fetch(BASE_URL+'/admin/bookings',{headers:authHeaders()});
+    allBookings=await r.json();
+    document.getElementById('s-total').textContent=allBookings.length;
+    document.getElementById('s-pending').textContent=allBookings.filter(b=>b.status==='pending').length;
+    document.getElementById('s-accepted').textContent=allBookings.filter(b=>b.status==='accepted').length;
+    document.getElementById('s-cancelled').textContent=allBookings.filter(b=>b.status==='rejected'||b.status==='cancelled').length;
+    render(allBookings);
+}
+
+function filterTab(status,el){
+    currentTab=status;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    render(status==='all'?allBookings:allBookings.filter(b=>b.status===status));
+}
+
+function render(list){
+    const tbody=document.getElementById('table-body');
+    if(!list.length){tbody.innerHTML=`<tr><td colspan="6" class="empty-state"><i class="fas fa-inbox"></i><p>لا توجد حجوزات</p></td></tr>`;return;}
+    tbody.innerHTML=list.map(b=>{
+        const main=b.property?.images?.find(i=>i.is_main)||b.property?.images?.[0];
+        const img=main?`<img src="${main.url}" alt="">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+        return `<tr>
+            <td><div class="prop-cell">
+                <div class="prop-thumb-sm">${img}</div>
+                <div>
+                    <div class="prop-cell-name">${b.property?.title||'عقار'}</div>
+                    <div class="prop-cell-loc">${b.property?.governorate?.name||''}</div>
+                </div>
+            </div></td>
+            <td><div class="tenant-cell">
+                <div class="tenant-name-val">${b.tenant?.first_name||'—'}</div>
+                <div class="tenant-id">مخفي لحماية الخصوصية</div>
+            </div></td>
+            <td style="font-size:0.78rem;color:#6B7280;">${b.start_date?.split('T')[0]||''}<br>${b.end_date?.split('T')[0]||''}</td>
+            <td><b style="color:#1B4332;">${Number(b.price||0).toLocaleString('ar')} ₪</b></td>
+            <td><span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span></td>
+            <td><button class="btn-archive-row" onclick="archiveOne(${b.id})"><i class="fas fa-archive me-1"></i>أرشفة</button></td>
+        </tr>`;
+    }).join('');
+}
+
+async function archiveOne(id){
+    if(!confirm('أرشفة هذا الحجز؟')) return;
+    const r=await fetch(`${BASE_URL}/admin/bookings/${id}`,{method:'DELETE',headers:authHeaders()});
+    if(r.ok){allBookings=allBookings.filter(b=>b.id!==id);filterTab(currentTab,document.querySelector('.tab.active'));showToast('تم أرشفة الحجز');}
+}
+
+async function archiveStale(){
+    if(!confirm('هل تريد أرشفة جميع الحجوزات المعلقة منذ أكثر من 48 ساعة؟')) return;
+    const r=await fetch(`${BASE_URL}/admin/bookings/stale`,{method:'DELETE',headers:authHeaders()});
+    if(r.ok){showToast('✅ تم أرشفة الحجوزات المعلقة');init();}
+}
+
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | تقييم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body{margin:0;background:#F8F5F0;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;}
+        .card{background:white;border-radius:20px;box-shadow:0 8px 40px rgba(27,67,50,0.16);width:100%;max-width:480px;overflow:hidden;}
+        .card-header{background:linear-gradient(135deg,#0D2B1F,#1B4332);padding:1.8rem;text-align:center;}
+        .card-header .logo{font-size:1.4rem;font-weight:900;color:#D4A853;margin-bottom:0.5rem;}
+        .card-header h2{color:white;font-size:1.2rem;font-weight:700;margin-bottom:0.2rem;}
+        .card-header p{color:rgba(255,255,255,0.6);font-size:0.85rem;}
+        .card-body{padding:1.8rem;}
+
+        /* Contract summary */
+        .contract-summary{background:#F8F5F0;border-radius:12px;padding:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.9rem;}
+        .contract-icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#1B4332,#2D6A4F);display:flex;align-items:center;justify-content:center;color:#D4A853;font-size:1.1rem;flex-shrink:0;}
+        .contract-name{font-weight:700;font-size:0.9rem;color:#1A1A1A;}
+        .contract-sub{font-size:0.78rem;color:#6B7280;}
+
+        /* Stars */
+        .stars-section{text-align:center;margin-bottom:1.5rem;}
+        .stars-section label{display:block;font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:0.8rem;}
+        .stars{display:flex;justify-content:center;gap:0.5rem;direction:ltr;}
+        .star{font-size:2.2rem;color:#D1D5DB;cursor:pointer;transition:all 0.15s;}
+        .star:hover,.star.active{color:#D4A853;transform:scale(1.15);}
+        .rating-text{font-size:0.82rem;color:#6B7280;margin-top:0.5rem;min-height:1.2rem;}
+
+        .form-group{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.2rem;}
+        .form-group label{font-size:0.85rem;font-weight:600;color:#374151;}
+        .form-group textarea{border:1.5px solid #E5E0D8;border-radius:10px;padding:0.7rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.875rem;color:#1A1A1A;resize:vertical;min-height:100px;outline:none;transition:border-color 0.2s;}
+        .form-group textarea:focus{border-color:#2D6A4F;box-shadow:0 0 0 3px rgba(45,106,79,0.1);}
+
+        .alert{padding:0.8rem 1rem;border-radius:10px;font-size:0.875rem;margin-bottom:1rem;display:none;align-items:center;gap:0.5rem;}
+        .alert.show{display:flex;}
+        .alert-error{background:#FEF2F2;border:1px solid #FECACA;color:#C0392B;}
+        .alert-success{background:#F0FDF4;border:1px solid #BBF7D0;color:#2D6A4F;}
+
+        .btn-submit{width:100%;background:#1B4332;color:white;border:none;border-radius:12px;padding:0.85rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:0.5rem;}
+        .btn-submit:hover{background:#2D6A4F;}
+        .btn-submit:disabled{opacity:0.6;cursor:not-allowed;}
+        .btn-back{width:100%;background:transparent;color:#6B7280;border:1.5px solid #E5E0D8;border-radius:12px;padding:0.75rem;font-family:'Cairo',sans-serif;font-size:0.875rem;cursor:pointer;margin-top:0.7rem;}
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="card-header">
+        <div class="logo">حمى</div>
+        <h2>تقييم العقد</h2>
+        <p>شاركنا رأيك لمساعدة المجتمع</p>
+    </div>
+    <div class="card-body">
+        <div class="contract-summary" id="contract-summary">
+            <div class="contract-icon"><i class="fas fa-file-contract"></i></div>
+            <div><div class="contract-name" id="summary-title">جارٍ التحميل...</div><div class="contract-sub" id="summary-sub"></div></div>
+        </div>
+
+        <div class="alert alert-error" id="err"><i class="fas fa-exclamation-circle"></i><span id="err-msg"></span></div>
+        <div class="alert alert-success" id="suc"><i class="fas fa-check-circle"></i><span id="suc-msg"></span></div>
+
+        <div class="stars-section">
+            <label>التقييم *</label>
+            <div class="stars" id="stars">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+            </div>
+            <div class="rating-text" id="rating-text">اختر تقييمك</div>
+        </div>
+
+        <div class="form-group">
+            <label>تعليقك (اختياري)</label>
+            <textarea id="comment" placeholder="شارك تجربتك..."></textarea>
+        </div>
+
+        <button class="btn-submit" id="submit-btn" onclick="submitReview()">
+            <i class="fas fa-star"></i> إرسال التقييم
+        </button>
+        <button class="btn-back" onclick="history.back()">العودة</button>
+    </div>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const ratingLabels=['','سيء','مقبول','جيد','جيد جداً','ممتاز'];
+const params=new URLSearchParams(window.location.search);
+const contractId=params.get('contract_id');
+let selectedRating=0;
+
+if(!contractId) window.location.href='my-contracts.html';
+
+// Stars interaction
+document.querySelectorAll('.star').forEach(star=>{
+    star.addEventListener('mouseover',()=>highlightStars(+star.dataset.val));
+    star.addEventListener('mouseout',()=>highlightStars(selectedRating));
+    star.addEventListener('click',()=>{
+        selectedRating=+star.dataset.val;
+        highlightStars(selectedRating);
+        document.getElementById('rating-text').textContent=ratingLabels[selectedRating];
+    });
+});
+
+function highlightStars(val){
+    document.querySelectorAll('.star').forEach(s=>{
+        s.classList.toggle('active',+s.dataset.val<=val);
+    });
+}
+
+async function loadContract(){
+    try{
+        const r=await fetch(`${BASE_URL}/contracts/${contractId}`,{headers:authHeaders()});
+        if(!r.ok) return;
+        const c=await r.json();
+        document.getElementById('summary-title').textContent=c.property?.title||'عقار';
+        document.getElementById('summary-sub').textContent=`${c.start_date?.split('T')[0]} → ${c.end_date?.split('T')[0]}`;
+    }catch(e){}
+}
+
+function showErr(msg){const e=document.getElementById('err');document.getElementById('err-msg').textContent=msg;e.classList.add('show');document.getElementById('suc').classList.remove('show');}
+function showSuc(msg){const s=document.getElementById('suc');document.getElementById('suc-msg').textContent=msg;s.classList.add('show');document.getElementById('err').classList.remove('show');}
+
+async function submitReview(){
+    if(!selectedRating){showErr('يرجى اختيار تقييم من 1 إلى 5 نجوم');return;}
+    const btn=document.getElementById('submit-btn');
+    btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> جارٍ الإرسال...';
+    const body={contract_id:Number(contractId),rating:selectedRating,comment:document.getElementById('comment').value.trim()||null};
+    const r=await fetch(`${BASE_URL}/reviews`,{method:'POST',headers:authHeaders(),body:JSON.stringify(body)});
+    const data=await r.json();
+    btn.disabled=false;btn.innerHTML='<i class="fas fa-star"></i> إرسال التقييم';
+    if(r.ok){
+        showSuc('✅ تم إرسال تقييمك بنجاح — شكراً لك!');
+        setTimeout(()=>{
+            const role=localStorage.getItem('role');
+            window.location.href=role==='host'?'my-contracts-host.html':'my-contracts.html';
+        },2000);
+    } else {
+        showErr(Object.values(data.errors||{})[0]?.[0]||data.message||'حدث خطأ');
+    }
+}
+
+requireAuth();
+loadContract();
+</script>
+</body>
+</html>

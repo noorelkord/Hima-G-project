@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | إدارة العقارات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body { margin:0; background:#F8F5F0; }
+        .container { max-width:1100px; margin:0 auto; padding:2rem 1.5rem; }
+        .page-title { font-size:1.5rem; font-weight:900; color:#1B4332; margin-bottom:1.5rem; }
+
+        .tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
+        .tab {
+            padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem;
+            font-weight:600; cursor:pointer; border:1.5px solid #E5E0D8;
+            background:white; color:#6B7280; font-family:'Cairo',sans-serif;
+        }
+        .tab.active { background:#1B4332; color:white; border-color:#1B4332; }
+
+        .prop-card {
+            background:white; border-radius:14px; border:1px solid #E5E0D8;
+            padding:1.2rem; margin-bottom:0.8rem; transition:box-shadow 0.2s;
+        }
+        .prop-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.1); }
+        .prop-card-top { display:flex; gap:1rem; align-items:flex-start; margin-bottom:0.8rem; }
+        .prop-thumb {
+            width:100px; height:75px; border-radius:10px;
+            background:linear-gradient(135deg,#1B4332,#2D6A4F);
+            overflow:hidden; flex-shrink:0;
+        }
+        .prop-thumb img { width:100%; height:100%; object-fit:cover; }
+        .prop-thumb .no-img {
+            display:flex; align-items:center; justify-content:center;
+            height:100%; font-size:2rem; color:rgba(255,255,255,0.2);
+        }
+        .prop-info { flex:1; }
+        .prop-name { font-weight:700; font-size:1rem; color:#1A1A1A; margin-bottom:0.3rem; }
+        .prop-meta { font-size:0.8rem; color:#6B7280; margin-bottom:0.4rem; }
+        .prop-meta span { margin-left:1rem; }
+
+        .badge { font-size:0.72rem; font-weight:700; padding:0.2rem 0.6rem; border-radius:12px; }
+        .badge-pending  { background:#FEF3C7; color:#92400E; }
+        .badge-accepted { background:#D1FAE5; color:#065F46; }
+        .badge-rejected { background:#FEE2E2; color:#991B1B; }
+
+        .prop-actions { display:flex; gap:0.7rem; }
+        .btn-accept {
+            background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0;
+            border-radius:8px; padding:0.5rem 1.2rem;
+            font-family:'Cairo',sans-serif; font-weight:700;
+            font-size:0.85rem; cursor:pointer; transition:all 0.2s;
+        }
+        .btn-accept:hover { background:#A7F3D0; }
+        .btn-reject {
+            background:#FEE2E2; color:#991B1B; border:1px solid #FECACA;
+            border-radius:8px; padding:0.5rem 1.2rem;
+            font-family:'Cairo',sans-serif; font-weight:700;
+            font-size:0.85rem; cursor:pointer; transition:all 0.2s;
+        }
+        .btn-reject:hover { background:#FECACA; }
+        .btn-archive {
+            background:#F3F4F6; color:#6B7280; border:1px solid #E5E0D8;
+            border-radius:8px; padding:0.5rem 1rem;
+            font-family:'Cairo',sans-serif; font-size:0.82rem; cursor:pointer;
+        }
+
+        /* Reject Modal */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.5);
+            display:none; align-items:center; justify-content:center; z-index:9999;
+        }
+        .modal-overlay.show { display:flex; }
+        .modal { background:white; border-radius:16px; padding:1.5rem; width:90%; max-width:420px; }
+        .modal h3 { font-size:1rem; font-weight:700; color:#C0392B; margin-bottom:0.8rem; }
+        .modal textarea {
+            width:100%; border:1.5px solid #E5E0D8; border-radius:10px;
+            padding:0.7rem; font-family:'Cairo',sans-serif; font-size:0.875rem;
+            resize:vertical; min-height:80px; margin-bottom:1rem;
+            box-sizing:border-box; outline:none;
+        }
+        .modal textarea:focus { border-color:#C0392B; }
+        .modal-actions { display:flex; gap:0.7rem; }
+        .btn-confirm-reject {
+            flex:1; background:#C0392B; color:white; border:none;
+            border-radius:10px; padding:0.7rem;
+            font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer;
+        }
+        .btn-cancel-modal {
+            background:transparent; color:#6B7280; border:1.5px solid #E5E0D8;
+            border-radius:10px; padding:0.7rem 1.2rem;
+            font-family:'Cairo',sans-serif; cursor:pointer;
+        }
+
+        .empty-state { text-align:center; padding:3rem; color:#6B7280; }
+        .empty-state i { font-size:3rem; color:#E5E0D8; display:block; margin-bottom:1rem; }
+
+        .toast-suc {
+            position:fixed; bottom:2rem; left:2rem;
+            background:#1B4332; color:white; padding:0.9rem 1.4rem;
+            border-radius:10px; font-size:0.9rem; z-index:9999;
+            display:none; align-items:center; gap:0.5rem;
+        }
+        .toast-suc.show { display:flex; }
+    </style>
+</head>
+<body>
+<div id="navbar"></div>
+<div class="container">
+    <div class="page-title"><i class="fas fa-shield-alt me-2"></i>إدارة العقارات</div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="filterTab('all',this)">كل العقارات</button>
+        <button class="tab" onclick="filterTab('pending',this)">بانتظار المراجعة</button>
+        <button class="tab" onclick="filterTab('accepted',this)">مقبولة</button>
+        <button class="tab" onclick="filterTab('rejected',this)">مرفوضة</button>
+    </div>
+
+    <div id="list"></div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal-overlay" id="reject-modal">
+    <div class="modal">
+        <h3><i class="fas fa-times-circle me-2"></i>سبب الرفض</h3>
+        <textarea id="reject-reason" placeholder="اكتب سبب رفض العقار..."></textarea>
+        <div class="modal-actions">
+            <button class="btn-cancel-modal" onclick="closeRejectModal()">إلغاء</button>
+            <button class="btn-confirm-reject" onclick="confirmReject()">تأكيد الرفض</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-suc" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg"></span></div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script src="js/navbar.js?v=20260628-live-fixes"></script>
+<script>
+const typeMap = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
+const statusLabel = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض'};
+const statusCls   = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected'};
+
+let allProps = [];
+let rejectId = null;
+let currentTab = 'all';
+
+async function loadProperties(){
+    const r = await fetch(BASE_URL+'/admin/properties',{headers:authHeaders()});
+    allProps = await r.json();
+    render(allProps);
+}
+
+function filterTab(status, el){
+    currentTab = status;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    const filtered = status==='all'?allProps:allProps.filter(p=>p.status===status);
+    render(filtered);
+}
+
+function render(list){
+    const el = document.getElementById('list');
+    if(!list.length){
+        el.innerHTML=`<div class="empty-state"><i class="fas fa-check-double"></i><p>لا توجد عقارات في هذه الفئة</p></div>`;
+        return;
+    }
+    el.innerHTML = list.map(p=>{
+        const main = p.images?.find(i=>i.is_main)||p.images?.[0];
+        const img  = main?`<img src="${main.url}" alt="">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+        const loc  = [p.governorate?.name,p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
+        const host = p.host?`${p.host.first_name||''} ${p.host.last_name||''}`:'غير معروف';
+        const actions = p.status==='pending' ? `
+            <button class="btn-accept" onclick="acceptProp(${p.id})"><i class="fas fa-check me-1"></i>قبول</button>
+            <button class="btn-reject" onclick="openReject(${p.id})"><i class="fas fa-times me-1"></i>رفض</button>
+        ` : `<span class="badge ${statusCls[p.status]}">${statusLabel[p.status]}</span>`;
+        return `
+        <div class="prop-card" id="card-${p.id}">
+            <div class="prop-card-top">
+                <div class="prop-thumb">${img}</div>
+                <div class="prop-info">
+                    <div class="prop-name">${p.title}</div>
+                    <div class="prop-meta">
+                        <span><i class="fas fa-map-marker-alt me-1"></i>${loc}</span>
+                        <span><i class="fas fa-tag me-1"></i>${typeMap[p.type]||p.type}</span>
+                        <span><i class="fas fa-user me-1"></i>${host}</span>
+                        <span><i class="fas fa-money-bill me-1"></i>${Number(p.price).toLocaleString('ar')} ₪</span>
+                    </div>
+                    ${p.status==='rejected'&&p.rejection_reason?`<div style="font-size:0.78rem;color:#C0392B;margin-top:0.3rem;"><i class="fas fa-exclamation-circle me-1"></i>${p.rejection_reason}</div>`:''}
+                </div>
+            </div>
+            <div class="prop-actions">
+                ${actions}
+                <button class="btn-archive" onclick="archiveProp(${p.id})"><i class="fas fa-archive me-1"></i>أرشفة</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+async function acceptProp(id){
+    const r = await fetch(`${BASE_URL}/admin/properties/${id}/accept`,{method:'PATCH',headers:authHeaders()});
+    if(r.ok){
+        const p = allProps.find(x=>x.id===id);
+        if(p) p.status='accepted';
+        filterTab(currentTab,document.querySelector('.tab.active'));
+        showToast('✅ تم قبول العقار ونشره');
+    }
+}
+
+function openReject(id){ rejectId=id; document.getElementById('reject-reason').value=''; document.getElementById('reject-modal').classList.add('show'); }
+function closeRejectModal(){ rejectId=null; document.getElementById('reject-modal').classList.remove('show'); }
+
+async function confirmReject(){
+    const reason = document.getElementById('reject-reason').value.trim();
+    if(!reason){ alert('يرجى كتابة سبب الرفض'); return; }
+    const r = await fetch(`${BASE_URL}/admin/properties/${rejectId}/reject`,{
+        method:'PATCH', headers:authHeaders(),
+        body:JSON.stringify({rejection_reason:reason})
+    });
+    closeRejectModal();
+    if(r.ok){
+        const p = allProps.find(x=>x.id===rejectId);
+        if(p){ p.status='rejected'; p.rejection_reason=reason; }
+        filterTab(currentTab,document.querySelector('.tab.active'));
+        showToast('❌ تم رفض العقار');
+    }
+}
+
+async function archiveProp(id){
+    if(!confirm('هل تريد أرشفة هذا العقار؟')) return;
+    const r = await fetch(`${BASE_URL}/admin/properties/${id}`,{method:'DELETE',headers:authHeaders()});
+    if(r.ok){
+        allProps = allProps.filter(p=>p.id!==id);
+        filterTab(currentTab,document.querySelector('.tab.active'));
+        showToast('🗄️ تم أرشفة العقار');
+    }
+}
+
+function showToast(msg){
+    const t=document.getElementById('toast');
+    document.getElementById('toast-msg').textContent=msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+requireAuth('login.html');
+loadProperties();
+</script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | الإشعارات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body{margin:0;background:#F8F5F0;}
+        .layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+        .sidebar{background:#0D2B1F;padding:1.5rem 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+        .sidebar-logo{font-size:1.4rem;font-weight:900;color:#D4A853;padding:0 1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .sidebar-logo span{color:white;font-weight:300;font-size:0.85rem;display:block;}
+        .sidebar-user{padding:0.8rem 1.2rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .user-avatar{width:44px;height:44px;border-radius:50%;background:#1B4332;border:2px solid #D4A853;display:flex;align-items:center;justify-content:center;color:#D4A853;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;}
+        .user-name{color:white;font-size:0.9rem;font-weight:700;}
+        .user-role{color:rgba(255,255,255,0.4);font-size:0.75rem;}
+        .nav-section{font-size:0.68rem;color:rgba(255,255,255,0.3);padding:1rem 1.2rem 0.4rem;text-transform:uppercase;letter-spacing:0.8px;}
+        .nav-item{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.2s;font-size:0.875rem;text-decoration:none;border-right:3px solid transparent;}
+        .nav-item:hover{color:white;background:rgba(255,255,255,0.05);}
+        .nav-item.active{color:#D4A853;background:rgba(212,168,83,0.1);border-right-color:#D4A853;}
+        .nav-item i{width:18px;text-align:center;}
+        .btn-logout{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.4);cursor:pointer;font-size:0.875rem;background:none;border:none;font-family:'Cairo',sans-serif;width:100%;text-align:right;margin-top:1rem;}
+        .btn-logout:hover{color:#E74C3C;}
+        .main{padding:2rem;}
+        .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;}
+        .page-title{font-size:1.5rem;font-weight:900;color:#1B4332;}
+        .btn-mark-all{background:transparent;color:#2D6A4F;border:1.5px solid #2D6A4F;border-radius:10px;padding:0.55rem 1.1rem;font-family:'Cairo',sans-serif;font-size:0.875rem;font-weight:600;cursor:pointer;}
+        .btn-mark-all:hover{background:#F0F7F4;}
+        .tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;}
+        .tab{padding:0.5rem 1.2rem;border-radius:20px;font-size:0.85rem;font-weight:600;cursor:pointer;border:1.5px solid #E5E0D8;background:white;color:#6B7280;font-family:'Cairo',sans-serif;}
+        .tab.active{background:#1B4332;color:white;border-color:#1B4332;}
+
+        .notif-item{background:white;border-radius:12px;border:1px solid #E5E0D8;padding:1rem 1.2rem;margin-bottom:0.6rem;display:flex;gap:1rem;align-items:flex-start;cursor:pointer;transition:all 0.2s;position:relative;}
+        .notif-item:hover{box-shadow:0 4px 14px rgba(27,67,50,0.08);}
+        .notif-item.unread{border-right:4px solid #1B4332;background:#F8FDF9;}
+        .notif-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+        .icon-booking{background:#D1FAE5;color:#065F46;}
+        .icon-contract{background:#DBEAFE;color:#1E40AF;}
+        .icon-property{background:#FEF3C7;color:#92400E;}
+        .icon-review{background:#FCE7F3;color:#9D174D;}
+        .icon-default{background:#F3F4F6;color:#374151;}
+        .notif-body{flex:1;min-width:0;}
+        .notif-title{font-weight:700;font-size:0.9rem;color:#1A1A1A;margin-bottom:0.2rem;}
+        .notif-msg{font-size:0.8rem;color:#6B7280;line-height:1.5;}
+        .notif-time{font-size:0.72rem;color:#9CA3AF;margin-top:0.3rem;}
+        .unread-dot{width:8px;height:8px;border-radius:50%;background:#1B4332;flex-shrink:0;margin-top:0.4rem;}
+
+        .empty-state{text-align:center;padding:4rem;color:#6B7280;}
+        .empty-state i{font-size:3rem;color:#E5E0D8;display:block;margin-bottom:1rem;}
+        @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}}
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">حمى <span>منصة الإيجار الرقمي</span></div>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="avatar">م</div>
+            <div class="user-name" id="sidebar-name">...</div>
+            <div class="user-role" id="sidebar-role">...</div>
+        </div>
+        <div class="nav-section">القائمة الرئيسية</div>
+        <a class="nav-item" id="nav-dashboard" href="#"><i class="fas fa-th-large"></i> لوحة التحكم</a>
+        <a class="nav-item" href="tenant-properties.html"><i class="fas fa-search"></i> تصفح العقارات</a>
+        <div class="nav-section">حسابي</div>
+        <a class="nav-item" href="my-bookings.html"><i class="fas fa-calendar-check"></i> حجوزاتي</a>
+        <a class="nav-item" href="my-contracts.html"><i class="fas fa-file-contract"></i> عقودي</a>
+        <a class="nav-item" href="my-favorites.html"><i class="fas fa-heart"></i> مفضلتي</a>
+        <a class="nav-item active" href="notifications.html"><i class="fas fa-bell"></i> الإشعارات</a>
+        <a class="nav-item" href="profile.html"><i class="fas fa-user-cog"></i> الملف الشخصي</a>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </aside>
+    <main class="main">
+        <div class="page-header">
+            <div class="page-title"><i class="fas fa-bell me-2"></i>الإشعارات</div>
+            <button class="btn-mark-all" onclick="markAll()"><i class="fas fa-check-double me-1"></i>تعيين الكل كمقروء</button>
+        </div>
+        <div class="tabs">
+            <button class="tab active" onclick="filterTab('all',this)">الكل</button>
+            <button class="tab" onclick="filterTab('unread',this)">غير مقروء <span id="unread-badge" style="background:#C0392B;color:white;font-size:0.65rem;padding:1px 6px;border-radius:10px;margin-right:4px;"></span></button>
+        </div>
+        <div id="list"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جارٍ التحميل...</p></div></div>
+    </main>
+</div>
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const typeIcons={
+    new_booking:'fa-calendar-plus icon-booking',
+    booking_accepted:'fa-check-circle icon-booking',
+    booking_rejected:'fa-times-circle icon-booking',
+    booking_edited:'fa-edit icon-booking',
+    booking_cancelled:'fa-ban icon-booking',
+    contract_activated:'fa-file-contract icon-contract',
+    contract_cancelled:'fa-file-times icon-contract',
+    contract_expired:'fa-clock icon-contract',
+    property_approved:'fa-building icon-property',
+    property_rejected:'fa-building icon-property',
+    new_property_submitted:'fa-home icon-property',
+    property_modified:'fa-tools icon-property',
+    review_received:'fa-star icon-review',
+    review_reminder:'fa-star-half-alt icon-review',
+};
+let allNotifs=[],currentTab='all';
+
+async function init(){
+    requireAuth();
+    const name=localStorage.getItem('name')||'';
+    const role=localStorage.getItem('role')||'';
+    document.getElementById('sidebar-name').textContent=name;
+    document.getElementById('avatar').textContent=name.charAt(0)||'م';
+    const roleMap={admin:'مشرف النظام',host:'صاحب عقار',tenant:'مستأجر'};
+    document.getElementById('sidebar-role').textContent=roleMap[role]||role;
+    const dashMap={admin:'dashboard-admin.html',host:'dashboard-host.html',tenant:'dashboard-tenant.html'};
+    document.getElementById('nav-dashboard').href=dashMap[role]||'#';
+
+    const r=await fetch(BASE_URL+'/notifications',{headers:authHeaders()});
+    allNotifs=await r.json();
+    const unread=allNotifs.filter(n=>!n.is_read).length;
+    if(unread>0){const b=document.getElementById('unread-badge');b.textContent=unread;b.style.display='inline';}
+    render(allNotifs);
+}
+
+function filterTab(status,el){
+    currentTab=status;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    render(status==='unread'?allNotifs.filter(n=>!n.is_read):allNotifs);
+}
+
+function getIconClass(type){
+    const c=typeIcons[type];
+    if(!c)return'fas fa-bell icon-default';
+    const parts=c.split(' ');
+    return`fas ${parts[0]} ${parts[1]}`;
+}
+function getIconColor(type){
+    const c=typeIcons[type];
+    if(!c)return'icon-default';
+    return c.split(' ')[1]||'icon-default';
+}
+
+function timeAgo(dateStr){
+    if(!dateStr)return'';
+    const diff=Math.floor((Date.now()-new Date(dateStr))/1000);
+    if(diff<60)return'الآن';
+    if(diff<3600)return Math.floor(diff/60)+' دقيقة';
+    if(diff<86400)return Math.floor(diff/3600)+' ساعة';
+    return Math.floor(diff/86400)+' يوم';
+}
+
+function render(list){
+    const el=document.getElementById('list');
+    if(!list.length){el.innerHTML=`<div class="empty-state"><i class="fas fa-bell-slash"></i><p>لا توجد إشعارات</p></div>`;return;}
+    el.innerHTML=list.map(n=>`
+    <div class="notif-item ${!n.is_read?'unread':''}" onclick="markRead(${n.id},this)">
+        <div class="notif-icon ${getIconColor(n.type)}">
+            <i class="fas ${(typeIcons[n.type]||'fa-bell icon-default').split(' ')[0]}"></i>
+        </div>
+        <div class="notif-body">
+            <div class="notif-title">${n.title}</div>
+            <div class="notif-msg">${n.body}</div>
+            <div class="notif-time"><i class="fas fa-clock me-1"></i>${timeAgo(n.created_at)}</div>
+        </div>
+        ${!n.is_read?'<div class="unread-dot"></div>':''}
+    </div>`).join('');
+}
+
+async function markRead(id,el){
+    if(!el.classList.contains('unread'))return;
+    await fetch(`${BASE_URL}/notifications/${id}/read`,{method:'PATCH',headers:authHeaders()});
+    el.classList.remove('unread');
+    el.querySelector('.unread-dot')?.remove();
+    allNotifs=allNotifs.map(n=>n.id===id?{...n,is_read:true}:n);
+}
+
+async function markAll(){
+    await fetch(`${BASE_URL}/notifications/mark-all-read`,{method:'PATCH',headers:authHeaders()});
+    allNotifs=allNotifs.map(n=>({...n,is_read:true}));
+    document.getElementById('unread-badge').textContent='';
+    render(currentTab==='unread'?[]:allNotifs);
+}
+
+init();
+</script>
+</body>
+</html>

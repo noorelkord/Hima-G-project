@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | لوحة الهوست</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body { margin:0; background:#F8F5F0; }
+        .layout { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+
+        .sidebar { background:#0D2B1F; padding:1.5rem 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+        .sidebar-logo { font-size:1.4rem; font-weight:900; color:#D4A853; padding:0 1.2rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; }
+        .sidebar-logo span { color:white; font-weight:300; font-size:0.85rem; display:block; }
+        .sidebar-user { padding:0.8rem 1.2rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; }
+        .user-avatar { width:44px; height:44px; border-radius:50%; background:#1B4332; border:2px solid #D4A853; display:flex; align-items:center; justify-content:center; color:#D4A853; font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; }
+        .user-name { color:white; font-size:0.9rem; font-weight:700; }
+        .user-role { color:rgba(255,255,255,0.4); font-size:0.75rem; }
+        .nav-section { font-size:0.68rem; color:rgba(255,255,255,0.3); padding:1rem 1.2rem 0.4rem; text-transform:uppercase; letter-spacing:0.8px; }
+        .nav-item { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 1.2rem; color:rgba(255,255,255,0.6); cursor:pointer; transition:all 0.2s; font-size:0.875rem; text-decoration:none; border-right:3px solid transparent; }
+        .nav-item:hover { color:white; background:rgba(255,255,255,0.05); }
+        .nav-item.active { color:#D4A853; background:rgba(212,168,83,0.1); border-right-color:#D4A853; }
+        .nav-item i { width:18px; text-align:center; }
+        .btn-logout { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 1.2rem; color:rgba(255,255,255,0.4); cursor:pointer; font-size:0.875rem; background:none; border:none; font-family:'Cairo',sans-serif; width:100%; text-align:right; margin-top:1rem; }
+        .btn-logout:hover { color:#E74C3C; }
+
+        .main { padding:2rem; overflow-y:auto; }
+
+        .welcome-bar { background:linear-gradient(135deg,#1B4332,#2D6A4F); border-radius:16px; padding:1.5rem 2rem; color:white; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; }
+        .welcome-bar h2 { font-size:1.3rem; font-weight:900; margin-bottom:0.2rem; }
+        .welcome-bar p  { color:rgba(255,255,255,0.7); font-size:0.875rem; }
+        .welcome-bar .icon { font-size:3rem; opacity:0.2; }
+
+        .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .stat-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.2rem; display:flex; align-items:center; gap:1rem; }
+        .stat-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+        .stat-icon.green  { background:#D1FAE5; color:#065F46; }
+        .stat-icon.gold   { background:#FEF3C7; color:#92400E; }
+        .stat-icon.blue   { background:#DBEAFE; color:#1E40AF; }
+        .stat-icon.red    { background:#FEE2E2; color:#991B1B; }
+        .stat-num { font-size:1.6rem; font-weight:900; color:#1B4332; line-height:1; }
+        .stat-lbl { font-size:0.78rem; color:#6B7280; margin-top:0.2rem; }
+
+        .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+        .section-title { font-size:1rem; font-weight:700; color:#1B4332; }
+        .btn-see-all { font-size:0.8rem; color:#2D6A4F; text-decoration:none; font-weight:600; }
+
+        .quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .quick-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.2rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.8rem; text-decoration:none; }
+        .quick-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.1); transform:translateY(-2px); }
+        .quick-card-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+        .quick-card-title { font-weight:700; font-size:0.9rem; color:#1A1A1A; }
+        .quick-card-sub   { font-size:0.75rem; color:#6B7280; }
+
+        .booking-row { background:white; border-radius:12px; border:1px solid #E5E0D8; padding:1rem 1.2rem; margin-bottom:0.7rem; display:flex; align-items:center; gap:1rem; }
+        .booking-info { flex:1; min-width:0; }
+        .booking-prop-name { font-weight:700; font-size:0.9rem; color:#1A1A1A; }
+        .booking-tenant { font-size:0.78rem; color:#6B7280; margin-top:0.2rem; }
+        .booking-dates  { font-size:0.78rem; color:#6B7280; }
+        .booking-actions { display:flex; gap:0.5rem; flex-shrink:0; }
+
+        .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; }
+        .btn-reject { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; }
+
+        .badge { font-size:0.72rem; font-weight:700; padding:0.2rem 0.6rem; border-radius:12px; }
+        .badge-pending  { background:#FEF3C7; color:#92400E; }
+        .badge-accepted { background:#D1FAE5; color:#065F46; }
+        .badge-rejected { background:#FEE2E2; color:#991B1B; }
+
+        .empty-mini { color:#6B7280; font-size:0.85rem; padding:1.5rem 0; text-align:center; }
+
+        @media(max-width:768px){ .layout{grid-template-columns:1fr;} .sidebar{display:none;} .stats-grid{grid-template-columns:repeat(2,1fr);} .quick-grid{grid-template-columns:1fr;} }
+    </style>
+</head>
+<body>
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">حمى <span>منصة الإيجار الرقمي</span></div>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="avatar">H</div>
+            <div class="user-name" id="sidebar-name">...</div>
+            <div class="user-role">صاحب عقار</div>
+        </div>
+
+        <div class="nav-section">القائمة الرئيسية</div>
+        <a class="nav-item active" href="dashboard-host.html"><i class="fas fa-th-large"></i> لوحة التحكم</a>
+        <a class="nav-item" href="properties.html"><i class="fas fa-search"></i> تصفح المنصة</a>
+
+        <div class="nav-section">إدارة عقاراتي</div>
+        <a class="nav-item" href="my-properties.html"><i class="fas fa-building"></i> عقاراتي</a>
+        <a class="nav-item" href="property-form.html"><i class="fas fa-plus-circle"></i> إضافة عقار</a>
+        <a class="nav-item" href="host-bookings.html"><i class="fas fa-calendar-check"></i> طلبات الحجز</a>
+        <a class="nav-item" href="my-contracts-host.html"><i class="fas fa-file-contract"></i> عقودي</a>
+
+        <div class="nav-section">حسابي</div>
+        <a class="nav-item" href="notifications.html">
+            <i class="fas fa-bell"></i> الإشعارات
+            <span id="notif-badge" style="background:#C0392B;color:white;font-size:0.65rem;padding:1px 6px;border-radius:10px;margin-right:auto;display:none;"></span>
+        </a>
+        <a class="nav-item" href="profile.html"><i class="fas fa-user-cog"></i> الملف الشخصي</a>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <div class="welcome-bar">
+            <div>
+                <h2>أهلاً، <span id="welcome-name">...</span> 👋</h2>
+                <p>إدارة عقاراتك وطلبات الحجز من مكان واحد</p>
+            </div>
+            <i class="fas fa-building icon"></i>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-building"></i></div>
+                <div><div class="stat-num" id="stat-props">0</div><div class="stat-lbl">عقاراتي</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon gold"><i class="fas fa-clock"></i></div>
+                <div><div class="stat-num" id="stat-pending-props">0</div><div class="stat-lbl">بانتظار الموافقة</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
+                <div><div class="stat-num" id="stat-bookings">0</div><div class="stat-lbl">طلبات حجز جديدة</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red"><i class="fas fa-file-contract"></i></div>
+                <div><div class="stat-num" id="stat-contracts">0</div><div class="stat-lbl">عقود نشطة</div></div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="section-header"><div class="section-title">إجراءات سريعة</div></div>
+        <div class="quick-grid">
+            <a class="quick-card" href="property-form.html">
+                <div class="quick-card-icon" style="background:#D1FAE5;color:#065F46;"><i class="fas fa-plus"></i></div>
+                <div><div class="quick-card-title">إضافة عقار</div><div class="quick-card-sub">أضف عقاراً جديداً</div></div>
+            </a>
+            <a class="quick-card" href="my-properties.html">
+                <div class="quick-card-icon" style="background:#DBEAFE;color:#1E40AF;"><i class="fas fa-building"></i></div>
+                <div><div class="quick-card-title">عقاراتي</div><div class="quick-card-sub">إدارة جميع عقاراتي</div></div>
+            </a>
+            <a class="quick-card" href="host-bookings.html">
+                <div class="quick-card-icon" style="background:#FEF3C7;color:#92400E;"><i class="fas fa-calendar"></i></div>
+                <div><div class="quick-card-title">طلبات الحجز</div><div class="quick-card-sub">قبول أو رفض الطلبات</div></div>
+            </a>
+        </div>
+
+        <!-- Pending Bookings -->
+        <div class="section-header">
+            <div class="section-title">طلبات الحجز المعلقة</div>
+            <a class="btn-see-all" href="host-bookings.html">عرض الكل</a>
+        </div>
+        <div id="pending-bookings">
+            <div class="empty-mini"><i class="fas fa-spinner fa-spin me-2"></i>جارٍ التحميل...</div>
+        </div>
+
+        <!-- My Properties Preview -->
+        <div class="section-header" style="margin-top:1.5rem;">
+            <div class="section-title">عقاراتي الأخيرة</div>
+            <a class="btn-see-all" href="my-properties.html">عرض الكل</a>
+        </div>
+        <div id="props-preview">
+            <div class="empty-mini"><i class="fas fa-spinner fa-spin me-2"></i>جارٍ التحميل...</div>
+        </div>
+
+    </main>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const statusMap = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض'};
+const statusCls = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected'};
+
+async function init(){
+    requireAuth('host-login.html');
+    const name = localStorage.getItem('name')||'';
+    document.getElementById('welcome-name').textContent = name;
+    document.getElementById('sidebar-name').textContent = name;
+    document.getElementById('avatar').textContent = name.charAt(0)||'H';
+
+    const [props, bookings, contracts, notifCount] = await Promise.all([
+        fetch(BASE_URL+'/host/properties',{headers:authHeaders()}).then(r=>r.json()),
+        fetch(BASE_URL+'/host/bookings',{headers:authHeaders()}).then(r=>r.json()),
+        fetch(BASE_URL+'/contracts',{headers:authHeaders()}).then(r=>r.json()),
+        fetch(BASE_URL+'/notifications/unread-count',{headers:authHeaders()}).then(r=>r.json()),
+    ]);
+
+    // Stats
+    document.getElementById('stat-props').textContent         = (props||[]).length;
+    document.getElementById('stat-pending-props').textContent = (props||[]).filter(p=>p.status==='pending').length;
+    document.getElementById('stat-bookings').textContent      = (bookings||[]).filter(b=>b.status==='pending').length;
+    document.getElementById('stat-contracts').textContent     = (contracts||[]).filter(c=>c.status==='active').length;
+
+    const nc = notifCount?.count||0;
+    document.getElementById('stat-notifs-val');
+    if(nc>0){ const b=document.getElementById('notif-badge'); b.textContent=nc; b.style.display='inline'; }
+
+    // Pending bookings
+    const pending = (bookings||[]).filter(b=>b.status==='pending').slice(0,3);
+    const bEl = document.getElementById('pending-bookings');
+    if(!pending.length){
+        bEl.innerHTML='<div class="empty-mini">لا توجد طلبات حجز معلقة ✅</div>';
+    } else {
+        bEl.innerHTML = pending.map(b=>`
+        <div class="booking-row">
+            <div class="booking-info">
+                <div class="booking-prop-name">${b.property?.title||'عقار'}</div>
+                <div class="booking-tenant"><i class="fas fa-user me-1"></i>${b.tenant?.first_name||'مستأجر'}</div>
+                <div class="booking-dates"><i class="fas fa-calendar me-1"></i>${b.start_date?.split('T')[0]} → ${b.end_date?.split('T')[0]}</div>
+            </div>
+            <div style="font-weight:700;color:#1B4332;font-size:0.9rem;">${Number(b.price||0).toLocaleString('ar')} ₪</div>
+            <div class="booking-actions">
+                <button class="btn-accept" onclick="acceptBooking(${b.id})"><i class="fas fa-check me-1"></i>قبول</button>
+                <button class="btn-reject" onclick="rejectBooking(${b.id})"><i class="fas fa-times me-1"></i>رفض</button>
+            </div>
+        </div>`).join('');
+    }
+
+    // Props preview
+    const pEl = document.getElementById('props-preview');
+    const recent = (props||[]).slice(0,3);
+    if(!recent.length){
+        pEl.innerHTML=`<div class="empty-mini">لا توجد عقارات — <a href="property-form.html" style="color:#2D6A4F">أضف عقارك الأول</a></div>`;
+    } else {
+        pEl.innerHTML = recent.map(p=>`
+        <div class="booking-row">
+            <div class="booking-info">
+                <div class="booking-prop-name">${p.title}</div>
+                <div class="booking-dates"><i class="fas fa-map-marker-alt me-1"></i>${p.governorate?.name||''} ${p.city?.name?'- '+p.city.name:''}</div>
+            </div>
+            <div style="font-weight:700;color:#1B4332;font-size:0.9rem;">${Number(p.price||0).toLocaleString('ar')} ₪/شهر</div>
+            <span class="badge ${statusCls[p.status]||''}">${statusMap[p.status]||p.status}</span>
+        </div>`).join('');
+    }
+}
+
+async function acceptBooking(id){
+    const r = await fetch(`${BASE_URL}/host/bookings/${id}/accept`,{method:'PATCH',headers:authHeaders()});
+    if(r.ok){ alert('✅ تم قبول الحجز'); init(); }
+}
+
+async function rejectBooking(id){
+    const r = await fetch(`${BASE_URL}/host/bookings/${id}/reject`,{method:'PATCH',headers:authHeaders()});
+    if(r.ok){ alert('تم رفض الحجز'); init(); }
+}
+
+init();
+</script>
+</body>
+</html>
