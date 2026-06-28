@@ -87,7 +87,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => true,
-                'image' => 'small-apartment.svg',
+                'image' => 'small-apartment.webp',
             ],
             [
                 'title' => 'محل تجاري في خانيونس',
