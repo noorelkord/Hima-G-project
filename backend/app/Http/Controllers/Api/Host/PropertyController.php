@@ -12,6 +12,7 @@ class PropertyController extends Controller
     public function index(Request $request)
     {
         $properties = Property::where('host_id', $request->user()->id)
+            ->with(['images', 'mainImage', 'governorate', 'city', 'neighborhood'])
             ->latest()
             ->get();
 
@@ -72,6 +73,7 @@ class PropertyController extends Controller
     public function show(Request $request, $id)
     {
         $property = Property::where('host_id', $request->user()->id)
+            ->with(['images', 'mainImage', 'governorate', 'city', 'neighborhood'])
             ->findOrFail($id);
 
         return response()->json($property);
