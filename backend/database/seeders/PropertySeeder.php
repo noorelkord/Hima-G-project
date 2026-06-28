@@ -6,8 +6,11 @@ use App\Models\City;
 use App\Models\Governorate;
 use App\Models\Neighborhood;
 use App\Models\Property;
+use App\Models\PropertyImage;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class PropertySeeder extends Seeder
 {
@@ -50,6 +53,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => true,
+                'image' => 'apartment.jpg',
             ],
             [
                 'title' => 'بيت مستقل في بيت لاهيا',
@@ -66,6 +70,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => false,
+                'image' => 'villa.jpg',
             ],
             [
                 'title' => 'شقة صغيرة في دير البلح',
@@ -82,6 +87,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => true,
+                'image' => 'small-apartment.jpg',
             ],
             [
                 'title' => 'محل تجاري في خانيونس',
@@ -98,6 +104,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => true,
+                'image' => 'commercial.jpg',
             ],
         ];
 
@@ -110,7 +117,7 @@ class PropertySeeder extends Seeder
                 ->when($city, fn ($query) => $query->where('city_id', $city->id))
                 ->first();
 
-            Property::updateOrCreate(
+            $property = Property::updateOrCreate(
                 ['title' => $propertyData['title'], 'host_id' => $host->id],
                 [
                     'host_id' => $host->id,
@@ -131,6 +138,32 @@ class PropertySeeder extends Seeder
                     'availability' => 'available',
                 ]
             );
+
+            $this->attachSeedImage($property, $propertyData['image']);
         }
+    }
+
+    private function attachSeedImage(Property $property, string $fileName): void
+    {
+        $source = database_path('seeders/assets/property-images/' . $fileName);
+        $target = 'property_images/seed-' . $property->id . '-' . $fileName;
+
+        if (File::exists($source) && !Storage::disk('public')->exists($target)) {
+            Storage::disk('public')->put($target, File::get($source));
+        }
+
+        PropertyImage::updateOrCreate(
+            [
+                'property_id' => $property->id,
+                'image_path' => $target,
+            ],
+            [
+                'is_main' => true,
+            ]
+        );
+
+        PropertyImage::where('property_id', $property->id)
+            ->where('image_path', '!=', $target)
+            ->update(['is_main' => false]);
     }
 }
