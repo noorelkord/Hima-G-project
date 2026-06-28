@@ -41,6 +41,7 @@ function renderNavbar() {
 
     const hostLinks = `
         <a class="drawer-link" href="dashboard-host.html"><span><i class="fas fa-chart-line"></i></span><b>لوحة المضيف</b></a>
+        <a class="drawer-link" href="host-properties.html"><span><i class="fas fa-search"></i></span><b>تصفح المنصة</b></a>
         <a class="drawer-link" href="property-form.html"><span><i class="fas fa-plus-circle"></i></span><b>إضافة عقار</b></a>
         <a class="drawer-link" href="my-properties.html"><span><i class="fas fa-building"></i></span><b>عقاراتي</b></a>
         <a class="drawer-link" href="host-bookings.html"><span><i class="fas fa-calendar-check"></i></span><b>طلبات الحجز</b></a>
@@ -72,7 +73,7 @@ function renderNavbar() {
     const drawerLabel = token ? (roleMap[role] || role) : 'زائر';
     const drawerName = token ? (name || drawerLabel) : 'حمى';
     const helpText = token ? 'تحتاج مساعدة؟ تواصل مع الدعم' : 'تصفح العقارات كزائر أو سجّل للمتابعة';
-    const homeHref = token && role === 'tenant' ? 'tenant-properties.html' : 'properties.html';
+    const homeHref = token && role === 'tenant' ? 'tenant-properties.html' : token && role === 'host' ? 'host-properties.html' : 'properties.html';
 
     navbar.innerHTML = `
         <nav class="site-nav">
