@@ -212,8 +212,8 @@ body{
                 </div>
                 <div class="form-group">
                     <label for="phone">رقم الهاتف</label>
-                    <input id="phone" inputmode="numeric" maxlength="10" placeholder="059XXXXXXX أو 056XXXXXXX">
-                    <span class="hint">10 أرقام وتبدأ بـ 059 أو 056</span>
+                    <input id="phone" type="tel" maxlength="13" placeholder="+970XXXXXXXXX أو +972XXXXXXXXX">
+                    <span class="hint">ابدأ بـ +970 (فلسطين) أو +972 — مثال: +970599123456</span>
                 </div>
             </div>
 
@@ -250,8 +250,8 @@ if(!/^4\d{8}$/.test(body.national_id)){
     return;
 }
 
-if(!/^(059|056)\d{7}$/.test(body.phone)){
-    msg.innerHTML='<div class="error">رقم الهاتف يجب أن يبدأ بـ 059 أو 056 ويتكون من 10 أرقام</div>';
+if(!/^\+(970|972)\d{9}$/.test(body.phone)){
+    msg.innerHTML='<div class="error">رقم الهاتف يجب أن يبدأ بـ +970 أو +972 ويتكون من 13 رقماً — مثال: +970599123456</div>';
     return;
 }
 

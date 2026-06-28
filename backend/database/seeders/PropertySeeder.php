@@ -25,7 +25,7 @@ class PropertySeeder extends Seeder
                 'last_name' => 'يوسف',
                 'national_id' => '222222222',
                 'password' => 'password123',
-                'phone' => '0599123456',
+                'phone' => '+972595335721',
             ]
         );
 

@@ -22,7 +22,7 @@ class ProfileController extends Controller
             'third_name'  => 'required|string|max:50',
             'last_name'   => 'required|string|max:50',
             'national_id' => ['required', 'string', 'regex:/^4[0-9]{8}$/', 'unique:users,national_id,' . $user->id],
-            'phone'       => ['required', 'string', 'regex:/^(059|056)[0-9]{7}$/'],
+            'phone'       => ['required', 'string', 'regex:/^\+(970|972)[0-9]{9}$/'],
         ], $this->validationMessages());
         $user->update($data);
         return response()->json([
@@ -43,7 +43,7 @@ class ProfileController extends Controller
             'third_name'  => 'sometimes|string|max:50',
             'last_name'   => 'sometimes|string|max:50',
             'national_id' => ['sometimes', 'string', 'regex:/^4[0-9]{8}$/', 'unique:users,national_id,' . $user->id],
-            'phone'       => ['sometimes', 'string', 'regex:/^(059|056)[0-9]{7}$/'],
+            'phone'       => ['sometimes', 'string', 'regex:/^\+(970|972)[0-9]{9}$/'],
         ], $this->validationMessages());
 
         $user->update($data);
@@ -111,7 +111,7 @@ class ProfileController extends Controller
     private function validationMessages(): array
     {
         return [
-            'phone.regex'       => 'رقم الهاتف يجب أن يبدأ بـ 059 أو 056 ويتكون من 10 أرقام.',
+            'phone.regex'       => 'رقم الهاتف يجب أن يبدأ بـ +970 أو +972 ويتكون من 13 رقماً (مثال: +970599123456).',
             'national_id.regex' => 'رقم الهوية يجب أن يتكون من 9 أرقام ويبدأ بالرقم 4.',
         ];
     }

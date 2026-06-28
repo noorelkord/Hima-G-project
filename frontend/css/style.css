@@ -462,6 +462,28 @@ a{
     color:#0D2B1F;
 }
 
+.verify-icon {
+    text-align: center;
+    font-size: 3rem;
+    color: #2f8f46;
+    margin: 1rem 0 0.75rem;
+}
+
+.verify-text {
+    text-align: center;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 0.5rem;
+}
+
+.verify-email-hint {
+    text-align: center;
+    font-weight: bold;
+    color: #1d5c2e;
+    margin-bottom: 1.25rem;
+    word-break: break-all;
+}
+
 @media(max-width:760px){
     .site-nav{
         position:fixed;

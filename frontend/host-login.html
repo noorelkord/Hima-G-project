@@ -116,9 +116,9 @@ async function registerHost(){
         const data = await response.json();
 
         if(response.ok){
-            document.getElementById('email').value = email;
-            setAuthMode('login');
-            msg.innerHTML = '<div class="success">تم إنشاء الحساب. تحقق من بريدك الإلكتروني ثم سجّل الدخول.</div>';
+            localStorage.setItem('pending_verify_email', email);
+            localStorage.setItem('pending_verify_role', 'host');
+            goToPage('verify.html');
             return;
         }
         if(data.errors){
@@ -136,6 +136,17 @@ async function registerHost(){
 const params = new URLSearchParams(window.location.search);
 if(params.get('mode') === 'signup'){
     setAuthMode('signup');
+}
+if(params.get('verified') === 'success'){
+    localStorage.removeItem('pending_verify_email');
+    localStorage.removeItem('pending_verify_role');
+    document.getElementById('msg').innerHTML = '<div class="success">✅ تم تفعيل حسابك! يمكنك الآن تسجيل الدخول</div>';
+}
+if(params.get('verified') === 'already'){
+    document.getElementById('msg').innerHTML = '<div class="success">حسابك مفعّل مسبقاً</div>';
+}
+if(params.get('error') === 'invalid_link'){
+    document.getElementById('msg').innerHTML = '<div class="error">رابط التفعيل غير صالح أو منتهي الصلاحية</div>';
 }
 </script>
 </body>

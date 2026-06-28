@@ -156,7 +156,9 @@
             background: white; border-radius: 12px; border: 1px solid #E5E0D8;
             padding: 1rem 1.2rem; margin-bottom: 0.7rem;
             display: flex; align-items: center; gap: 1rem;
+            cursor: pointer; text-decoration: none; color: inherit; transition: box-shadow 0.2s;
         }
+        .booking-row:hover { box-shadow: 0 4px 16px rgba(27,67,50,0.1); }
         .booking-prop { flex: 1; min-width: 0; }
         .booking-prop-name { font-weight: 700; font-size: 0.9rem; color: #1A1A1A; }
         .booking-dates { font-size: 0.78rem; color: #6B7280; margin-top: 0.2rem; }
@@ -376,7 +378,7 @@ async function init(){
         return;
     }
     el.innerHTML = recent.map(b=>`
-        <div class="booking-row">
+        <a class="booking-row" href="property-details.html?id=${b.property?.id}">
             <div class="booking-prop">
                 <div class="booking-prop-name">${b.property?.title||'عقار'}</div>
                 <div class="booking-dates">
@@ -386,7 +388,7 @@ async function init(){
             </div>
             <div class="booking-price">${Number(b.price||0).toLocaleString('ar')} ₪</div>
             <span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span>
-        </div>`).join('');
+        </a>`).join('');
 }
 
 init();

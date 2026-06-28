@@ -92,7 +92,19 @@ class PropertyController extends Controller
             . "Type: {$property->type}\n\n"
             . "Can we discuss more details?";
 
-        $phone = preg_replace('/[^0-9]/', '', $property->host->phone);
+        $phone = preg_replace('/[^0-9+]/', '', $property->host->phone);
+
+        // Normalise to international format for wa.me (no leading + or 00)
+        if (str_starts_with($phone, '+')) {
+            $phone = substr($phone, 1);
+        } elseif (str_starts_with($phone, '00')) {
+            $phone = substr($phone, 2);
+        } elseif (str_starts_with($phone, '0')) {
+            // Local Palestinian number — prepend country code 970
+            $phone = '970' . substr($phone, 1);
+        }
+
+        $phone = preg_replace('/[^0-9]/', '', $phone);
         $link  = 'https://wa.me/' . $phone . '?text=' . urlencode($message);
 
         return response()->json([

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css?v=20260628-auth-tabs">
+<title>حمى | تفعيل الحساب</title>
+</head>
+<body>
+<div class="center-page">
+    <div class="card auth-card">
+        <div class="logo">حمى</div>
+        <h2>تحقق من بريدك الإلكتروني</h2>
+
+        <div id="msg"></div>
+
+        <div class="verify-icon">
+            <i class="fas fa-envelope-open-text"></i>
+        </div>
+
+        <p class="verify-text">
+            أرسلنا رابط التفعيل إلى بريدك الإلكتروني.
+            <br>
+            افتح الرسالة واضغط على الرابط لتفعيل حسابك.
+        </p>
+
+        <p id="verify-email-hint" class="verify-email-hint"></p>
+
+        <button id="resend-btn" onclick="resendEmail()">إعادة إرسال رابط التفعيل</button>
+
+        <div class="auth-switch-row" style="margin-top:1rem;">
+            <a id="login-link" href="tenant-login.html">العودة إلى تسجيل الدخول</a>
+        </div>
+    </div>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const pendingEmail = localStorage.getItem('pending_verify_email') || '';
+const pendingRole  = localStorage.getItem('pending_verify_role') || 'tenant';
+
+if (pendingEmail) {
+    document.getElementById('verify-email-hint').textContent = pendingEmail;
+}
+
+const loginPage = pendingRole === 'host' ? 'host-login.html' : 'tenant-login.html';
+document.getElementById('login-link').href = loginPage;
+
+let resendCooldown = 0;
+
+async function resendEmail() {
+    if (resendCooldown > 0) return;
+
+    const btn = document.getElementById('resend-btn');
+    const msg = document.getElementById('msg');
+
+    if (!pendingEmail) {
+        msg.innerHTML = '<div class="error">تعذر تحديد البريد الإلكتروني. يرجى التسجيل مجدداً.</div>';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'جارٍ الإرسال...';
+
+    try {
+        const res = await fetch(BASE_URL + '/email/resend-public', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ email: pendingEmail })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            msg.innerHTML = '<div class="success">تم إرسال رابط التفعيل مجدداً، تحقق من بريدك.</div>';
+            startCooldown(60);
+        } else {
+            msg.innerHTML = '<div class="error">' + (data.message || 'حدث خطأ، حاول مجدداً.') + '</div>';
+            btn.disabled = false;
+            btn.textContent = 'إعادة إرسال رابط التفعيل';
+        }
+    } catch (e) {
+        msg.innerHTML = '<div class="error">تعذر الاتصال بالسيرفر</div>';
+        btn.disabled = false;
+        btn.textContent = 'إعادة إرسال رابط التفعيل';
+    }
+}
+
+function startCooldown(seconds) {
+    resendCooldown = seconds;
+    const btn = document.getElementById('resend-btn');
+    btn.disabled = true;
+
+    const interval = setInterval(() => {
+        resendCooldown--;
+        btn.textContent = 'إعادة الإرسال (' + resendCooldown + 'ث)';
+        if (resendCooldown <= 0) {
+            clearInterval(interval);
+            btn.disabled = false;
+            btn.textContent = 'إعادة إرسال رابط التفعيل';
+        }
+    }, 1000);
+}
+</script>
+</body>
+</html>

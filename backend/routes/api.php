@@ -62,34 +62,30 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
 
     if (!$user) {
         return redirect(
-            rtrim(config('app.frontend_url'), '/') . '/login.html?error=user_not_found'
+            rtrim(config('app.frontend_url'), '/') . '/tenant-login.html?error=user_not_found'
         );
     }
 
+    $role     = $user->getRoleNames()->first();
+    $loginPage = $role === 'host' ? 'host-login.html' : 'tenant-login.html';
+    $base      = rtrim(config('app.frontend_url'), '/');
+
     if (!URL::hasValidSignature(request())) {
-        return redirect(
-            rtrim(config('app.frontend_url'), '/') . '/login.html?error=invalid_link'
-        );
+        return redirect("{$base}/{$loginPage}?error=invalid_link");
     }
 
     if (!hash_equals(sha1($user->getEmailForVerification()), $hash)) {
-        return redirect(
-            rtrim(config('app.frontend_url'), '/') . '/login.html?error=invalid_hash'
-        );
+        return redirect("{$base}/{$loginPage}?error=invalid_link");
     }
 
     if ($user->hasVerifiedEmail()) {
-        return redirect(
-            rtrim(config('app.frontend_url'), '/') . '/login.html?verified=already'
-        );
+        return redirect("{$base}/{$loginPage}?verified=already");
     }
 
     $user->markEmailAsVerified();
     event(new Verified($user));
 
-    return redirect(
-        rtrim(config('app.frontend_url'), '/') . '/login.html?verified=success'
-    );
+    return redirect("{$base}/{$loginPage}?verified=success");
 
 })->middleware('signed')->name('verification.verify');
 
@@ -97,6 +93,24 @@ Route::post('/email/resend', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return response()->json(['message' => 'Verification link resent.']);
 })->middleware(['auth:sanctum', 'throttle:6,1']);
+
+Route::post('/email/resend-public', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'Verification link sent if account exists.']);
+    }
+
+    if ($user->hasVerifiedEmail()) {
+        return response()->json(['message' => 'البريد الإلكتروني مفعّل مسبقاً.'], 422);
+    }
+
+    $user->sendEmailVerificationNotification();
+
+    return response()->json(['message' => 'Verification link resent.']);
+})->middleware('throttle:6,1');
 
 // =====================
 // Protected routes

@@ -30,7 +30,7 @@
         .tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
         .tab { padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem; font-weight:600; cursor:pointer; border:1.5px solid #E5E0D8; background:white; color:#6B7280; font-family:'Cairo',sans-serif; transition:all 0.2s; }
         .tab.active { background:#1B4332; color:white; border-color:#1B4332; }
-        .booking-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.3rem; margin-bottom:0.9rem; transition:box-shadow 0.2s; }
+        .booking-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.3rem; margin-bottom:0.9rem; transition:box-shadow 0.2s; cursor:pointer; display:block; color:inherit; text-decoration:none; }
         .booking-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.1); }
         .booking-top { display:flex; gap:1rem; align-items:flex-start; margin-bottom:1rem; }
         .booking-icon { width:52px; height:52px; border-radius:12px; background:linear-gradient(135deg,#1B4332,#2D6A4F); display:flex; align-items:center; justify-content:center; color:#D4A853; font-size:1.3rem; flex-shrink:0; }
@@ -149,7 +149,7 @@ function render(list){
         const loc  = [b.property?.governorate?.name, b.property?.city?.name].filter(Boolean).join(' - ')||'غير محدد';
         const isPending = b.status==='pending';
         return `
-        <div class="booking-card">
+        <a class="booking-card" href="property-details.html?id=${b.property?.id}">
             <div class="booking-top">
                 <div class="booking-icon"><i class="fas fa-calendar-check"></i></div>
                 <div class="booking-info">
@@ -164,12 +164,12 @@ function render(list){
             </div>
             <div class="booking-footer">
                 <div class="booking-price">${Number(b.price||0).toLocaleString('ar')} ₪ <span style="font-size:0.75rem;font-weight:400;color:#9CA3AF;">/ شهر</span></div>
-                <div class="booking-actions">
-                    ${isPending?`<button class="btn-cancel-booking" onclick="openCancel(${b.id})"><i class="fas fa-times me-1"></i>إلغاء</button>`:''}
-                    ${b.status==='accepted'&&b.contract_id?`<a href="my-contracts.html" style="background:#D1FAE5;color:#065F46;border:1px solid #BBF7D0;border-radius:8px;padding:0.38rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:600;text-decoration:none;">عرض العقد</a>`:''}
+                <div class="booking-actions" onclick="event.preventDefault()">
+                    ${isPending?`<button class="btn-cancel-booking" onclick="event.stopPropagation();openCancel(${b.id})"><i class="fas fa-times me-1"></i>إلغاء</button>`:''}
+                    ${b.status==='accepted'&&b.contract_id?`<a href="my-contracts.html" onclick="event.stopPropagation()" style="background:#D1FAE5;color:#065F46;border:1px solid #BBF7D0;border-radius:8px;padding:0.38rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:600;text-decoration:none;">عرض العقد</a>`:''}
                 </div>
             </div>
-        </div>`;
+        </a>`;
     }).join('');
 }
 
