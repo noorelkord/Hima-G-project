@@ -104,7 +104,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => true,
-                'image' => 'commercial.svg',
+                'image' => 'commercial.webp',
             ],
         ];
 
