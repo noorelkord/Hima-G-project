@@ -148,6 +148,15 @@ class PropertySeeder extends Seeder
         $source = database_path('seeders/assets/property-images/' . $fileName);
         $target = 'property_images/seed-' . $property->id . '-' . $fileName;
 
+        PropertyImage::where('property_id', $property->id)
+            ->where('image_path', 'like', 'property_images/seed-' . $property->id . '-%')
+            ->where('image_path', '!=', $target)
+            ->get()
+            ->each(function (PropertyImage $image) {
+                Storage::disk('public')->delete($image->image_path);
+                $image->delete();
+            });
+
         if (File::exists($source) && !Storage::disk('public')->exists($target)) {
             Storage::disk('public')->put($target, File::get($source));
         }
