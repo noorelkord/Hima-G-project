@@ -48,6 +48,24 @@
         .form-group input:focus,
         .form-group textarea:focus { border-color:#2D6A4F; box-shadow:0 0 0 3px rgba(45,106,79,0.1); }
         .form-group textarea { resize:vertical; min-height:100px; }
+        .input-with-unit {
+            position:relative;
+        }
+        .input-with-unit input {
+            padding-inline-end:4.4rem;
+            direction:ltr;
+            text-align:right;
+        }
+        .input-with-unit .unit {
+            position:absolute;
+            top:50%;
+            inset-inline-end:0.9rem;
+            transform:translateY(-50%);
+            color:#2D6A4F;
+            font-size:0.8rem;
+            font-weight:800;
+            pointer-events:none;
+        }
 
         /* Damage cards */
         .damage-cards { display:flex; gap:0.8rem; }
@@ -171,7 +189,10 @@
             </div>
             <div class="form-group">
                 <label>السعر الشهري (₪) *</label>
-                <input id="price" type="number" placeholder="500">
+                <div class="input-with-unit">
+                    <input id="price" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="500">
+                    <span class="unit">₪ / شهر</span>
+                </div>
             </div>
         </div>
         <div class="form-grid full" style="margin-top:1rem;">
@@ -221,7 +242,10 @@
             </div>
             <div class="form-group">
                 <label>المساحة (م²)</label>
-                <input id="area_m2" type="number" placeholder="120" min="0">
+                <div class="input-with-unit">
+                    <input id="area_m2" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="120">
+                    <span class="unit">م²</span>
+                </div>
             </div>
         </div>
         <div class="form-group" style="margin-top:1rem;">
@@ -294,6 +318,13 @@ let selectedDamage = 'intact';
 let selectedImages = [];
 let savedPropertyId = null;
 
+function bindNumericInput(id){
+    const input = document.getElementById(id);
+    input.addEventListener('input', () => {
+        input.value = input.value.replace(/[^\d]/g, '');
+    });
+}
+
 function selectDamage(val, el){
     selectedDamage = val;
     document.querySelectorAll('.damage-card').forEach(c=>c.classList.remove('selected'));
@@ -363,6 +394,9 @@ async function submitProperty(){
     if(!title||!type||!price||!govId||!cityId){
         showErr('يرجى ملء جميع الحقول الإلزامية *'); return;
     }
+    if(!/^\d+$/.test(price) || Number(price) <= 0){
+        showErr('يرجى إدخال سعر شهري صحيح'); return;
+    }
 
     const body = {
         title, type, price: Number(price),
@@ -408,6 +442,8 @@ async function uploadImages(propId){
 }
 
 requireAuth('host-login.html');
+bindNumericInput('price');
+bindNumericInput('area_m2');
 loadGovernorates();
 </script>
 </body>
