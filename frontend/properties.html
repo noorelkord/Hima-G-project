@@ -8,7 +8,92 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
     <style>
-        body { margin: 0; }
+        body { margin: 0; background:#F8F5F0; }
+
+        .layout {
+            display:grid;
+            grid-template-columns:240px 1fr;
+            min-height:100vh;
+        }
+        .sidebar {
+            background:#0D2B1F;
+            padding:1.5rem 0;
+            position:sticky;
+            top:0;
+            height:100vh;
+            overflow-y:auto;
+        }
+        .sidebar-logo {
+            color:#D4A853;
+            padding:0 1.2rem 1.5rem;
+            border-bottom:1px solid rgba(255,255,255,0.08);
+            margin-bottom:1rem;
+        }
+        .sidebar-logo a {
+            color:inherit;
+            text-decoration:none;
+            display:flex;
+            align-items:center;
+            gap:0.65rem;
+            font-size:1.4rem;
+            font-weight:900;
+        }
+        .sidebar-logo span { color:white; font-weight:300; font-size:0.85rem; display:block; margin-top:0.15rem; }
+        .sidebar-guest {
+            padding:0.8rem 1.2rem 1.2rem;
+            border-bottom:1px solid rgba(255,255,255,0.08);
+            margin-bottom:1rem;
+        }
+        .guest-avatar {
+            width:44px;
+            height:44px;
+            border-radius:50%;
+            background:#1B4332;
+            border:2px solid #D4A853;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#D4A853;
+            font-size:1.1rem;
+            font-weight:700;
+            margin-bottom:0.5rem;
+        }
+        .guest-name { color:white; font-size:0.9rem; font-weight:700; }
+        .guest-role { color:rgba(255,255,255,0.4); font-size:0.75rem; }
+        .nav-section {
+            font-size:0.68rem;
+            color:rgba(255,255,255,0.3);
+            padding:1rem 1.2rem 0.4rem;
+            text-transform:uppercase;
+            letter-spacing:0.8px;
+        }
+        .nav-item {
+            display:flex;
+            align-items:center;
+            gap:0.7rem;
+            padding:0.7rem 1.2rem;
+            color:rgba(255,255,255,0.6);
+            cursor:pointer;
+            transition:all 0.2s;
+            font-size:0.875rem;
+            text-decoration:none;
+            border-right:3px solid transparent;
+            background:none;
+            border-top:none;
+            border-bottom:none;
+            border-left:none;
+            font-family:'Cairo',sans-serif;
+            width:100%;
+            text-align:right;
+        }
+        .nav-item:hover { color:white; background:rgba(255,255,255,0.05); }
+        .nav-item.active {
+            color:#D4A853;
+            background:rgba(212,168,83,0.1);
+            border-right-color:#D4A853;
+        }
+        .nav-item i { width:18px; text-align:center; }
+        .guest-main { min-width:0; }
 
         .page-header {
             background:#F8F5F0;
@@ -339,6 +424,8 @@
         .empty-state i { font-size: 3rem; color: #E5E0D8; display: block; margin-bottom: 1rem; }
 
         @media(max-width:768px){
+            .layout { grid-template-columns:1fr; }
+            .sidebar { display:none; }
             .main-layout { grid-template-columns: 1fr; }
             .filter-search-bar { align-items:flex-start; flex-direction:column; }
             .filter-modal { padding-top:4.5rem; }
@@ -346,22 +433,43 @@
     </style>
 </head>
 <body>
-<div id="navbar"></div>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <a href="properties.html" aria-label="الصفحة الرئيسية">
+                <i class="fas fa-home"></i>
+                <b>حمى</b>
+            </a>
+            <span>منصة الإيجار الرقمي</span>
+        </div>
+        <div class="sidebar-guest">
+            <div class="guest-avatar">ز</div>
+            <div class="guest-name">زائر</div>
+            <div class="guest-role">تصفح بدون تسجيل</div>
+        </div>
+        <div class="nav-section">القائمة الرئيسية</div>
+        <a class="nav-item active" href="properties.html"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
+        <button class="nav-item" type="button" onclick="openFilters()"><i class="fas fa-filter"></i> الفلترة</button>
+        <a class="nav-item" href="tenant-login.html"><i class="fas fa-user"></i> تسجيل الدخول</a>
+        <a class="nav-item" href="host-login.html"><i class="fas fa-user-plus"></i> كن مضيفا</a>
+        <a class="nav-item" href="policies.html"><i class="fas fa-file-contract"></i> السياسات والخصوصية</a>
+    </aside>
 
-<div class="page-header">
-    <h1>الصفحة الرئيسية</h1>
-    <p>تصفح جميع العقارات المعتمدة والمتاحة للإيجار</p>
-</div>
+    <main class="guest-main">
+        <div class="page-header">
+            <h1>الصفحة الرئيسية</h1>
+            <p>تصفح جميع العقارات المعتمدة والمتاحة للإيجار</p>
+        </div>
 
-<div class="filter-search-wrap" id="filters">
-    <button class="filter-search-bar" onclick="openFilters()">
-        <span class="filter-search-main">
-            <i class="fas fa-search"></i>
-            ابحث عن عقارات
-        </span>
-        <span class="filter-search-hint">اختر المحافظة، المدينة، السعر، الغرف والخدمات</span>
-    </button>
-</div>
+        <div class="filter-search-wrap" id="filters">
+            <button class="filter-search-bar" onclick="openFilters()">
+                <span class="filter-search-main">
+                    <i class="fas fa-search"></i>
+                    ابحث عن عقارات
+                </span>
+                <span class="filter-search-hint">اختر المحافظة، المدينة، السعر، الغرف والخدمات</span>
+            </button>
+        </div>
 
 <div class="filter-modal" id="filter-modal" onclick="if(event.target===this) closeFilters()">
     <div class="filter-panel">
@@ -502,8 +610,10 @@
     </div>
 </div>
 
+    </main>
+</div>
+
 <script src="js/api.js?v=20260628-absolute-nav"></script>
-<script src="js/navbar.js?v=20260628-live-fixes"></script>
 <script>
 const typeMap    = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
 const damageMap  = {intact:'سليم',partial:'أضرار جزئية',renovated:'مرمم'};
