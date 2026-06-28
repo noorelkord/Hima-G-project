@@ -72,8 +72,8 @@ class BookingController extends Controller
             // Notify other tenants their booking was rejected
             NotificationService::send(
                 $rejected->tenant_id,
-                'Booking Request Rejected',
-                'Your booking request for "' . $booking->property->title . '" was rejected because the property has been booked by another tenant.',
+                'تم رفض طلب الحجز',
+                'تم رفض طلب حجزك لـ «' . $booking->property->title . '» لأن العقار تم حجزه من قبل مستأجر آخر.',
                 'booking_rejected',
                 $rejected->id
             );
@@ -115,8 +115,8 @@ class BookingController extends Controller
         // Notify tenant - contract activated
         NotificationService::send(
             $booking->tenant_id,
-            'Contract Activated',
-            'Your rental contract for "' . $booking->property->title . '" is now active.',
+            'تم تفعيل العقد',
+            'عقد الإيجار الخاص بك لـ «' . $booking->property->title . '» أصبح نشطاً الآن.',
             'contract_activated',
             $contract->id
         );
@@ -124,8 +124,8 @@ class BookingController extends Controller
         // Notify host - contract activated
         NotificationService::send(
             $request->user()->id,
-            'Contract Activated',
-            'A rental contract for "' . $booking->property->title . '" has been activated.',
+            'تم تفعيل العقد',
+            'تم تفعيل عقد إيجار لـ «' . $booking->property->title . '».',
             'contract_activated',
             $contract->id
         );
@@ -133,8 +133,8 @@ class BookingController extends Controller
         // Notify tenant their booking was accepted
         NotificationService::send(
             $booking->tenant_id,
-            'Booking Request Accepted',
-            'Your booking request for "' . $booking->property->title . '" has been accepted. Your contract is now active.',
+            'تم قبول طلب الحجز',
+            'تم قبول طلب حجزك لـ «' . $booking->property->title . '». عقدك نشط الآن.',
             'booking_accepted',
             $booking->id
         );
@@ -192,8 +192,8 @@ class BookingController extends Controller
         // Notify tenant
         NotificationService::send(
             $booking->tenant_id,
-            'Booking Request Rejected',
-            'Your booking request for "' . $booking->property->title . '" has been rejected by the host.',
+            'تم رفض طلب الحجز',
+            'تم رفض طلب حجزك لـ «' . $booking->property->title . '» من قبل المضيف.',
             'booking_rejected',
             $booking->id
         );

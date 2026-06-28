@@ -90,8 +90,8 @@ class ReviewController extends Controller
         // Notify reviewee
         NotificationService::send(
             $revieweeId,
-            'New Review Received',
-            'You have received a new ' . $data['rating'] . '-star review for "' . $contract->property->title . '".',
+            'تقييم جديد',
+            'لقد تلقيت تقييماً جديداً بـ ' . $data['rating'] . ' نجوم لـ «' . $contract->property->title . '».',
             'review_received',
             $review->id
         );

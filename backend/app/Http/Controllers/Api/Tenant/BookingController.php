@@ -68,8 +68,8 @@ class BookingController extends Controller
         // Notify host
         NotificationService::send(
             $property->host_id,
-            'New Booking Request',
-            'You have a new booking request for "' . $property->title . '".',
+            'طلب حجز جديد',
+            'لديك طلب حجز جديد لـ «' . $property->title . '».',
             'new_booking',
             $booking->id
         );
@@ -127,8 +127,8 @@ $booking->update($data);
         $property = $booking->property;
         NotificationService::send(
             $property->host_id,
-            'Booking Edited',
-            'A tenant has edited their booking request for "' . $property->title . '".',
+            'تم تعديل الحجز',
+            'قام مستأجر بتعديل طلب الحجز لـ «' . $property->title . '».',
             'booking_edited',
             $booking->id
         );
@@ -155,8 +155,8 @@ $booking->update($data);
         $property = $booking->property;
         NotificationService::send(
             $property->host_id,
-            'Booking Cancelled',
-            'A tenant has cancelled their booking request for "' . $property->title . '".',
+            'تم إلغاء الحجز',
+            'قام مستأجر بإلغاء طلب الحجز لـ «' . $property->title . '».',
             'booking_cancelled',
             $booking->id
         );

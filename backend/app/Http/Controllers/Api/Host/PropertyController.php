@@ -57,8 +57,8 @@ class PropertyController extends Controller
         foreach ($admins as $admin) {
             NotificationService::send(
                 $admin->id,
-                'New Property Submitted',
-                'A new property "' . $property->title . '" has been submitted and requires your review.',
+                'عقار جديد مُقدَّم',
+                'تم تقديم عقار جديد «' . $property->title . '» ويحتاج إلى مراجعتك.',
                 'new_property_submitted',
                 $property->id
             );
@@ -125,8 +125,8 @@ class PropertyController extends Controller
                 $booking->update(['status' => 'cancelled']);
                  NotificationService::send(
                 $booking->tenant_id,
-                'Booking Cancelled',
-                'Your booking request for "' . $property->title . '" has been cancelled because the property details were updated and is now under review.',
+                'تم إلغاء الحجز',
+                'تم إلغاء طلب حجزك لـ «' . $property->title . '» لأن تفاصيل العقار تم تحديثها وهو قيد المراجعة.',
                 'booking_cancelled',
                   $booking->id
         );
@@ -141,8 +141,8 @@ $property->update($data);
             foreach ($admins as $admin) {
                 NotificationService::send(
                     $admin->id,
-                    'Property Modified',
-                    'The property "' . $property->title . '" has been modified and may require your review.',
+                    'تم تعديل العقار',
+                    'تم تعديل العقار «' . $property->title . '» وقد يحتاج إلى مراجعتك.',
                     'property_modified',
                     $property->id
                 );

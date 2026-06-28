@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>حمى | الصفحة غير موجودة</title>
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{
+    font-family:'Cairo',sans-serif;
+    background:#F8F5F0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem;
+    direction:rtl;
+}
+.card{
+    background:white;
+    border-radius:24px;
+    box-shadow:0 8px 40px rgba(27,67,50,0.10);
+    padding:3rem 2.5rem;
+    max-width:480px;
+    width:100%;
+    text-align:center;
+}
+.logo{
+    font-size:1.5rem;
+    font-weight:900;
+    color:#1d5c2e;
+    margin-bottom:2rem;
+    letter-spacing:-0.5px;
+}
+.illustration{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:1.5rem;
+}
+.circle-bg{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#D1FAE5,#A7F3D0);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.circle-bg i{
+    font-size:3rem;
+    color:#065F46;
+}
+.badge-404{
+    position:absolute;
+    top:-8px;
+    left:-8px;
+    background:linear-gradient(135deg,#1B4332,#2D6A4F);
+    color:#D4A853;
+    font-size:1rem;
+    font-weight:900;
+    padding:0.35rem 0.75rem;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(27,67,50,0.25);
+    letter-spacing:1px;
+}
+h1{
+    font-size:1.4rem;
+    font-weight:900;
+    color:#1B4332;
+    margin-bottom:0.6rem;
+}
+p{
+    color:#6B7280;
+    font-size:0.92rem;
+    line-height:1.7;
+    margin-bottom:2rem;
+}
+.actions{
+    display:flex;
+    flex-direction:column;
+    gap:0.75rem;
+}
+.btn-primary{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    background:linear-gradient(135deg,#1B4332,#2D6A4F);
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:0.85rem 1.5rem;
+    font-family:'Cairo',sans-serif;
+    font-size:0.95rem;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:none;
+    transition:opacity 0.2s,transform 0.15s;
+}
+.btn-primary:hover{ opacity:0.92; transform:translateY(-1px); }
+.btn-secondary{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    background:transparent;
+    color:#2D6A4F;
+    border:1.5px solid #D1FAE5;
+    border-radius:12px;
+    padding:0.75rem 1.5rem;
+    font-family:'Cairo',sans-serif;
+    font-size:0.9rem;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:none;
+    transition:background 0.2s,border-color 0.2s;
+}
+.btn-secondary:hover{ background:#F0FDF4; border-color:#A7F3D0; }
+.divider{
+    border:none;
+    border-top:1px solid #F3F4F6;
+    margin:1.5rem 0 1rem;
+}
+.quick-links{
+    display:flex;
+    justify-content:center;
+    gap:1.5rem;
+    flex-wrap:wrap;
+}
+.quick-link{
+    color:#6B7280;
+    font-size:0.8rem;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:0.3rem;
+    transition:color 0.2s;
+}
+.quick-link:hover{ color:#1B4332; }
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">حمى</div>
+
+    <div class="illustration">
+        <div class="circle-bg">
+            <i class="fas fa-map-signs"></i>
+        </div>
+        <span class="badge-404">404</span>
+    </div>
+
+    <h1>الصفحة غير موجودة</h1>
+    <p>يبدو أن الصفحة التي تبحث عنها انتقلت إلى مكان آخر أو لم تعد موجودة.</p>
+
+    <div class="actions">
+        <a class="btn-primary" id="home-btn" href="properties.html">
+            <i class="fas fa-home"></i>
+            العودة إلى الرئيسية
+        </a>
+        <a class="btn-secondary" onclick="history.back()" href="#">
+            <i class="fas fa-arrow-right"></i>
+            الصفحة السابقة
+        </a>
+    </div>
+
+    <hr class="divider">
+
+    <div class="quick-links">
+        <a class="quick-link" href="properties.html"><i class="fas fa-building"></i> العقارات</a>
+        <a class="quick-link" id="dashboard-link" href="properties.html" style="display:none"><i class="fas fa-th-large"></i> لوحة التحكم</a>
+        <a class="quick-link" href="tenant-login.html"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a>
+    </div>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const role = localStorage.getItem('role');
+if (role) {
+    const dashMap = { tenant: 'dashboard-tenant.html', host: 'dashboard-host.html', admin: 'dashboard-admin.html' };
+    const dash = dashMap[role];
+    if (dash) {
+        document.getElementById('home-btn').href = dash;
+        document.getElementById('home-btn').innerHTML = '<i class="fas fa-th-large"></i> لوحة التحكم';
+        const dl = document.getElementById('dashboard-link');
+        dl.href = dash;
+        dl.style.display = 'flex';
+    }
+}
+</script>
+</body>
+</html>
