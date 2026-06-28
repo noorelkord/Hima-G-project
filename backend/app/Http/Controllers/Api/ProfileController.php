@@ -21,9 +21,9 @@ class ProfileController extends Controller
             'second_name' => 'required|string|max:50',
             'third_name'  => 'required|string|max:50',
             'last_name'   => 'required|string|max:50',
-            'national_id' => 'required|string|unique:users,national_id,' . $user->id,
-            'phone'       => 'required|string|max:20',
-        ]);
+            'national_id' => ['required', 'string', 'regex:/^[984][0-9]{8}$/', 'unique:users,national_id,' . $user->id],
+            'phone'       => ['required', 'string', 'regex:/^(059|056)[0-9]{7}$/'],
+        ], $this->validationMessages());
         $user->update($data);
         return response()->json([
             'message'             => 'Profile completed successfully.',
@@ -42,9 +42,9 @@ class ProfileController extends Controller
             'second_name' => 'sometimes|string|max:50',
             'third_name'  => 'sometimes|string|max:50',
             'last_name'   => 'sometimes|string|max:50',
-            'national_id' => 'sometimes|string|unique:users,national_id,' . $user->id,
-            'phone'       => 'sometimes|string|max:20',
-        ]);
+            'national_id' => ['sometimes', 'string', 'regex:/^[984][0-9]{8}$/', 'unique:users,national_id,' . $user->id],
+            'phone'       => ['sometimes', 'string', 'regex:/^(059|056)[0-9]{7}$/'],
+        ], $this->validationMessages());
 
         $user->update($data);
 
@@ -106,5 +106,13 @@ class ProfileController extends Controller
         return response()->json([
             'message' => 'Email updated. Please verify your new email.',
         ]);
+    }
+
+    private function validationMessages(): array
+    {
+        return [
+            'phone.regex'       => 'رقم الهاتف يجب أن يبدأ بـ 059 أو 056 ويتكون من 10 أرقام.',
+            'national_id.regex' => 'رقم الهوية يجب أن يتكون من 9 أرقام ويبدأ بـ 9 أو 8 أو 4.',
+        ];
     }
 }

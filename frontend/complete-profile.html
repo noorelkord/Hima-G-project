@@ -16,8 +16,8 @@
     <input id="second_name" placeholder="اسم الأب">
     <input id="third_name" placeholder="اسم الجد">
     <input id="last_name" placeholder="اسم العائلة">
-    <input id="national_id" placeholder="رقم الهوية">
-    <input id="phone" placeholder="رقم الهاتف">
+    <input id="national_id" inputmode="numeric" maxlength="9" placeholder="رقم الهوية - 9 أرقام تبدأ بـ 9 أو 8 أو 4">
+    <input id="phone" inputmode="numeric" maxlength="10" placeholder="رقم الهاتف - 059XXXXXXX أو 056XXXXXXX">
 
     <button onclick="completeProfile()">
         حفظ ومتابعة
@@ -30,12 +30,27 @@
 async function completeProfile(){
 
 const body={
-    second_name:second_name.value,
-    third_name:third_name.value,
-    last_name:last_name.value,
-    national_id:national_id.value,
-    phone:phone.value
+    second_name:second_name.value.trim(),
+    third_name:third_name.value.trim(),
+    last_name:last_name.value.trim(),
+    national_id:national_id.value.trim(),
+    phone:phone.value.trim()
 };
+
+if(!body.second_name || !body.third_name || !body.last_name || !body.national_id || !body.phone){
+    msg.innerHTML='<div class="error">يرجى ملء جميع الحقول</div>';
+    return;
+}
+
+if(!/^[984]\d{8}$/.test(body.national_id)){
+    msg.innerHTML='<div class="error">رقم الهوية يجب أن يتكون من 9 أرقام ويبدأ بـ 9 أو 8 أو 4</div>';
+    return;
+}
+
+if(!/^(059|056)\d{7}$/.test(body.phone)){
+    msg.innerHTML='<div class="error">رقم الهاتف يجب أن يبدأ بـ 059 أو 056 ويتكون من 10 أرقام</div>';
+    return;
+}
 
 const res=await fetch(
     BASE_URL+"/profile/complete",
@@ -67,8 +82,9 @@ if(redirectTo){
 }
 
 }else{
+const data=await res.json();
 msg.innerHTML=
-'<div class="error">فشل الحفظ</div>';
+`<div class="error">${Object.values(data.errors||{})[0]?.[0] || data.message || 'فشل الحفظ'}</div>`;
 }
 }
 </script>

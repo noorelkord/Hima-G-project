@@ -108,8 +108,8 @@
                 <div class="form-group"><label>اسم الأب</label><input id="second_name" type="text"></div>
                 <div class="form-group"><label>اسم الجد</label><input id="third_name" type="text"></div>
                 <div class="form-group"><label>اسم العائلة</label><input id="last_name" type="text"></div>
-                <div class="form-group"><label>رقم الهاتف</label><input id="phone" type="tel"></div>
-                <div class="form-group"><label>رقم الهوية</label><input id="national_id" type="text"></div>
+                <div class="form-group"><label>رقم الهاتف</label><input id="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="059XXXXXXX أو 056XXXXXXX"></div>
+                <div class="form-group"><label>رقم الهوية</label><input id="national_id" type="text" inputmode="numeric" maxlength="9" placeholder="9 أرقام تبدأ بـ 9 أو 8 أو 4"></div>
             </div>
             <div style="margin-top:1rem;">
                 <button class="btn-save" onclick="saveInfo()"><i class="fas fa-save"></i> حفظ التغييرات</button>
@@ -204,6 +204,16 @@ function showMsg(prefix,type,msg){
     setTimeout(()=>el.classList.remove('show'),4000);
 }
 
+function validatePalestinianContact(phone,nationalId){
+    if(!/^(059|056)\d{7}$/.test(phone)){
+        return 'رقم الهاتف يجب أن يبدأ بـ 059 أو 056 ويتكون من 10 أرقام';
+    }
+    if(!/^[984]\d{8}$/.test(nationalId)){
+        return 'رقم الهوية يجب أن يتكون من 9 أرقام ويبدأ بـ 9 أو 8 أو 4';
+    }
+    return '';
+}
+
 async function saveInfo(){
     const body={
         first_name:document.getElementById('first_name').value.trim(),
@@ -214,6 +224,8 @@ async function saveInfo(){
         national_id:document.getElementById('national_id').value.trim(),
     };
     if(!body.first_name){showMsg('info','err','الاسم الأول مطلوب');return;}
+    const validationError = validatePalestinianContact(body.phone, body.national_id);
+    if(validationError){showMsg('info','err',validationError);return;}
     const r=await fetch(BASE_URL+'/profile',{method:'PUT',headers:authHeaders(),body:JSON.stringify(body)});
     const data=await r.json();
     if(r.ok){
