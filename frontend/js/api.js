@@ -179,5 +179,5 @@ async function logout() {
         }
     }
     localStorage.clear();
-    goToPage('login.html');
+    goToPage('properties.html');
 }
