@@ -158,7 +158,7 @@ function render(list){
             <div class="contract-footer">
                 <div class="contract-price">${Number(c.price||0).toLocaleString('ar')} ₪ <span style="font-size:0.75rem;font-weight:400;color:#9CA3AF;">/ شهر</span></div>
                 <div class="contract-actions">
-                    ${c.pdf_path?`<a class="btn-pdf" href="${BASE_URL}/contracts/${c.id}/download" target="_blank"><i class="fas fa-file-pdf"></i> تحميل PDF</a>`:''}
+                    ${c.pdf_path?`<button class="btn-pdf" onclick="downloadPdf(${c.id})"><i class="fas fa-file-pdf"></i> تحميل PDF</button>`:''}
                     ${isActive?`<button class="btn-cancel-contract" onclick="openCancel(${c.id})"><i class="fas fa-times me-1"></i>إلغاء العقد</button>`:''}
                     ${canReview?`<button class="btn-review" onclick="window.location.href='review-form.html?contract_id=${c.id}'"><i class="fas fa-star me-1"></i>تقييم</button>`:''}
                 </div>
@@ -167,6 +167,27 @@ function render(list){
     }).join('');
 }
 
+async function downloadPdf(id){
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ التحميل...';
+    try {
+        const r = await fetch(`${BASE_URL}/contracts/${id}/download`, {headers: authHeaders()});
+        if (!r.ok) throw new Error();
+        const blob = await r.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `contract-${id}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch(e) {
+        alert('تعذر تحميل العقد، حاول مجدداً.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-file-pdf"></i> تحميل PDF';
+    }
+}
 function openCancel(id){cancelId=id;document.getElementById('cancel-modal').classList.add('show');}
 function closeModal(){cancelId=null;document.getElementById('cancel-modal').classList.remove('show');}
 

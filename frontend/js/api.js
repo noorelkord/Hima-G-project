@@ -181,13 +181,17 @@ async function initNotifDot() {
     try {
         const res = await fetch(BASE_URL + '/notifications/unread-count', { headers: authHeaders() });
         if (!res.ok) return;
-        const { count } = await res.json();
-        if (!count) return;
-        document.querySelectorAll('a[href*="notifications.html"] .fa-bell').forEach(icon => {
-            if (icon.parentNode.querySelector('.nav-notif-dot')) return;
-            const dot = document.createElement('span');
-            dot.className = 'nav-notif-dot';
-            icon.parentNode.appendChild(dot);
+        const data = await res.json();
+        const count = data.unread_count ?? data.count ?? 0;
+        document.querySelectorAll('a[href*="notifications.html"]').forEach(link => {
+            let badge = link.querySelector('.nav-notif-badge');
+            if (!count) { if (badge) badge.remove(); return; }
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'nav-notif-badge';
+                link.appendChild(badge);
+            }
+            badge.textContent = count > 99 ? '99+' : count;
         });
     } catch (e) {}
 }
