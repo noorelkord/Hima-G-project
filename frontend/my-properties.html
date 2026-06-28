@@ -258,11 +258,19 @@ function closeModal(){ deleteId=null; document.getElementById('del-modal').class
 
 async function confirmDelete(){
     if(!deleteId) return;
+    const idToDelete = deleteId;
     const r = await fetch(`${BASE_URL}/host/properties/${deleteId}`,{
         method:'DELETE', headers:authHeaders()
     });
     closeModal();
-    if(r.ok){ allProps = allProps.filter(p=>p.id!==deleteId); filterTab(currentTab,document.querySelector('.tab.active')); }
+    if(r.ok){
+        allProps = allProps.filter(p=>p.id!==idToDelete);
+        filterTab(currentTab,document.querySelector('.tab.active'));
+        return;
+    }
+
+    const data = await r.json().catch(()=>({}));
+    alert(data.message || 'لا يمكن أرشفة هذا العقار الآن');
 }
 
 requireAuth('host-login.html');
