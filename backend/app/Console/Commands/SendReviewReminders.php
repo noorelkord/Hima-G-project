@@ -55,7 +55,7 @@ class SendReviewReminders extends Command
             NotificationService::send(
                 $window->user_id,
                 'تذكير بالتقييم',
-                'لا يزال لديك تقييم معلّق لـ «' . $window->contract->property->title . '». يرجى مشاركة تجربتك.',
+                'لا يزال لديك تقييم معلق لـ "' . $window->contract->property->title . '". يرجى مشاركة تجربتك.',
                 'review_reminder',
                 $window->contract_id
             );

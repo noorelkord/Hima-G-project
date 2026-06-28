@@ -58,7 +58,7 @@ class PropertyController extends Controller
             NotificationService::send(
                 $admin->id,
                 'عقار جديد مُقدَّم',
-                'تم تقديم عقار جديد «' . $property->title . '» ويحتاج إلى مراجعتك.',
+                'تم تقديم عقار جديد "' . $property->title . '" ويتطلب مراجعتك.',
                 'new_property_submitted',
                 $property->id
             );
@@ -126,7 +126,7 @@ class PropertyController extends Controller
                  NotificationService::send(
                 $booking->tenant_id,
                 'تم إلغاء الحجز',
-                'تم إلغاء طلب حجزك لـ «' . $property->title . '» لأن تفاصيل العقار تم تحديثها وهو قيد المراجعة.',
+                'تم إلغاء طلب الحجز لـ "' . $property->title . '" بسبب تحديث تفاصيل العقار وهو الآن قيد المراجعة.',
                 'booking_cancelled',
                   $booking->id
         );
@@ -142,7 +142,7 @@ $property->update($data);
                 NotificationService::send(
                     $admin->id,
                     'تم تعديل العقار',
-                    'تم تعديل العقار «' . $property->title . '» وقد يحتاج إلى مراجعتك.',
+                    'تم تعديل العقار "' . $property->title . '" وقد يتطلب مراجعتك.',
                     'property_modified',
                     $property->id
                 );

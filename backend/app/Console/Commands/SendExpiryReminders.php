@@ -26,7 +26,7 @@ class SendExpiryReminders extends Command
             NotificationService::send(
                 $contract->tenant_id,
                 'تذكير بانتهاء العقد',
-                'عقد الإيجار الخاص بك لـ «' . $contract->property->title . '» ينتهي قريباً في ' . $contract->end_date->format('Y-m-d') . '. يرجى اتخاذ الترتيبات اللازمة.',
+                'عقد الإيجار الخاص بك لـ "' . $contract->property->title . '" ينتهي قريباً في ' . $contract->end_date->format('Y-m-d') . '. يرجى اتخاذ الترتيبات اللازمة.',
                 'contract_expiry_reminder',
                 $contract->id
             );
@@ -35,7 +35,7 @@ class SendExpiryReminders extends Command
             NotificationService::send(
                 $contract->host_id,
                 'تذكير بانتهاء العقد',
-                'عقد الإيجار لـ «' . $contract->property->title . '» ينتهي قريباً في ' . $contract->end_date->format('Y-m-d') . '. يرجى اتخاذ الترتيبات اللازمة.',
+                'عقد الإيجار لـ "' . $contract->property->title . '" ينتهي قريباً في ' . $contract->end_date->format('Y-m-d') . '. يرجى اتخاذ الترتيبات اللازمة.',
                 'contract_expiry_reminder',
                 $contract->id
             );

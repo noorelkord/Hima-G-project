@@ -35,7 +35,7 @@ class ExpireContracts extends Command
             NotificationService::send(
                 $contract->tenant_id,
                 'انتهى العقد',
-                'انتهى عقدك لـ «' . $contract->property->title . '».',
+                'انتهى عقدك لـ "' . $contract->property->title . '".',
                 'contract_expired',
                 $contract->id
             );
@@ -44,7 +44,7 @@ class ExpireContracts extends Command
             NotificationService::send(
                 $contract->host_id,
                 'انتهى العقد',
-                'انتهى العقد لـ «' . $contract->property->title . '».',
+                'انتهى العقد لـ "' . $contract->property->title . '".',
                 'contract_expired',
                 $contract->id
             );
@@ -53,7 +53,7 @@ class ExpireContracts extends Command
             NotificationService::send(
                 $contract->tenant_id,
                 'تذكير بالتقييم',
-                'انتهى عقدك لـ «' . $contract->property->title . '». يرجى تقييم تجربتك.',
+                'انتهى عقدك لـ "' . $contract->property->title . '". يرجى تقييم تجربتك.',
                 'review_reminder',
                 $contract->id
             );
@@ -61,7 +61,7 @@ class ExpireContracts extends Command
             NotificationService::send(
                 $contract->host_id,
                 'تذكير بالتقييم',
-                'انتهى عقدك لـ «' . $contract->property->title . '». يرجى تقييم المستأجر.',
+                'انتهى عقدك لـ "' . $contract->property->title . '". يرجى تقييم المستأجر.',
                 'review_reminder',
                 $contract->id
             );

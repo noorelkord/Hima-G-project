@@ -47,7 +47,7 @@ class PropertyController extends Controller
         NotificationService::send(
             $property->host_id,
             'تمت الموافقة على العقار',
-            'تمت الموافقة على عقارك «' . $property->title . '» وهو متاح الآن.',
+            'تمت الموافقة على عقارك "' . $property->title . '" وهو متاح الآن.',
             'property_approved',
             $property->id
         );
@@ -82,7 +82,7 @@ class PropertyController extends Controller
             NotificationService::send(
                 $booking->tenant_id,
                 'تم إلغاء الحجز',
-                'تم إلغاء طلب حجزك لـ «' . $property->title . '». تم تعليق العقار مؤقتاً من قبل الإدارة.',
+                'تم إلغاء طلب الحجز لـ "' . $property->title . '". تم تعليق العقار مؤقتاً من قبل الإدارة.',
                 'booking_cancelled',
                 $booking->id
             );
@@ -96,7 +96,7 @@ class PropertyController extends Controller
         NotificationService::send(
             $property->host_id,
             'تم رفض العقار',
-            'تم رفض عقارك «' . $property->title . '». السبب: ' . $data['rejection_reason'],
+            'تم رفض عقارك "' . $property->title . '". السبب: ' . $data['rejection_reason'],
             'property_rejected',
             $property->id
         );

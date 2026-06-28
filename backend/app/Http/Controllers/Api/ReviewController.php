@@ -91,7 +91,7 @@ class ReviewController extends Controller
         NotificationService::send(
             $revieweeId,
             'تقييم جديد',
-            'لقد تلقيت تقييماً جديداً بـ ' . $data['rating'] . ' نجوم لـ «' . $contract->property->title . '».',
+            'تلقيت تقييماً جديداً بـ ' . $data['rating'] . ' نجوم لـ "' . $contract->property->title . '".',
             'review_received',
             $review->id
         );

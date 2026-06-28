@@ -122,7 +122,7 @@ class ContractController extends Controller
         NotificationService::send(
             $contract->tenant_id,
             'تذكير بالتقييم',
-            'انتهى عقدك لـ «' . $contract->property->title . '». يرجى ترك تقييمك.',
+            'انتهى عقدك لـ "' . $contract->property->title . '". يرجى ترك تقييمك.',
             'review_reminder',
             $contract->id
         );
@@ -130,7 +130,7 @@ class ContractController extends Controller
         NotificationService::send(
             $contract->host_id,
             'تذكير بالتقييم',
-            'انتهى عقدك لـ «' . $contract->property->title . '». يرجى تقييم المستأجر.',
+            'انتهى عقدك لـ "' . $contract->property->title . '". يرجى تقييم المستأجر.',
             'review_reminder',
             $contract->id
         );
@@ -140,7 +140,7 @@ class ContractController extends Controller
             NotificationService::send(
                 $contract->host_id,
                 'تم إلغاء العقد',
-                'قام المستأجر بإلغاء العقد لـ «' . $contract->property->title . '».',
+                'قام المستأجر بإلغاء العقد لـ "' . $contract->property->title . '".',
                 'contract_cancelled',
                 $contract->id
             );
@@ -149,7 +149,7 @@ class ContractController extends Controller
             NotificationService::send(
                 $contract->tenant_id,
                 'تم إلغاء العقد',
-                'قام المضيف بإلغاء العقد لـ «' . $contract->property->title . '».',
+                'قام المضيف بإلغاء العقد لـ "' . $contract->property->title . '".',
                 'contract_cancelled',
                 $contract->id
             );

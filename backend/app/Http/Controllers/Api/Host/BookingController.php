@@ -73,7 +73,7 @@ class BookingController extends Controller
             NotificationService::send(
                 $rejected->tenant_id,
                 'تم رفض طلب الحجز',
-                'تم رفض طلب حجزك لـ «' . $booking->property->title . '» لأن العقار تم حجزه من قبل مستأجر آخر.',
+                'تم رفض طلب الحجز لـ "' . $booking->property->title . '" لأن العقار تم حجزه من قبل مستأجر آخر.',
                 'booking_rejected',
                 $rejected->id
             );
@@ -116,7 +116,7 @@ class BookingController extends Controller
         NotificationService::send(
             $booking->tenant_id,
             'تم تفعيل العقد',
-            'عقد الإيجار الخاص بك لـ «' . $booking->property->title . '» أصبح نشطاً الآن.',
+            'عقد الإيجار الخاص بك لـ "' . $booking->property->title . '" أصبح نشطاً الآن.',
             'contract_activated',
             $contract->id
         );
@@ -125,7 +125,7 @@ class BookingController extends Controller
         NotificationService::send(
             $request->user()->id,
             'تم تفعيل العقد',
-            'تم تفعيل عقد إيجار لـ «' . $booking->property->title . '».',
+            'تم تفعيل عقد إيجار لـ "' . $booking->property->title . '".',
             'contract_activated',
             $contract->id
         );
@@ -134,7 +134,7 @@ class BookingController extends Controller
         NotificationService::send(
             $booking->tenant_id,
             'تم قبول طلب الحجز',
-            'تم قبول طلب حجزك لـ «' . $booking->property->title . '». عقدك نشط الآن.',
+            'تم قبول طلب الحجز لـ "' . $booking->property->title . '". عقدك أصبح نشطاً الآن.',
             'booking_accepted',
             $booking->id
         );
@@ -193,7 +193,7 @@ class BookingController extends Controller
         NotificationService::send(
             $booking->tenant_id,
             'تم رفض طلب الحجز',
-            'تم رفض طلب حجزك لـ «' . $booking->property->title . '» من قبل المضيف.',
+            'تم رفض طلب الحجز لـ "' . $booking->property->title . '" من قبل المضيف.',
             'booking_rejected',
             $booking->id
         );
