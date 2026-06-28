@@ -34,8 +34,35 @@ class ContractPdfService
             'cancelled' => 'ملغي',
         ];
 
-        $months     = $contract->start_date->diffInMonths($contract->end_date);
-        $total      = number_format($contract->price * $months, 2);
+        // ─────────────────────────────────────────────
+        // حساب مدة العقد والإجمالي
+        // ─────────────────────────────────────────────
+        // diff() تحسب الفرق الحقيقي بين التاريخين بشكل هرمي:
+        // → سنوات كاملة أولاً
+        // → ثم الأشهر الكاملة المتبقية بعد السنوات
+        // → ثم الأيام الكاملة المتبقية بعد الأشهر
+        // مصدر واحد للحقيقة — لا نستدعي دالتين مختلفتين
+        $diff        = $contract->start_date->diff($contract->end_date);
+        $years       = $diff->y;  // السنوات الكاملة
+        $months      = $diff->m;  // الأشهر الكاملة بعد السنوات
+        $days        = $diff->d;  // الأيام الكاملة بعد الأشهر
+
+        // تحويل السنوات إلى أشهر وجمعها مع الأشهر المتبقية
+        $totalMonths = ($years * 12) + $months;
+
+        // السعر اليومي = السعر الشهري / 30 (معيار مقبول في سوق الإيجار العقاري)
+        $dailyRate   = $contract->price / 30;
+
+        // الإجمالي = (الأشهر الكاملة × السعر الشهري) + (الأيام الزائدة × السعر اليومي)
+        // يوم النهاية لا يُحسب — وهو المعيار المتبع في العقارات عالمياً
+        $total       = number_format(
+            ($totalMonths * $contract->price) + ($days * $dailyRate),
+            2
+        );
+
+        // تنسيق المدة بالعربي للعرض في PDF
+        $durationText = self::formatDuration($years, $months, $days);
+        // ─────────────────────────────────────────────
         $price      = number_format($contract->price, 2);
         $contractNo = str_pad($contract->id, 6, '0', STR_PAD_LEFT);
         $today      = now()->format('Y-m-d');
@@ -186,15 +213,15 @@ class ContractPdfService
                 <table class="info">
                     <tr><td class="label">تاريخ البداية:</td><td>' . $contract->start_date->format('Y-m-d') . '</td></tr>
                     <tr><td class="label">تاريخ النهاية:</td><td>' . $contract->end_date->format('Y-m-d') . '</td></tr>
-                    <tr><td class="label">مدة العقد:</td><td>' . $months . ' شهر</td></tr>
+                    <tr><td class="label">مدة العقد:</td><td>' . $durationText . ' </td></tr>
+                    <tr><td class="label">السعر الشهري:</td><td><span dir="ltr">&#x20AA; ' . $price . '</span></td></tr>
                 </table>
             </div>
         </div>
 
-        <div class="price-box">
-            <div class="lbl">قيمة الإيجار الشهري المتفق عليه</div>
-            <div class="amount">' . $price . ' ₪</div>
-            <div class="lbl">الإجمالي للمدة الكاملة: ' . $total . ' ₪</div>
+        <div class="price-box" style="margin-bottom:25px;">
+          <div class="lbl" style="margin-bottom:10px; font-size:15px;"><strong>الإجمالي للمدة الكاملة</strong></div>
+          <div class="amount"><span dir="ltr">&#x20AA; ' . $total . '</span></div>
         </div>
 
         <div class="terms">
@@ -259,5 +286,31 @@ class ContractPdfService
         $mpdf->Output($fullPath, \Mpdf\Output\Destination::FILE);
 
         return $filename;
+    }
+
+    private static function formatDuration(int $years, int $months, int $days): string
+    {
+        // تنسيق مدة العقد بالأرقامة
+        // مثال: سنة و3 أشهر و5 أيام
+
+        $parts = [];
+
+        if ($years > 0) {
+            $parts[] = $years === 1 ? 'سنة' : $years . ' سنوات';
+        }
+
+        if ($months > 0) {
+            $parts[] = $months === 1 ? 'شهر' : $months . ' أشهر';
+        }
+
+        if ($days > 0) {
+            $parts[] = $days === 1 ? 'يوم واحد' : $days . ' يوم';
+        }
+
+        if (empty($parts)) {
+            return 'يوم واحد';
+        }
+
+        return implode(' و', $parts);
     }
 }

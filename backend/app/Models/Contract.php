@@ -26,13 +26,13 @@ class Contract extends Model
 ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date'   => 'date',
-        'price'      => 'decimal:2',
-        'closed_at' => 'datetime',
-        'expiry_reminder_date' => 'date',
-        'expiry_reminder_sent' => 'boolean',
-    ];
+    'start_date'           => 'date:Y-m-d', // يوم تقويمي — لا علاقة بالتوقيت
+    'end_date'             => 'date:Y-m-d', // يوم تقويمي — لا علاقة بالتوقيت
+    'expiry_reminder_date' => 'date:Y-m-d', // يوم تقويمي — لا علاقة بالتوقيت
+    'expiry_reminder_sent' => 'boolean',
+    'closed_at'            => 'datetime',   // لحظة زمنية — يُحفظ UTC ✅
+    'price'                => 'decimal:2',
+];
 
     // Relationships
     public function booking()
