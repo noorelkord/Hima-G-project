@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="Commercial shop">
+  <rect width="1200" height="720" fill="#f8f5f0"/>
+  <rect y="540" width="1200" height="180" fill="#d8d0c2"/>
+  <rect x="250" y="230" width="700" height="335" rx="18" fill="#1b4332"/>
+  <rect x="295" y="300" width="610" height="74" rx="10" fill="#d4a853"/>
+  <rect x="330" y="410" width="215" height="155" rx="12" fill="#f8f5f0"/>
+  <rect x="595" y="410" width="270" height="155" rx="12" fill="#f8f5f0"/>
+  <path d="M265 230 H935 L885 150 H315 Z" fill="#6b4f3f"/>
+  <rect x="392" y="440" width="92" height="125" rx="10" fill="#2d6a4f"/>
+  <path d="M0 590 C165 550 260 620 420 580 C585 540 710 622 865 578 C1008 538 1090 568 1200 540 L1200 720 L0 720 Z" fill="#2d6a4f" opacity=".2"/>
+  <circle cx="1010" cy="150" r="52" fill="#d4a853"/>
+</svg>

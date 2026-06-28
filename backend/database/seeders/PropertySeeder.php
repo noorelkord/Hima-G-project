@@ -53,7 +53,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => true,
-                'image' => 'apartment.jpg',
+                'image' => 'apartment.svg',
             ],
             [
                 'title' => 'بيت مستقل في بيت لاهيا',
@@ -70,7 +70,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => false,
-                'image' => 'villa.jpg',
+                'image' => 'villa.svg',
             ],
             [
                 'title' => 'شقة صغيرة في دير البلح',
@@ -87,7 +87,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => true,
-                'image' => 'small-apartment.jpg',
+                'image' => 'small-apartment.svg',
             ],
             [
                 'title' => 'محل تجاري في خانيونس',
@@ -104,7 +104,7 @@ class PropertySeeder extends Seeder
                 'has_water' => true,
                 'has_electricity' => true,
                 'is_ready' => true,
-                'image' => 'commercial.jpg',
+                'image' => 'commercial.svg',
             ],
         ];
 

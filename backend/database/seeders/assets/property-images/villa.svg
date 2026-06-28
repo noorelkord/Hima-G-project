@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="Independent family house">
+  <rect width="1200" height="720" fill="#e9f5db"/>
+  <rect y="530" width="1200" height="190" fill="#95b46a"/>
+  <path d="M275 342 L598 130 L925 342 Z" fill="#6b4f3f"/>
+  <rect x="330" y="330" width="535" height="245" rx="18" fill="#f8f5f0"/>
+  <rect x="405" y="390" width="95" height="85" rx="9" fill="#7ea06c"/>
+  <rect x="695" y="390" width="95" height="85" rx="9" fill="#7ea06c"/>
+  <rect x="548" y="425" width="100" height="150" rx="14" fill="#1b4332"/>
+  <path d="M160 565 C245 500 330 610 410 545 C490 480 570 596 660 542 C760 482 860 610 1028 540 L1028 720 L160 720 Z" fill="#2d6a4f" opacity=".45"/>
+  <circle cx="980" cy="165" r="58" fill="#d4a853"/>
+  <rect x="910" y="310" width="35" height="220" rx="17" fill="#7a5b42"/>
+  <circle cx="928" cy="285" r="75" fill="#2d6a4f"/>
+</svg>
