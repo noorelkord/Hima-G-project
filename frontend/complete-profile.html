@@ -195,20 +195,20 @@ body{
             <div class="form-grid">
                 <div class="form-group">
                     <label for="second_name">اسم الأب</label>
-                    <input id="second_name" autocomplete="additional-name" placeholder="مثال: أحمد">
+                    <input id="second_name" autocomplete="additional-name">
                 </div>
                 <div class="form-group">
                     <label for="third_name">اسم الجد</label>
-                    <input id="third_name" placeholder="مثال: محمود">
+                    <input id="third_name">
                 </div>
                 <div class="form-group full">
                     <label for="last_name">اسم العائلة</label>
-                    <input id="last_name" autocomplete="family-name" placeholder="مثال: العائلة">
+                    <input id="last_name" autocomplete="family-name">
                 </div>
                 <div class="form-group">
                     <label for="national_id">رقم الهوية</label>
-                    <input id="national_id" inputmode="numeric" maxlength="9" placeholder="9XXXXXXXX">
-                    <span class="hint">9 أرقام وتبدأ بـ 9 أو 8 أو 4</span>
+                    <input id="national_id" inputmode="numeric" maxlength="9">
+                    <span class="hint">9 أرقام وتبدأ بالرقم 4</span>
                 </div>
                 <div class="form-group">
                     <label for="phone">رقم الهاتف</label>
@@ -245,8 +245,8 @@ if(!body.second_name || !body.third_name || !body.last_name || !body.national_id
     return;
 }
 
-if(!/^[984]\d{8}$/.test(body.national_id)){
-    msg.innerHTML='<div class="error">رقم الهوية يجب أن يتكون من 9 أرقام ويبدأ بـ 9 أو 8 أو 4</div>';
+if(!/^4\d{8}$/.test(body.national_id)){
+    msg.innerHTML='<div class="error">رقم الهوية يجب أن يتكون من 9 أرقام ويبدأ بالرقم 4</div>';
     return;
 }
 
