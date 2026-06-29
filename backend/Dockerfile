@@ -3,13 +3,20 @@ FROM php:8.3-cli
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         git \
+        libfreetype6-dev \
         libicu-dev \
+        libjpeg62-turbo-dev \
+        libonig-dev \
+        libpng-dev \
         libpq-dev \
         libzip-dev \
         unzip \
         zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
+        gd \
         intl \
+        mbstring \
         pcntl \
         pdo_pgsql \
         zip \
