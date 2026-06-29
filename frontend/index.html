@@ -3,501 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حمى | العقارات</title>
+    <title>حمى | عقاراتي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
     <style>
-        body { margin: 0; }
-
+        body { margin:0; background:#F8F5F0; }
+        .container { max-width:1100px; margin:0 auto; padding:2rem 1.5rem; }
         .page-header {
-            background:#F8F5F0;
-            padding:2rem 2rem 0.5rem;
-            color:#1B4332;
-            max-width:1200px;
-            margin:0 auto;
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:1.5rem;
         }
-        .page-header h1 { font-size:1.05rem; font-weight:800; margin-bottom:0.25rem; }
-        .page-header p  { color:#6B7280; font-size:0.9rem; }
+        .page-title { font-size:1.5rem; font-weight:900; color:#1B4332; }
+        .btn-add {
+            background:#D4A853; color:#1B4332; border:none;
+            border-radius:10px; padding:0.65rem 1.3rem;
+            font-family:'Cairo',sans-serif; font-weight:700;
+            font-size:0.9rem; cursor:pointer; transition:background 0.2s;
+            display:flex; align-items:center; gap:0.4rem;
+        }
+        .btn-add:hover { background:#F0C97A; }
 
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.2rem;
-            max-width: 1200px;
-            margin: 1rem auto 2rem;
-            padding: 0 1.5rem;
-        }
-
-        .filter-search-wrap {
-            margin:0;
-            padding:1.2rem 1.5rem 0;
-        }
-        .filter-search-bar {
-            width:100%;
-            max-width:980px;
-            margin:0 auto;
-            background:white;
-            color:#6B7280;
-            border:none;
-            border-radius:999px;
-            padding:1.05rem 1.45rem;
-            display:flex;
-            align-items:center;
-            justify-content:flex-start;
-            gap:1.15rem;
+        /* Tabs */
+        .tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
+        .tab {
+            padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem;
+            font-weight:600; cursor:pointer; border:1.5px solid #E5E0D8;
+            background:white; color:#6B7280; transition:all 0.2s;
             font-family:'Cairo',sans-serif;
-            direction:rtl;
-            box-shadow:0 12px 28px rgba(27,67,50,0.18);
         }
-        .filter-search-bar:hover {
-            background:#FFFDF7;
-            box-shadow:0 14px 34px rgba(27,67,50,0.22);
+        .tab.active { background:#1B4332; color:white; border-color:#1B4332; }
+
+        /* Property rows */
+        .prop-row {
+            background:white; border-radius:14px; border:1px solid #E5E0D8;
+            display:flex; gap:1rem; padding:1rem; margin-bottom:0.8rem;
+            align-items:center; transition:box-shadow 0.2s, transform 0.2s;
+            cursor:pointer;
         }
-        .filter-search-main {
-            display:flex;
-            align-items:center;
-            gap:1rem;
-            font-weight:700;
-            font-size:1.05rem;
-            color:#6F6F80;
+        .prop-row:hover { box-shadow:0 4px 16px rgba(27,67,50,0.1); transform:translateY(-2px); }
+        .prop-thumb {
+            width:90px; height:70px; border-radius:10px;
+            background:linear-gradient(135deg,#1B4332,#2D6A4F);
+            overflow:hidden; flex-shrink:0;
         }
-        .filter-search-main i {
-            color:#7EA06C;
-            font-size:1.45rem;
+        .prop-thumb img { width:100%; height:100%; object-fit:cover; }
+        .prop-thumb .no-img {
+            display:flex; align-items:center; justify-content:center;
+            height:100%; font-size:1.5rem; color:rgba(255,255,255,0.2);
         }
-        .filter-search-hint {
-            display:none;
+        .prop-info { flex:1; min-width:0; }
+        .prop-name { font-weight:700; font-size:0.95rem; color:#1A1A1A; margin-bottom:0.2rem; }
+        .prop-loc  { font-size:0.78rem; color:#6B7280; margin-bottom:0.4rem; }
+        .prop-meta { display:flex; gap:0.5rem; flex-wrap:wrap; }
+
+        /* Badges */
+        .badge {
+            font-size:0.72rem; font-weight:700; padding:0.2rem 0.6rem;
+            border-radius:12px; display:inline-flex; align-items:center; gap:0.2rem;
+        }
+        .badge-pending    { background:#FEF3C7; color:#92400E; }
+        .badge-accepted   { background:#D1FAE5; color:#065F46; }
+        .badge-rejected   { background:#FEE2E2; color:#991B1B; }
+        .badge-available  { background:#D1FAE5; color:#065F46; }
+        .badge-booked     { background:#DBEAFE; color:#1E40AF; }
+        .badge-not_available { background:#F3F4F6; color:#374151; }
+
+        .rejection-note {
+            background:#FEF2F2; border:1px solid #FECACA;
+            border-radius:8px; padding:0.5rem 0.8rem;
+            font-size:0.78rem; color:#C0392B; margin-top:0.5rem;
         }
 
-        .filter-modal {
-            position:fixed;
-            inset:0;
-            background:rgba(13,43,31,0.58);
-            z-index:1100;
-            display:none;
-            align-items:flex-start;
-            justify-content:center;
-            padding:5rem 1rem 1.5rem;
-            overflow:auto;
+        /* Toggle availability */
+        .switch { position:relative; width:40px; height:22px; flex-shrink:0; }
+        .switch input { opacity:0; width:0; height:0; }
+        .slider {
+            position:absolute; inset:0; background:#D1D5DB;
+            border-radius:22px; cursor:pointer; transition:0.3s;
         }
-        .filter-modal.show { display:flex; }
-        .filter-panel {
-            width:min(760px,100%);
-            background:white;
-            border-radius:14px;
-            border:1px solid #E5E0D8;
-            box-shadow:0 18px 55px rgba(13,43,31,0.22);
+        .slider:before {
+            content:''; position:absolute;
+            width:16px; height:16px; left:3px; bottom:3px;
+            background:white; border-radius:50%; transition:0.3s;
         }
-        .filter-panel-head {
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            padding:1rem 1.2rem;
-            border-bottom:1px solid #E5E0D8;
-        }
-        .filter-panel-head h3 {
-            margin:0;
-            font-size:1rem;
-            color:#1B4332;
-            display:flex;
-            align-items:center;
-            gap:0.5rem;
-        }
-        .filter-close {
-            width:34px;
-            height:34px;
-            padding:0;
-            border-radius:8px;
-            background:#F8F5F0;
-            color:#1B4332;
-            font-size:1.25rem;
-        }
-        .filter-close:hover { background:#E5E0D8; }
+        input:checked + .slider { background:#1B4332; }
+        input:checked + .slider:before { transform:translateX(18px); }
 
-        /* ── SIDEBAR FILTERS ── */
-        .filters-sidebar {
-            padding: 1.2rem;
+        /* Actions */
+        .prop-actions { display:flex; gap:0.5rem; align-items:center; flex-shrink:0; }
+        .btn-icon {
+            width:34px; height:34px; border-radius:8px; border:none;
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer; font-size:0.85rem; transition:all 0.2s;
         }
-        .filters-sidebar h3 {
-            display:none;
-        }
-        .filter-group { margin-bottom: 1.2rem; }
-        .filter-group label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #6B7280;
-            margin-bottom: 0.4rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .filter-group select,
-        .filter-group input {
-            width: 100%;
-            border: 1.5px solid #E5E0D8;
-            border-radius: 8px;
-            padding: 0.55rem 0.8rem;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.85rem;
-            color: #1A1A1A;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .filter-group select:focus,
-        .filter-group input:focus { border-color: #2D6A4F; }
+        .btn-edit  { background:#EFF6FF; color:#2563EB; }
+        .btn-edit:hover  { background:#DBEAFE; }
+        .btn-delete{ background:#FEF2F2; color:#C0392B; }
+        .btn-delete:hover{ background:#FEE2E2; }
 
-        .price-row { display: flex; gap: 0.5rem; }
-        .price-row input { flex: 1; }
+        .empty-state { text-align:center; padding:4rem; color:#6B7280; }
+        .empty-state i { font-size:3.5rem; color:#E5E0D8; display:block; margin-bottom:1rem; }
+        .empty-state h3 { font-size:1rem; font-weight:700; color:#1A1A1A; margin-bottom:0.5rem; }
 
-        .checkbox-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            cursor: pointer;
+        /* Modal */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.5);
+            display:none; align-items:center; justify-content:center; z-index:9999;
         }
-        .checkbox-item input[type="checkbox"] { accent-color: #1B4332; width: 16px; height: 16px; }
-
-        .btn-filter {
-            width: 100%;
-            background: #1B4332;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.7rem;
-            font-family: 'Cairo', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            transition: background 0.2s;
+        .modal-overlay.show { display:flex; }
+        .modal {
+            background:white; border-radius:16px; padding:1.5rem;
+            width:90%; max-width:400px;
         }
-        .btn-filter:hover { background: #2D6A4F; }
-
-        .btn-reset {
-            width: 100%;
-            background: transparent;
-            color: #6B7280;
-            border: 1px solid #E5E0D8;
-            border-radius: 10px;
-            padding: 0.6rem;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
+        .modal h3 { font-size:1rem; font-weight:700; color:#1B4332; margin-bottom:0.5rem; }
+        .modal p  { color:#6B7280; font-size:0.875rem; margin-bottom:1rem; }
+        .modal-actions { display:flex; gap:0.7rem; }
+        .btn-confirm-delete {
+            flex:1; background:#C0392B; color:white; border:none;
+            border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif;
+            font-weight:700; cursor:pointer;
         }
-
-        /* ── RESULTS ── */
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.2rem;
-        }
-        .results-count {
-            font-size: 0.9rem;
-            color: #6B7280;
-        }
-        .results-count span { font-weight: 700; color: #1B4332; }
-
-        .properties-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.2rem;
-        }
-
-        /* ── PROPERTY CARD ── */
-        .prop-card {
-            background: white;
-            border-radius: 16px;
-            border: 1px solid #E5E0D8;
-            overflow: hidden;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        .prop-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(27,67,50,0.15);
-        }
-        .prop-img {
-            height: 190px;
-            background: linear-gradient(135deg, #1B4332, #2D6A4F);
-            position: relative;
-            overflow: hidden;
-        }
-        .prop-img img { width: 100%; height: 100%; object-fit: cover; }
-        .prop-img .no-img {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            font-size: 3rem;
-            color: rgba(255,255,255,0.15);
-        }
-        .prop-type-badge {
-            position: absolute;
-            top: 0.8rem;
-            right: 0.8rem;
-            background: #D4A853;
-            color: #1B4332;
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 0.25rem 0.7rem;
-            border-radius: 20px;
-        }
-        .prop-fav {
-            position: absolute;
-            top: 0.8rem;
-            left: 0.8rem;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #9CA3AF;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-        .prop-fav:hover, .prop-fav.active { color: #E74C3C; }
-
-        .prop-body { padding: 1rem; }
-        .prop-title {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: #1A1A1A;
-            margin-bottom: 0.3rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .prop-location {
-            color: #6B7280;
-            font-size: 0.8rem;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .prop-location i { color: #2D6A4F; font-size: 0.75rem; }
-        .prop-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-bottom: 0.8rem;
-        }
-        .prop-tag {
-            background: #F8F5F0;
-            color: #6B7280;
-            font-size: 0.72rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        .prop-tag i { color: #2D6A4F; font-size: 0.68rem; }
-        .prop-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 0.7rem;
-            border-top: 1px solid #E5E0D8;
-        }
-        .prop-price { font-weight: 900; font-size: 1.05rem; color: #1B4332; }
-        .prop-price span { font-size: 0.72rem; font-weight: 400; color: #9CA3AF; }
-        .btn-view {
-            background: #1B4332;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.38rem 0.9rem;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-decoration: none;
-        }
-        .btn-view:hover { background: #2D6A4F; color: white; }
-
-        /* skeleton */
-        .skeleton {
-            background: linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
-        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-        .empty-state { text-align: center; padding: 3rem; color: #6B7280; grid-column: 1/-1; }
-        .empty-state i { font-size: 3rem; color: #E5E0D8; display: block; margin-bottom: 1rem; }
-
-        @media(max-width:768px){
-            .main-layout { grid-template-columns: 1fr; }
-            .filter-search-bar { align-items:flex-start; flex-direction:column; }
-            .filter-modal { padding-top:4.5rem; }
+        .btn-cancel-modal {
+            flex:1; background:transparent; color:#6B7280;
+            border:1.5px solid #E5E0D8; border-radius:10px; padding:0.7rem;
+            font-family:'Cairo',sans-serif; cursor:pointer;
         }
     </style>
 </head>
 <body>
 <div id="navbar"></div>
+<div class="container">
+    <div class="page-header">
+        <div class="page-title"><i class="fas fa-building me-2"></i>عقاراتي</div>
+        <button class="btn-add" onclick="window.location.href='property-form.html'">
+            <i class="fas fa-plus"></i> إضافة عقار
+        </button>
+    </div>
 
-<div class="page-header">
-    <h1>الصفحة الرئيسية</h1>
-    <p>تصفح جميع العقارات المعتمدة والمتاحة للإيجار</p>
-</div>
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" onclick="filterTab('all',this)">الكل</button>
+        <button class="tab" onclick="filterTab('pending',this)">بانتظار الموافقة</button>
+        <button class="tab" onclick="filterTab('accepted',this)">مقبولة</button>
+        <button class="tab" onclick="filterTab('rejected',this)">مرفوضة</button>
+    </div>
 
-<div class="filter-search-wrap" id="filters">
-    <button class="filter-search-bar" onclick="openFilters()">
-        <span class="filter-search-main">
-            <i class="fas fa-search"></i>
-            ابحث عن عقارات
-        </span>
-        <span class="filter-search-hint">اختر المحافظة، المدينة، السعر، الغرف والخدمات</span>
-    </button>
-</div>
-
-<div class="filter-modal" id="filter-modal" onclick="if(event.target===this) closeFilters()">
-    <div class="filter-panel">
-        <div class="filter-panel-head">
-            <h3><i class="fas fa-filter"></i>فلترة النتائج</h3>
-            <button class="filter-close" onclick="closeFilters()">×</button>
-        </div>
-        <aside class="filters-sidebar">
-            <h3><i class="fas fa-filter me-2"></i>فلترة النتائج</h3>
-
-            <div class="filter-group">
-                <label>المحافظة</label>
-                <select id="f-gov" onchange="loadCities()">
-                    <option value="">كل المحافظات</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>المدينة</label>
-                <select id="f-city" onchange="loadNeighborhoods()">
-                    <option value="">كل المدن</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>الحي</label>
-                <select id="f-neighborhood">
-                    <option value="">كل الأحياء</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>نوع العقار</label>
-                <select id="f-type">
-                    <option value="">كل الأنواع</option>
-                    <option value="apartment">شقة</option>
-                    <option value="villa">فيلا</option>
-                    <option value="land">أرض</option>
-                    <option value="chalet">شاليه</option>
-                    <option value="commercial">تجاري</option>
-                    <option value="parking">موقف</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>السعر الشهري (₪)</label>
-                <div class="price-row">
-                    <input type="number" id="f-min" placeholder="من">
-                    <input type="number" id="f-max" placeholder="إلى">
-                </div>
-            </div>
-
-            <div class="filter-group">
-                <label>عدد الغرف</label>
-                <select id="f-rooms">
-                    <option value="">أي عدد</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5+</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>حالة العقار</label>
-                <select id="f-damage">
-                    <option value="">الكل</option>
-                    <option value="intact">سليم</option>
-                    <option value="partial">أضرار جزئية</option>
-                    <option value="renovated">مرمم</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>الخدمات</label>
-                <div class="checkbox-group">
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="f-water">
-                        <i class="fas fa-tint" style="color:#2D6A4F"></i> ماء
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="f-electricity">
-                        <i class="fas fa-bolt" style="color:#D4A853"></i> كهرباء
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="f-ready">
-                        <i class="fas fa-check-circle" style="color:#2D6A4F"></i> جاهز للسكن
-                    </label>
-                </div>
-            </div>
-
-            <button class="btn-filter" onclick="applyFilters()">
-                <i class="fas fa-search me-1"></i> بحث
-            </button>
-            <button class="btn-reset" onclick="resetFilters()">
-                إعادة تعيين الفلاتر
-            </button>
-        </aside>
+    <div id="list">
+        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جارٍ التحميل...</p></div>
     </div>
 </div>
 
-<div class="main-layout">
-    <!-- RESULTS -->
-    <div>
-        <div class="results-header">
-            <div class="results-count">
-                عرض <span id="count">0</span> عقار
-            </div>
-        </div>
-        <div class="properties-grid" id="grid">
-            <!-- skeletons -->
-            <div class="prop-card" id="sk1">
-                <div class="skeleton" style="height:190px"></div>
-                <div class="prop-body">
-                    <div class="skeleton mb-2" style="height:18px;width:70%"></div>
-                    <div class="skeleton mb-3" style="height:14px;width:50%"></div>
-                    <div class="skeleton" style="height:14px;width:40%"></div>
-                </div>
-            </div>
-            <div class="prop-card" id="sk2">
-                <div class="skeleton" style="height:190px"></div>
-                <div class="prop-body">
-                    <div class="skeleton mb-2" style="height:18px;width:70%"></div>
-                    <div class="skeleton mb-3" style="height:14px;width:50%"></div>
-                    <div class="skeleton" style="height:14px;width:40%"></div>
-                </div>
-            </div>
-            <div class="prop-card" id="sk3">
-                <div class="skeleton" style="height:190px"></div>
-                <div class="prop-body">
-                    <div class="skeleton mb-2" style="height:18px;width:70%"></div>
-                    <div class="skeleton mb-3" style="height:14px;width:50%"></div>
-                    <div class="skeleton" style="height:14px;width:40%"></div>
-                </div>
-            </div>
+<!-- Delete Modal -->
+<div class="modal-overlay" id="del-modal">
+    <div class="modal">
+        <h3>تأكيد الحذف</h3>
+        <p>هل أنت متأكد من أرشفة هذا العقار؟ لن يظهر للعموم بعد ذلك.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel-modal" onclick="closeModal()">إلغاء</button>
+            <button class="btn-confirm-delete" onclick="confirmDelete()">نعم، أرشفة</button>
         </div>
     </div>
 </div>
@@ -505,150 +169,112 @@
 <script src="js/api.js?v=20260628-absolute-nav"></script>
 <script src="js/navbar.js?v=20260628-live-fixes"></script>
 <script>
-const typeMap    = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
-const damageMap  = {intact:'سليم',partial:'أضرار جزئية',renovated:'مرمم'};
+const statusMap = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض'};
+const availMap  = {available:'متاح',not_available:'غير متاح',booked:'محجوز'};
+const statusBadge = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected'};
+const availBadge  = {available:'badge-available',not_available:'badge-not_available',booked:'badge-booked'};
 
-function openFilters(){
-    document.getElementById('filter-modal').classList.add('show');
+let allProps = [];
+let deleteId = null;
+let currentTab = 'all';
+
+async function loadProperties(){
+    const r = await fetch(BASE_URL+'/host/properties',{headers:authHeaders()});
+    allProps = await r.json();
+    render(allProps);
 }
 
-function closeFilters(){
-    document.getElementById('filter-modal').classList.remove('show');
+function filterTab(status, el){
+    currentTab = status;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    const filtered = status==='all' ? allProps : allProps.filter(p=>p.status===status);
+    render(filtered);
 }
 
-async function loadGovernorates(){
-    const r = await fetch(BASE_URL+'/governorates',{headers:{'Accept':'application/json'}});
-    const data = await r.json();
-    const sel = document.getElementById('f-gov');
-    data.forEach(g => sel.innerHTML += `<option value="${g.id}">${g.name}</option>`);
-}
-
-async function loadCities(){
-    const govId = document.getElementById('f-gov').value;
-    const sel = document.getElementById('f-city');
-    sel.innerHTML = '<option value="">كل المدن</option>';
-    document.getElementById('f-neighborhood').innerHTML = '<option value="">كل الأحياء</option>';
-    if(!govId) return;
-    const r = await fetch(`${BASE_URL}/governorates/${govId}/cities`,{headers:{'Accept':'application/json'}});
-    const data = await r.json();
-    data.forEach(c => sel.innerHTML += `<option value="${c.id}">${c.name}</option>`);
-}
-
-async function loadNeighborhoods(){
-    const cityId = document.getElementById('f-city').value;
-    const sel = document.getElementById('f-neighborhood');
-    sel.innerHTML = '<option value="">كل الأحياء</option>';
-    if(!cityId) return;
-    const r = await fetch(`${BASE_URL}/cities/${cityId}/neighborhoods`,{headers:{'Accept':'application/json'}});
-    const data = await r.json();
-    data.forEach(n => sel.innerHTML += `<option value="${n.id}">${n.name}</option>`);
-}
-
-function buildParams(){
-    const p = {};
-    const gov  = document.getElementById('f-gov').value;
-    const city = document.getElementById('f-city').value;
-    const nbr  = document.getElementById('f-neighborhood').value;
-    const type = document.getElementById('f-type').value;
-    const min  = document.getElementById('f-min').value;
-    const max  = document.getElementById('f-max').value;
-    const rooms= document.getElementById('f-rooms').value;
-    const dmg  = document.getElementById('f-damage').value;
-    if(gov)  p.governorate_id  = gov;
-    if(city) p.city_id         = city;
-    if(nbr)  p.neighborhood_id = nbr;
-    if(type) p.type            = type;
-    if(min)  p.min_price       = min;
-    if(max)  p.max_price       = max;
-    if(rooms)p.rooms           = rooms;
-    if(dmg)  p.damage_status   = dmg;
-    if(document.getElementById('f-water').checked)       p.has_water       = true;
-    if(document.getElementById('f-electricity').checked) p.has_electricity = true;
-    if(document.getElementById('f-ready').checked)       p.is_ready        = true;
-    return p;
-}
-
-async function loadProperties(params={}){
-    const qs = new URLSearchParams(params).toString();
-    const r = await fetch(`${BASE_URL}/properties?${qs}`,{headers:{'Accept':'application/json'}});
-    return await r.json();
-}
-
-function renderCard(p){
-    const role  = localStorage.getItem('role');
-    const token = localStorage.getItem('token');
-    const main  = p.images?.find(i=>i.is_main) || p.images?.[0];
-    const img   = main ? `<img src="${main.url}" alt="${p.title}" loading="lazy">` : `<div class="no-img"><i class="fas fa-building"></i></div>`;
-    const fav   = role !== 'host' ? `<button class="prop-fav" onclick="event.stopPropagation();toggleFav(${p.id},this)" title="أضف للمفضلة"><i class="fas fa-heart"></i></button>` : '';
-    const loc   = [p.governorate?.name, p.city?.name, p.neighborhood?.name].filter(Boolean).join(' - ') || 'غير محدد';
-    return `
-    <div class="prop-card" onclick="window.location.href='property-details.html?id=${p.id}'">
-        <div class="prop-img">
-            ${img}
-            <span class="prop-type-badge">${typeMap[p.type]||p.type}</span>
-            ${fav}
-        </div>
-        <div class="prop-body">
-            <div class="prop-title">${p.title}</div>
-            <div class="prop-location"><i class="fas fa-map-marker-alt"></i>${loc}</div>
-            <div class="prop-tags">
-                ${p.rooms?`<span class="prop-tag"><i class="fas fa-door-open"></i>${p.rooms} غرف</span>`:''}
-                ${p.area_m2?`<span class="prop-tag"><i class="fas fa-ruler-combined"></i>${p.area_m2}م²</span>`:''}
-                ${p.has_water?`<span class="prop-tag"><i class="fas fa-tint"></i>ماء</span>`:''}
-                ${p.has_electricity?`<span class="prop-tag"><i class="fas fa-bolt"></i>كهرباء</span>`:''}
-                <span class="prop-tag"><i class="fas fa-hard-hat"></i>${damageMap[p.damage_status]||p.damage_status}</span>
-            </div>
-            <div class="prop-footer">
-                <div class="prop-price">${Number(p.price).toLocaleString('ar')} ₪ <span>/ شهر</span></div>
-                <a class="btn-view" href="property-details.html?id=${p.id}" onclick="event.stopPropagation()">عرض</a>
-            </div>
-        </div>
-    </div>`;
-}
-
-async function applyFilters(){
-    const params = buildParams();
-    ['sk1','sk2','sk3'].forEach(id=>{const e=document.getElementById(id);if(e)e.remove();});
-    document.getElementById('grid').innerHTML = '';
-    const data = await loadProperties(params);
-    document.getElementById('count').textContent = data.length;
-    if(!data.length){
-        document.getElementById('grid').innerHTML = `<div class="empty-state"><i class="fas fa-building"></i><p>لا توجد عقارات تطابق الفلاتر</p></div>`;
-        closeFilters();
-        return;
+function render(list){
+    const el = document.getElementById('list');
+    if(!list.length){
+        el.innerHTML=`<div class="empty-state">
+            <i class="fas fa-home"></i>
+            <h3>لا توجد عقارات</h3>
+            <p>اضغط على "إضافة عقار" لإضافة عقارك الأول</p>
+        </div>`; return;
     }
-    data.forEach(p => document.getElementById('grid').innerHTML += renderCard(p));
-    closeFilters();
+    el.innerHTML = list.map(p=>{
+        const main = p.images?.find(i=>i.is_main)||p.images?.[0];
+        const img  = main ? `<img src="${main.url}" alt="">` : `<div class="no-img"><i class="fas fa-building"></i></div>`;
+        const loc  = [p.governorate?.name, p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
+        const canToggle = p.status==='accepted' && p.availability!=='booked';
+        const isAvail   = p.availability==='available';
+        return `
+        <div class="prop-row" onclick="window.location.href='property-details.html?id=${p.id}'">
+            <div class="prop-thumb">${img}</div>
+            <div class="prop-info">
+                <div class="prop-name">${p.title}</div>
+                <div class="prop-loc"><i class="fas fa-map-marker-alt me-1"></i>${loc}</div>
+                <div class="prop-meta">
+                    <span class="badge ${statusBadge[p.status]}">${statusMap[p.status]}</span>
+                    <span class="badge ${availBadge[p.availability]}">${availMap[p.availability]}</span>
+                    <span style="font-size:0.8rem;color:#6B7280;">${Number(p.price).toLocaleString('ar')} ₪/شهر</span>
+                </div>
+                ${p.status==='rejected'&&p.rejection_reason?`<div class="rejection-note"><i class="fas fa-exclamation-circle me-1"></i>${p.rejection_reason}</div>`:''}
+            </div>
+            ${canToggle?`
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;" onclick="event.stopPropagation()">
+                <label class="switch">
+                    <input type="checkbox" ${isAvail?'checked':''} onchange="toggleAvail(${p.id},this)">
+                    <span class="slider"></span>
+                </label>
+                <span style="font-size:0.65rem;color:#6B7280;">${isAvail?'متاح':'مخفي'}</span>
+            </div>`:''}
+            <div class="prop-actions">
+                <button class="btn-icon btn-edit" title="تعديل" onclick="event.stopPropagation(); window.location.href='property-form.html?id=${p.id}'">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon btn-delete" title="أرشفة" onclick="event.stopPropagation(); openModal(${p.id})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>`;
+    }).join('');
 }
 
-function resetFilters(){
-    ['f-gov','f-city','f-neighborhood','f-type','f-rooms','f-damage'].forEach(id=>document.getElementById(id).value='');
-    ['f-min','f-max'].forEach(id=>document.getElementById(id).value='');
-    ['f-water','f-electricity','f-ready'].forEach(id=>document.getElementById(id).checked=false);
-    document.getElementById('f-city').innerHTML='<option value="">كل المدن</option>';
-    document.getElementById('f-neighborhood').innerHTML='<option value="">كل الأحياء</option>';
-    applyFilters();
-}
-
-async function toggleFav(id, btn){
-    if(!localStorage.getItem('token')){
-        const redirect = `property-details.html?id=${id}`;
-        window.location.href = `tenant-login.html?redirect=${encodeURIComponent(redirect)}`;
-        return;
-    }
-    const active = btn.classList.contains('active');
-    if(active){
-        const r = await fetch(`${BASE_URL}/tenant/favorites/${id}`,{method:'DELETE',headers:authHeaders()});
-        if(r.ok) btn.classList.remove('active');
+async function toggleAvail(id, el){
+    const r = await fetch(`${BASE_URL}/host/properties/${id}/availability`,{
+        method:'PATCH', headers:authHeaders()
+    });
+    if(!r.ok){
+        el.checked = !el.checked;
+        alert('لا يمكن تغيير الإتاحة');
     } else {
-        const r = await fetch(`${BASE_URL}/tenant/favorites`,{method:'POST',headers:authHeaders(),body:JSON.stringify({property_id:id})});
-        if(r.ok) btn.classList.add('active');
+        const p = allProps.find(x=>x.id===id);
+        if(p) p.availability = el.checked?'available':'not_available';
     }
 }
 
-// Init
-loadGovernorates();
-applyFilters();
+function openModal(id){ deleteId=id; document.getElementById('del-modal').classList.add('show'); }
+function closeModal(){ deleteId=null; document.getElementById('del-modal').classList.remove('show'); }
+
+async function confirmDelete(){
+    if(!deleteId) return;
+    const idToDelete = deleteId;
+    const r = await fetch(`${BASE_URL}/host/properties/${deleteId}`,{
+        method:'DELETE', headers:authHeaders()
+    });
+    closeModal();
+    if(r.ok){
+        allProps = allProps.filter(p=>p.id!==idToDelete);
+        filterTab(currentTab,document.querySelector('.tab.active'));
+        return;
+    }
+
+    const data = await r.json().catch(()=>({}));
+    alert(data.message || 'لا يمكن أرشفة هذا العقار الآن');
+}
+
+requireAuth('host-login.html');
+loadProperties();
 </script>
 </body>
 </html>

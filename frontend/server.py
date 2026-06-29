@@ -5,6 +5,14 @@ import http.server, os, sys
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
 
 class Handler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/':
+            self.send_response(302)
+            self.send_header('Location', '/properties.html')
+            self.end_headers()
+            return
+        super().do_GET()
+
     def send_error(self, code, message=None, explain=None):
         if code == 404:
             self.send_response(404)
