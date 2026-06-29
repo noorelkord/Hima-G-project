@@ -13,6 +13,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         // Reset Password
         ResetPassword::createUrlUsing(function ($user, string $token) {
             return rtrim(config('app.frontend_url'), '/') . '/reset-password.html'
