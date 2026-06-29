@@ -1,4 +1,12 @@
-const BASE_URL = window.API_BASE_URL || "http://127.0.0.1:8000/api";
+const LOCAL_API_BASE_URL = "http://127.0.0.1:8000/api";
+const PRODUCTION_API_BASE_URL = "https://hima-vegg.onrender.com/api";
+
+const isLocalFrontend =
+    window.location.protocol === "file:" ||
+    ["localhost", "127.0.0.1", ""].includes(window.location.hostname);
+
+const BASE_URL = window.API_BASE_URL ||
+    (isLocalFrontend ? LOCAL_API_BASE_URL : PRODUCTION_API_BASE_URL);
 
 function appUrl(path){
     const frontendOrigin = window.location.protocol === "file:"
