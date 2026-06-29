@@ -26,7 +26,7 @@ class BookingController extends Controller
         // تحقق من اكتمال البيانات
         if (!$request->user()->isTenantReady()) {
             return response()->json([
-                'message'  => 'Please complete your profile before booking.',
+                'message'  => 'يرجى إكمال ملفك الشخصي قبل الحجز.',
                 'redirect' => 'profile/complete',
             ], 403);
         }
@@ -41,7 +41,7 @@ class BookingController extends Controller
         // Only available properties can be booked
         if ($property->status !== 'accepted' || $property->availability !== 'available') {
             return response()->json([
-                'message' => 'This property is not available for booking.',
+                'message' => 'هذا العقار غير متاح للحجز.',
             ], 403);
         }
 
@@ -53,7 +53,7 @@ class BookingController extends Controller
 
         if ($exists) {
             return response()->json([
-                'message' => 'You already have a pending booking request for this property.',
+                'message' => 'لديك بالفعل طلب حجز معلق لهذا العقار.',
             ], 403);
         }
 
@@ -74,7 +74,7 @@ class BookingController extends Controller
             $booking->id
         );
         return response()->json([
-            'message' => 'Booking request submitted successfully.',
+            'message' => 'تم إرسال طلب الحجز بنجاح.',
             'booking' => $booking,
         ], 201);
     }
@@ -97,7 +97,7 @@ class BookingController extends Controller
 
         if ($booking->status !== 'pending') {
             return response()->json([
-                'message' => 'Only pending bookings can be edited.',
+                'message' => 'يمكن تعديل الحجوزات المعلقة فقط.',
             ], 403);
         }
 
@@ -113,9 +113,9 @@ $endDate   = $data['end_date']   ?? $booking->end_date->format('Y-m-d');
 // Validate that end_date is always after start_date
 if ($endDate <= $startDate) {
     return response()->json([
-        'message' => 'The end date must be a date after the start date.',
+        'message' => 'يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية.',
         'errors'  => [
-            'end_date' => ['The end date must be a date after the start date.'],
+            'end_date' => ['يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية.'],
         ],
     ], 422);
 }
@@ -133,7 +133,7 @@ $booking->update($data);
             $booking->id
         );
         return response()->json([
-            'message' => 'Booking updated successfully.',
+            'message' => 'تم تحديث الحجز بنجاح.',
             'booking' => $booking,
         ]);
     }
@@ -146,7 +146,7 @@ $booking->update($data);
 
         if ($booking->status !== 'pending') {
             return response()->json([
-                'message' => 'Only pending bookings can be cancelled.',
+                'message' => 'يمكن إلغاء الحجوزات المعلقة فقط.',
             ], 403);
         }
 
@@ -161,7 +161,7 @@ $booking->update($data);
             $booking->id
         );
         return response()->json([
-            'message' => 'Booking cancelled successfully.',
+            'message' => 'تم إلغاء الحجز بنجاح.',
         ]);
     }
 }

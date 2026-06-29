@@ -72,7 +72,7 @@ class BookingController extends Controller
         }
 
         return response()->json([
-            'message' => "Archived {$count} stale pending bookings.",
+            'message' => "تم أرشفة {$count} حجز معلق قديم.",
             'count'   => $count,
         ]);
     }

@@ -34,7 +34,7 @@ class BookingController extends Controller
 
         if ($booking->status !== 'pending') {
             return response()->json([
-                'message' => 'Only pending bookings can be accepted.',
+                'message' => 'يمكن قبول الحجوزات المعلقة فقط.',
             ], 403);
         }
 
@@ -140,7 +140,7 @@ class BookingController extends Controller
         );
 
         return response()->json([
-            'message'     => 'Booking accepted and contract created.',
+            'message'     => 'تم قبول الحجز وإنشاء العقد.',
             'booking'     => $booking,
             'contract'    => [
                 'id'         => $contract->id,
@@ -183,7 +183,7 @@ class BookingController extends Controller
 
         if ($booking->status !== 'pending') {
             return response()->json([
-                'message' => 'Only pending bookings can be rejected.',
+                'message' => 'يمكن رفض الحجوزات المعلقة فقط.',
             ], 403);
         }
 
@@ -199,7 +199,7 @@ class BookingController extends Controller
         );
 
         return response()->json([
-            'message' => 'Booking rejected.',
+            'message' => 'تم رفض الحجز.',
             'booking' => $booking,
         ]);
     }

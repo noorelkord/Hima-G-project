@@ -81,16 +81,16 @@ class PropertyController extends Controller
 
         if (!$property->host->phone) {
             return response()->json([
-                'message' => 'Host has no phone number listed.',
+                'message' => 'المضيف لم يُدرج رقم هاتف.',
             ], 404);
         }
 
-        $message = "Hello, I found your property on Hima platform and I'm interested:\n\n"
-            . "Property: {$property->title}\n"
-            . "Location: {$property->location}\n"
-            . "Price: {$property->price} per month\n"
-            . "Type: {$property->type}\n\n"
-            . "Can we discuss more details?";
+        $message = "مرحباً، وجدت عقارك على منصة حمى وأنا مهتم:\n\n"
+            . "العقار: {$property->title}\n"
+            . "الموقع: {$property->location}\n"
+            . "السعر: {$property->price} شهرياً\n"
+            . "النوع: {$property->type}\n\n"
+            . "هل يمكننا مناقشة التفاصيل؟";
 
         $phone = preg_replace('/[^0-9+]/', '', $property->host->phone);
 

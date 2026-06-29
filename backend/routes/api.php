@@ -91,7 +91,7 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
 
 Route::post('/email/resend', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
-    return response()->json(['message' => 'Verification link resent.']);
+    return response()->json(['message' => 'تم إعادة إرسال رابط التفعيل.']);
 })->middleware(['auth:sanctum', 'throttle:6,1']);
 
 Route::post('/email/resend-public', function (Request $request) {
@@ -100,7 +100,7 @@ Route::post('/email/resend-public', function (Request $request) {
     $user = User::where('email', $request->email)->first();
 
     if (!$user) {
-        return response()->json(['message' => 'Verification link sent if account exists.']);
+        return response()->json(['message' => 'سيتم إرسال رابط التفعيل إذا كان الحساب موجوداً.']);
     }
 
     if ($user->hasVerifiedEmail()) {
@@ -109,7 +109,7 @@ Route::post('/email/resend-public', function (Request $request) {
 
     $user->sendEmailVerificationNotification();
 
-    return response()->json(['message' => 'Verification link resent.']);
+    return response()->json(['message' => 'تم إعادة إرسال رابط التفعيل.']);
 })->middleware('throttle:6,1');
 
 // =====================

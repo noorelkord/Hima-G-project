@@ -43,7 +43,7 @@ class PropertyImageController extends Controller
         }
 
         return response()->json([
-            'message' => 'Images uploaded successfully.',
+            'message' => 'تم رفع الصور بنجاح.',
             'images'  => $uploaded,
         ], 201);
     }
@@ -64,7 +64,7 @@ class PropertyImageController extends Controller
         $image->update(['is_main' => true]);
 
         return response()->json([
-            'message' => 'Main image updated.',
+            'message' => 'تم تحديث الصورة الرئيسية.',
         ]);
     }
 
@@ -88,7 +88,7 @@ class PropertyImageController extends Controller
         }
 
         return response()->json([
-            'message' => 'Image deleted successfully.',
+            'message' => 'تم حذف الصورة بنجاح.',
         ]);
     }
 

@@ -246,7 +246,8 @@ async function toggleAvail(id, el){
     });
     if(!r.ok){
         el.checked = !el.checked;
-        alert('لا يمكن تغيير الإتاحة');
+        const data = await r.json().catch(()=>({}));
+        alert(data.message || 'لا يمكن تغيير الإتاحة');
     } else {
         const p = allProps.find(x=>x.id===id);
         if(p) p.availability = el.checked?'available':'not_available';

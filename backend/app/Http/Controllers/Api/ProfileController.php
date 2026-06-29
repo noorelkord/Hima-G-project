@@ -14,7 +14,7 @@ class ProfileController extends Controller
         // if the info is already completed 
         if ($user->isProfileComplete()) {
             return response()->json([
-                'message' => 'Profile is already complete.',
+                'message' => 'الملف الشخصي مكتمل مسبقاً.',
             ], 200);
         }
         $data = $request->validate([
@@ -26,7 +26,7 @@ class ProfileController extends Controller
         ], $this->validationMessages());
         $user->update($data);
         return response()->json([
-            'message'             => 'Profile completed successfully.',
+            'message'             => 'تم إكمال الملف الشخصي بنجاح.',
             'user'                => $user,
             'is_profile_complete' => $user->isProfileComplete(),
         ]);
@@ -49,7 +49,7 @@ class ProfileController extends Controller
         $user->update($data);
 
         return response()->json([
-            'message'             => 'Profile updated successfully.',
+            'message'             => 'تم تحديث الملف الشخصي بنجاح.',
             'user'                => $user,
             'is_profile_complete' => $user->isProfileComplete(),
         ]);
@@ -67,7 +67,7 @@ class ProfileController extends Controller
 
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json([
-                'message' => 'Current password is incorrect.',
+                'message' => 'كلمة المرور الحالية غير صحيحة.',
             ], 403);
         }
 
@@ -75,7 +75,7 @@ class ProfileController extends Controller
 
         $user->tokens()->delete();
 
-        return response()->json(['message' => 'Password changed successfully.']);
+        return response()->json(['message' => 'تم تغيير كلمة المرور بنجاح.']);
     }
 
     // change the email
@@ -90,7 +90,7 @@ class ProfileController extends Controller
 
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json([
-                'message' => 'Current password is incorrect.',
+                'message' => 'كلمة المرور الحالية غير صحيحة.',
             ], 403);
         }
 
@@ -104,7 +104,7 @@ class ProfileController extends Controller
         $user->tokens()->delete();
 
         return response()->json([
-            'message' => 'Email updated. Please verify your new email.',
+            'message' => 'تم تحديث البريد الإلكتروني. يرجى تفعيل بريدك الجديد.',
         ]);
     }
 
@@ -113,6 +113,8 @@ class ProfileController extends Controller
         return [
             'phone.regex'       => 'رقم الهاتف يجب أن يبدأ بـ +970 أو +972 ويتكون من 13 رقماً (مثال: +970599123456).',
             'national_id.regex' => 'رقم الهوية يجب أن يتكون من 9 أرقام ويبدأ بالرقم 4.',
+            'password.min'      => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.',
+            'password.confirmed'=> 'تأكيد كلمة المرور غير متطابق.',
         ];
     }
 }

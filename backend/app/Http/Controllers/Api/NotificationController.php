@@ -27,7 +27,7 @@ class NotificationController extends Controller
         $notification->update(['is_read' => true]);
 
         return response()->json([
-            'message' => 'Notification marked as read.',
+            'message' => 'تم تعيين الإشعار كمقروء.',
         ]);
     }
 
@@ -39,7 +39,7 @@ class NotificationController extends Controller
             ->update(['is_read' => true]);
 
         return response()->json([
-            'message' => 'All notifications marked as read.',
+            'message' => 'تم تعيين جميع الإشعارات كمقروءة.',
         ]);
     }
 

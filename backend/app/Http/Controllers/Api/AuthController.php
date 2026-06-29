@@ -29,7 +29,7 @@ class AuthController extends Controller
         event(new Registered($user));
 
         return response()->json([
-            'message' => 'Account created. Please verify your email.',
+            'message' => 'تم إنشاء الحساب. يرجى تفعيل بريدك الإلكتروني.',
         ], 201);
     }
 
@@ -39,13 +39,13 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
         if (!Auth::guard('web')->attempt($credentials)) {
-            return response()->json(['message' => 'Invalid credentials.'], 401);
+            return response()->json(['message' => 'بيانات الدخول غير صحيحة.'], 401);
         }
         
         $user = Auth::guard('web')->user();
 
         if (!$user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Please verify your email first.'], 403);
+            return response()->json(['message' => 'يرجى تفعيل بريدك الإلكتروني أولاً.'], 403);
         }
         $user->tokens()->delete();
         $token = $user->createToken(
@@ -67,7 +67,7 @@ class AuthController extends Controller
     {
        
         $request->user()->tokens()->delete();
-        return response()->json(['message' => 'Logged out successfully.']);
+        return response()->json(['message' => 'تم تسجيل الخروج بنجاح.']);
     }
 
     public function me(Request $request)

@@ -36,7 +36,7 @@ class FavoriteController extends Controller
 
         if ($exists) {
             return response()->json([
-                'message' => 'Property already in favorites.',
+                'message' => 'العقار موجود في المفضلة مسبقاً.',
             ], 403);
         }
 
@@ -46,7 +46,7 @@ class FavoriteController extends Controller
         ]);
 
         return response()->json([
-            'message'  => 'Property added to favorites.',
+            'message'  => 'تمت إضافة العقار إلى المفضلة.',
             'favorite' => $favorite,
         ], 201);
     }
@@ -61,7 +61,7 @@ class FavoriteController extends Controller
         $favorite->delete();
 
         return response()->json([
-            'message' => 'Property removed from favorites.',
+            'message' => 'تمت إزالة العقار من المفضلة.',
         ]);
     }
 }

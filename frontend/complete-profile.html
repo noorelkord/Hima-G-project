@@ -125,6 +125,37 @@ body{
     color:#8A8F98;
     font-size:0.74rem;
 }
+.phone-input-row{
+    display:flex;
+    direction:ltr;
+    border:1.5px solid #E5E0D8;
+    border-radius:10px;
+    overflow:hidden;
+    transition:border-color 0.2s, box-shadow 0.2s;
+}
+.phone-input-row:focus-within{
+    border-color:#2D6A4F;
+    box-shadow:0 0 0 3px rgba(45,106,79,0.1);
+}
+.phone-input-row select{
+    flex-shrink:0;
+    border:none;
+    border-left:1.5px solid #E5E0D8;
+    padding:0.78rem 0.5rem 0.78rem 0.8rem;
+    font-family:'Cairo',sans-serif;
+    font-size:0.92rem;
+    outline:none;
+    background:#F8F5F0;
+    cursor:pointer;
+    color:#1a1a1a;
+}
+.phone-input-row input{
+    flex:1;
+    border:none !important;
+    box-shadow:none !important;
+    border-radius:0 !important;
+    padding:0.78rem 0.95rem;
+}
 #msg{
     margin-bottom:1rem;
 }
@@ -211,9 +242,15 @@ body{
                     <span class="hint">9 أرقام وتبدأ بالرقم 4</span>
                 </div>
                 <div class="form-group">
-                    <label for="phone">رقم الهاتف</label>
-                    <input id="phone" type="tel" maxlength="13" placeholder="+970XXXXXXXXX أو +972XXXXXXXXX">
-                    <span class="hint">ابدأ بـ +970 (فلسطين) أو +972 — مثال: +970599123456</span>
+                    <label for="phone_number">رقم الهاتف</label>
+                    <div class="phone-input-row">
+                        <select id="dial_code">
+                            <option value="+970" selected>+970</option>
+                            <option value="+972">+972</option>
+                        </select>
+                        <input id="phone_number" type="tel" inputmode="numeric" maxlength="9" placeholder="599123456">
+                    </div>
+                    <span class="hint">أدخل الرقم بدون الصفر — مثال: 599123456</span>
                 </div>
             </div>
 
@@ -237,10 +274,10 @@ const body={
     third_name:third_name.value.trim(),
     last_name:last_name.value.trim(),
     national_id:national_id.value.trim(),
-    phone:phone.value.trim()
+    phone:(()=>{let n=phone_number.value.trim();if(n.startsWith('0'))n=n.slice(1);return dial_code.value+n;})()
 };
 
-if(!body.second_name || !body.third_name || !body.last_name || !body.national_id || !body.phone){
+if(!body.second_name || !body.third_name || !body.last_name || !body.national_id || !phone_number.value.trim()){
     msg.innerHTML='<div class="error">يرجى ملء جميع الحقول</div>';
     return;
 }
@@ -251,7 +288,7 @@ if(!/^4\d{8}$/.test(body.national_id)){
 }
 
 if(!/^\+(970|972)\d{9}$/.test(body.phone)){
-    msg.innerHTML='<div class="error">رقم الهاتف يجب أن يبدأ بـ +970 أو +972 ويتكون من 13 رقماً — مثال: +970599123456</div>';
+    msg.innerHTML='<div class="error">رقم الهاتف يجب أن يتكون من 9 أرقام — مثال: 599123456</div>';
     return;
 }
 

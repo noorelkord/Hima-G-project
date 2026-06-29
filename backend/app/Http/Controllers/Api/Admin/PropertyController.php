@@ -35,7 +35,7 @@ class PropertyController extends Controller
         $property = Property::findOrFail($id);
         if (!in_array($property->status, ['pending', 'rejected'])) {
               return response()->json([
-             'message' => 'Only pending or rejected properties can be accepted.',
+             'message' => 'يمكن قبول العقارات المعلقة أو المرفوضة فقط.',
              ], 403);
     }
         $property->update([
@@ -53,7 +53,7 @@ class PropertyController extends Controller
         );
 
         return response()->json([
-            'message'  => 'Property accepted and is now live.',
+            'message'  => 'تم قبول العقار وهو متاح الآن.',
             'property' => $property,
         ]);
     }
@@ -63,13 +63,13 @@ class PropertyController extends Controller
         $property = Property::findOrFail($id);
         if (!in_array($property->status, ['pending', 'accepted'])) {
             return response()->json([
-                'message' => 'Only pending or accepted properties can be rejected.',
+                'message' => 'يمكن رفض العقارات المعلقة أو المقبولة فقط.',
                 ], 403);
         }
         // Cannot reject if booked (active contract)
         if ($property->availability === 'booked') {
             return response()->json([
-                'message' => 'Cannot reject a property with an active contract.',
+                'message' => 'لا يمكن رفض عقار له عقد نشط.',
             ], 403);
         }
         $data = $request->validate([
@@ -101,7 +101,7 @@ class PropertyController extends Controller
             $property->id
         );
         return response()->json([
-            'message'  => 'Property rejected.',
+            'message'  => 'تم رفض العقار.',
             'property' => $property,
         ]);
     }
@@ -113,14 +113,14 @@ class PropertyController extends Controller
 
         if ($property->availability === 'booked') {
             return response()->json([
-                'message' => 'Cannot delete a booked property.',
+                'message' => 'لا يمكن حذف عقار محجوز.',
             ], 403);
         }
 
         $property->delete();
 
         return response()->json([
-            'message' => 'Property archived successfully.',
+            'message' => 'تم أرشفة العقار بنجاح.',
         ]);
     }
 }

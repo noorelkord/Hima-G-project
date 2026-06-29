@@ -20,11 +20,11 @@ class PasswordResetController extends Controller {
         );
         if ($status === Password::RESET_LINK_SENT) {
             return response()->json([
-                'message' => 'Password reset link sent to your email.',
+                'message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.',
             ]);
         }
         return response()->json([
-            'message' => 'Unable to send reset link.',
+            'message' => 'تعذر إرسال رابط إعادة التعيين.',
         ], 400);
     }
     // Reset password using token
@@ -46,11 +46,11 @@ class PasswordResetController extends Controller {
         );
         if ($status === Password::PASSWORD_RESET) {
             return response()->json([
-                'message' => 'Password reset successfully.',
+                'message' => 'تم إعادة تعيين كلمة المرور بنجاح.',
             ]);
         }
         return response()->json([
-            'message' => 'Invalid or expired token.',
+            'message' => 'رمز غير صالح أو منتهي الصلاحية.',
         ], 400);
     }
 }

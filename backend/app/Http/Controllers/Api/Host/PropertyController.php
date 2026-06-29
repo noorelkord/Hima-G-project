@@ -25,7 +25,7 @@ class PropertyController extends Controller
         // تحقق من اكتمال البيانات
         if (!$request->user()->isHostReady()) {
             return response()->json([
-                'message'  => 'Please complete your profile before listing a property.',
+                'message'  => 'يرجى إكمال ملفك الشخصي قبل إضافة عقار.',
                 'redirect' => 'profile/complete',
             ], 403);
         }
@@ -64,7 +64,7 @@ class PropertyController extends Controller
             );
         }
         return response()->json([
-            'message'  => 'Property submitted successfully. Waiting for admin approval.',
+            'message'  => 'تم تقديم العقار بنجاح. بانتظار موافقة الإدارة.',
             'property' => $property,
         ], 201);
     }
@@ -88,7 +88,7 @@ class PropertyController extends Controller
         // Cannot edit if booked
         if ($property->availability === 'booked') {
             return response()->json([
-                'message' => 'Cannot edit a booked property.',
+                'message' => 'لا يمكن تعديل عقار محجوز.',
             ], 403);
         }
 
@@ -149,7 +149,7 @@ $property->update($data);
             }
         }
         return response()->json([
-            'message'  => 'Property updated successfully.',
+            'message'  => 'تم تحديث العقار بنجاح.',
             'property' => $property,
         ]);
     }
@@ -162,13 +162,13 @@ $property->update($data);
 
         if ($property->status !== 'accepted') {
             return response()->json([
-                'message' => 'Property must be accepted before changing availability.',
+                'message' => 'يجب قبول العقار قبل تغيير الإتاحة.',
             ], 403);
         }
 
         if ($property->availability === 'booked') {
             return response()->json([
-                'message' => 'Cannot change availability of a booked property.',
+                'message' => 'لا يمكن تغيير إتاحة عقار محجوز.',
             ], 403);
         }
 
@@ -179,7 +179,7 @@ $property->update($data);
         $property->save();
 
         return response()->json([
-            'message'      => 'Availability updated.',
+            'message'      => 'تم تحديث الإتاحة.',
             'availability' => $property->availability,
         ]);
     }
@@ -192,14 +192,14 @@ $property->update($data);
 
         if ($property->availability === 'booked') {
             return response()->json([
-                'message' => 'Cannot delete a booked property.',
+                'message' => 'لا يمكن حذف عقار محجوز.',
             ], 403);
         }
 
         $property->delete();
 
         return response()->json([
-            'message' => 'Property archived successfully.',
+            'message' => 'تم أرشفة العقار بنجاح.',
         ]);
     }
 }
