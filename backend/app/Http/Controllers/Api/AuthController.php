@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -38,11 +38,11 @@ class AuthController extends Controller
             'email'    => 'required|email',
             'password' => 'required|string',
         ]);
-        if (!Auth::guard('web')->attempt($credentials)) {
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json(['message' => 'بيانات الدخول غير صحيحة.'], 401);
         }
-        
-        $user = Auth::guard('web')->user();
 
         if (!$user->hasVerifiedEmail()) {
             return response()->json(['message' => 'يرجى تفعيل بريدك الإلكتروني أولاً.'], 403);
