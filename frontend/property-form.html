@@ -52,9 +52,10 @@
             position:relative;
         }
         .input-with-unit input {
-            padding-inline-end:4.4rem;
+            padding-inline-start:4.8rem;
+            padding-inline-end:0.9rem;
             direction:ltr;
-            text-align:right;
+            text-align:left;
         }
         .input-with-unit .unit {
             position:absolute;
@@ -321,7 +322,17 @@ let savedPropertyId = null;
 function bindNumericInput(id){
     const input = document.getElementById(id);
     input.addEventListener('input', () => {
-        input.value = input.value.replace(/[^\d]/g, '');
+        input.value = normalizeDigits(input.value).replace(/[^\d]/g, '');
+    });
+}
+
+function normalizeDigits(value){
+    const arabicDigits = '٠١٢٣٤٥٦٧٨٩';
+    const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+    return String(value).replace(/[٠-٩۰-۹]/g, digit => {
+        const arabicIndex = arabicDigits.indexOf(digit);
+        if(arabicIndex !== -1) return arabicIndex;
+        return persianDigits.indexOf(digit);
     });
 }
 
