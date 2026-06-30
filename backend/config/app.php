@@ -54,7 +54,15 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    'frontend_url' => env('FRONTEND_URL', 'http://127.0.0.1:8080'),
+    'frontend_url' => (function () {
+        $frontendUrl = env('FRONTEND_URL', 'https://hima.noorjkord.workers.dev');
+
+        if (str_contains($frontendUrl, 'your-cloudflare-pages-url.pages.dev')) {
+            return 'https://hima.noorjkord.workers.dev';
+        }
+
+        return $frontendUrl;
+    })(),
 
     /*
     |--------------------------------------------------------------------------
