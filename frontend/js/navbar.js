@@ -73,7 +73,7 @@ function renderNavbar() {
     const drawerLabel = token ? (roleMap[role] || role) : 'زائر';
     const drawerName = token ? (name || drawerLabel) : 'حمى';
     const helpText = token ? 'تحتاج مساعدة؟ تواصل مع الدعم' : 'تصفح العقارات كزائر أو سجّل للمتابعة';
-    const homeHref = token && role === 'tenant' ? 'tenant-properties.html' : token && role === 'host' ? 'host-properties.html' : 'properties.html';
+    const homeHref = token && role === 'admin' ? 'admin-dashboard.html' : token && role === 'tenant' ? 'tenant-properties.html' : token && role === 'host' ? 'host-properties.html' : 'properties.html';
 
     navbar.innerHTML = `
         <nav class="site-nav">
