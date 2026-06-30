@@ -145,8 +145,8 @@ class BookingController extends Controller
             'contract'    => [
                 'id'         => $contract->id,
                 'booking_id' => $contract->booking_id,
-                'start_date' => $contract->start_date,
-                'end_date'   => $contract->end_date,
+                'start_date' => $contract->start_date->format('Y-m-d'),
+                'end_date'   => $contract->end_date->format('Y-m-d'),
                 'price'      => $contract->price,
                 'status'     => $contract->status,
                 'pdf_path'   => $contract->pdf_path,
