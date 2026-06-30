@@ -14,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->environment('production')) {
+            URL::forceRootUrl(rtrim(config('app.url'), '/'));
             URL::forceScheme('https');
         }
 
@@ -26,15 +27,17 @@ class AppServiceProvider extends ServiceProvider
 
         // Email Verification
         VerifyEmail::createUrlUsing(function ($notifiable) {
-            $verifyUrl = URL::temporarySignedRoute(
+            $verifyPath = URL::temporarySignedRoute(
                 'verification.verify',
                 now()->addMinutes(60),
                 [
                     'id'   => $notifiable->getKey(),
                     'hash' => sha1($notifiable->getEmailForVerification()),
-                ]
+                ],
+                false
             );
-            return $verifyUrl;
+
+            return rtrim(config('app.url'), '/') . $verifyPath;
         });
     }
 }

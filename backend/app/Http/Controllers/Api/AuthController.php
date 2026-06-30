@@ -29,16 +29,19 @@ class AuthController extends Controller
         $user->assignRole($data['role']);
         event(new Registered($user));
 
+        $verificationPath = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            [
+                'id'   => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+            ],
+            false
+        );
+
         return response()->json([
             'message' => 'تم إنشاء الحساب. يرجى تفعيل بريدك الإلكتروني.',
-            'verification_url' => URL::temporarySignedRoute(
-                'verification.verify',
-                now()->addMinutes(60),
-                [
-                    'id'   => $user->getKey(),
-                    'hash' => sha1($user->getEmailForVerification()),
-                ]
-            ),
+            'verification_url' => rtrim(config('app.url'), '/') . $verificationPath,
         ], 201);
     }
 

@@ -17,7 +17,6 @@ use App\Http\Controllers\Api\Admin\PropertyController as AdminPropertyController
 use App\Http\Controllers\Api\Tenant\BookingController as TenantBookingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\URL;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 
@@ -56,7 +55,7 @@ Route::get('/governorates/{id}/cities',      [LocationController::class, 'cities
 Route::get('/cities/{id}/neighborhoods',     [LocationController::class, 'neighborhoods']);
 
 // Email verification
-Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
 
     $user = User::find($id);
 
@@ -70,7 +69,7 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
     $loginPage = $role === 'host' ? 'host-login.html' : 'tenant-login.html';
     $base      = rtrim(config('app.frontend_url'), '/');
 
-    if (!URL::hasValidSignature(request())) {
+    if (!$request->hasValidRelativeSignature()) {
         return redirect("{$base}/{$loginPage}?error=invalid_link");
     }
 
@@ -87,7 +86,7 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash) {
 
     return redirect("{$base}/{$loginPage}?verified=success");
 
-})->middleware('signed')->name('verification.verify');
+})->name('verification.verify');
 
 Route::post('/email/resend', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
