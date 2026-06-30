@@ -146,13 +146,13 @@
             <div class="form-group">
                 <label for="start_date" onclick="openDatePicker('start_date')">تاريخ البداية *</label>
                 <div class="date-field" onclick="openDatePicker('start_date')">
-                    <input type="date" id="start_date" onchange="calcSummary()" onclick="event.stopPropagation()">
+                    <input type="date" id="start_date" oninput="syncDateInput(this); calcSummary()" onchange="syncDateInput(this); calcSummary()" onclick="event.stopPropagation()">
                 </div>
             </div>
             <div class="form-group">
                 <label for="end_date" onclick="openDatePicker('end_date')">تاريخ النهاية *</label>
                 <div class="date-field" onclick="openDatePicker('end_date')">
-                    <input type="date" id="end_date" onchange="calcSummary()" onclick="event.stopPropagation()">
+                    <input type="date" id="end_date" oninput="syncDateInput(this); calcSummary()" onchange="syncDateInput(this); calcSummary()" onclick="event.stopPropagation()">
                 </div>
             </div>
         </div>
@@ -216,9 +216,35 @@ async function loadProperty(){
         </div>`;
 }
 
+function toDateInputValue(date){
+    if(!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+    return date.toISOString().split('T')[0];
+}
+
+function normalizeDateValue(value){
+    if(!value) return '';
+    const text = String(value).trim();
+    if(/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+    if(/^\d{4}\/\d{2}\/\d{2}$/.test(text)) return text.split('/').join('-');
+    return '';
+}
+
+function syncDateInput(input){
+    const normalized = normalizeDateValue(input.value) || toDateInputValue(input.valueAsDate);
+    if(normalized){
+        input.dataset.selectedDate = normalized;
+    }
+    return normalized;
+}
+
+function getDateValue(id){
+    const input = document.getElementById(id);
+    return syncDateInput(input) || normalizeDateValue(input.dataset.selectedDate);
+}
+
 function calcSummary(){
-    const start = document.getElementById('start_date').value;
-    const end   = document.getElementById('end_date').value;
+    const start = getDateValue('start_date');
+    const end   = getDateValue('end_date');
     if(!start || !end || !property) return;
 
     const s = new Date(start), e = new Date(end);
@@ -268,8 +294,8 @@ function openDatePicker(id){
 
 async function submitBooking(){
     hideAlerts();
-    const start = document.getElementById('start_date').value;
-    const end   = document.getElementById('end_date').value;
+    const start = getDateValue('start_date');
+    const end   = getDateValue('end_date');
 
     if(!start||!end){ showErr('يرجى تحديد تواريخ الإقامة'); return; }
     if(new Date(end)<=new Date(start)){ showErr('تاريخ النهاية يجب أن يكون بعد تاريخ البداية'); return; }
