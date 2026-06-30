@@ -63,6 +63,23 @@
     </div>
 </div>
 
+<div class="verify-modal" id="verify-modal" aria-hidden="true">
+    <div class="verify-modal-card">
+        <h3><i class="fas fa-link"></i> رابط تفعيل الحساب</h3>
+        <p>
+            تم إنشاء الحساب. افتح هذا الرابط لتفعيل حسابك، أو انسخه إذا أردت فتحه في متصفح آخر.
+        </p>
+        <textarea class="verify-url-box" id="verify-url" readonly></textarea>
+        <div class="verify-modal-actions">
+            <a id="open-verify-link" href="#" target="_blank" rel="noopener">فتح رابط التفعيل</a>
+            <button type="button" class="secondary" onclick="copyVerifyUrl()">نسخ الرابط</button>
+        </div>
+        <div class="auth-switch-row">
+            <button type="button" onclick="closeVerifyModal()">العودة لتسجيل الدخول</button>
+        </div>
+    </div>
+</div>
+
 <script src="js/api.js?v=20260628-absolute-nav"></script>
 <script>
 captureLoginRedirect();
@@ -118,6 +135,11 @@ async function registerHost(){
         if(response.ok){
             localStorage.setItem('pending_verify_email', email);
             localStorage.setItem('pending_verify_role', 'host');
+            if(data.verification_url){
+                localStorage.setItem('pending_verify_url', data.verification_url);
+                showVerifyModal(data.verification_url, email);
+                return;
+            }
             goToPage('verify.html');
             return;
         }
@@ -130,6 +152,33 @@ async function registerHost(){
         msg.innerHTML = '<div class="error">' + (data.message || 'حدث خطأ') + '</div>';
     } catch(e){
         msg.innerHTML = '<div class="error">تعذر الاتصال بالسيرفر</div>';
+    }
+}
+
+function showVerifyModal(url, email){
+    document.getElementById('email').value = email;
+    document.getElementById('verify-url').value = url;
+    document.getElementById('open-verify-link').href = url;
+    document.getElementById('verify-modal').classList.add('show');
+    document.getElementById('verify-modal').setAttribute('aria-hidden', 'false');
+}
+
+function closeVerifyModal(){
+    document.getElementById('verify-modal').classList.remove('show');
+    document.getElementById('verify-modal').setAttribute('aria-hidden', 'true');
+    setAuthMode('login');
+    document.getElementById('msg').innerHTML = '<div class="success">تم إنشاء الحساب. فعّل بريدك الإلكتروني ثم سجّل الدخول.</div>';
+}
+
+async function copyVerifyUrl(){
+    const field = document.getElementById('verify-url');
+    field.select();
+    try {
+        await navigator.clipboard.writeText(field.value);
+        document.getElementById('msg').innerHTML = '<div class="success">تم نسخ رابط التفعيل</div>';
+    } catch(e) {
+        document.execCommand('copy');
+        document.getElementById('msg').innerHTML = '<div class="success">تم نسخ رابط التفعيل</div>';
     }
 }
 

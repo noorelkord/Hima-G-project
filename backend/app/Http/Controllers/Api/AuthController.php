@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 
 class AuthController extends Controller
 {
@@ -30,6 +31,14 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'تم إنشاء الحساب. يرجى تفعيل بريدك الإلكتروني.',
+            'verification_url' => URL::temporarySignedRoute(
+                'verification.verify',
+                now()->addMinutes(60),
+                [
+                    'id'   => $user->getKey(),
+                    'hash' => sha1($user->getEmailForVerification()),
+                ]
+            ),
         ], 201);
     }
 
