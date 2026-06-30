@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | لوحة الأدمن</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body { margin:0; background:#F8F5F0; }
+        .layout { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+
+        /* ── SIDEBAR ── */
+        .sidebar { background:#0D2B1F; padding:1.5rem 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+        .sidebar-logo { font-size:1.4rem; font-weight:900; color:#D4A853; padding:0 1.2rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; }
+        .sidebar-logo span { color:white; font-weight:300; font-size:0.85rem; display:block; }
+        .sidebar-user { padding:0.8rem 1.2rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; }
+        .user-avatar { width:44px; height:44px; border-radius:50%; background:#C0392B; border:2px solid #D4A853; display:flex; align-items:center; justify-content:center; color:white; font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; }
+        .user-name { color:white; font-size:0.9rem; font-weight:700; }
+        .user-role { color:rgba(255,255,255,0.4); font-size:0.75rem; }
+        .nav-section { font-size:0.68rem; color:rgba(255,255,255,0.3); padding:1rem 1.2rem 0.4rem; text-transform:uppercase; letter-spacing:0.8px; }
+        .nav-item { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 1.2rem; color:rgba(255,255,255,0.6); cursor:pointer; transition:all 0.2s; font-size:0.875rem; text-decoration:none; border-right:3px solid transparent; }
+        .nav-item:hover { color:white; background:rgba(255,255,255,0.05); }
+        .nav-item.active { color:#D4A853; background:rgba(212,168,83,0.1); border-right-color:#D4A853; }
+        .nav-item i { width:18px; text-align:center; }
+        .btn-logout { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 1.2rem; color:rgba(255,255,255,0.4); cursor:pointer; font-size:0.875rem; background:none; border:none; font-family:'Cairo',sans-serif; width:100%; text-align:right; margin-top:1rem; }
+        .btn-logout:hover { color:#E74C3C; }
+
+        /* ── MAIN ── */
+        .main { padding:2rem; overflow-y:auto; }
+
+        .welcome-bar { background:linear-gradient(135deg,#0D2B1F,#1B4332); border-radius:16px; padding:1.5rem 2rem; color:white; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; }
+        .welcome-bar h2 { font-size:1.3rem; font-weight:900; margin-bottom:0.2rem; }
+        .welcome-bar p  { color:rgba(255,255,255,0.7); font-size:0.875rem; }
+        .welcome-bar .icon { font-size:3rem; opacity:0.15; }
+
+        /* Stats */
+        .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .stat-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.2rem; display:flex; align-items:center; gap:1rem; }
+        .stat-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+        .stat-icon.green  { background:#D1FAE5; color:#065F46; }
+        .stat-icon.gold   { background:#FEF3C7; color:#92400E; }
+        .stat-icon.blue   { background:#DBEAFE; color:#1E40AF; }
+        .stat-icon.red    { background:#FEE2E2; color:#991B1B; }
+        .stat-num { font-size:1.6rem; font-weight:900; color:#1B4332; line-height:1; }
+        .stat-lbl { font-size:0.78rem; color:#6B7280; margin-top:0.2rem; }
+
+        /* Section */
+        .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+        .section-title { font-size:1rem; font-weight:700; color:#1B4332; }
+        .btn-see-all { font-size:0.8rem; color:#2D6A4F; text-decoration:none; font-weight:600; }
+
+        /* Quick Links */
+        .quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .quick-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.2rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.8rem; text-decoration:none; }
+        .quick-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.1); transform:translateY(-2px); }
+        .quick-card-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+        .quick-card-title { font-weight:700; font-size:0.9rem; color:#1A1A1A; }
+        .quick-card-sub   { font-size:0.75rem; color:#6B7280; }
+
+        /* Pending Props */
+        .prop-card { background:white; border-radius:12px; border:1px solid #E5E0D8; padding:1rem 1.2rem; margin-bottom:0.7rem; display:flex; align-items:center; gap:1rem; transition:box-shadow 0.2s; }
+        .prop-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.08); }
+        .prop-thumb { width:80px; height:62px; border-radius:10px; background:linear-gradient(135deg,#1B4332,#2D6A4F); overflow:hidden; flex-shrink:0; }
+        .prop-thumb img { width:100%; height:100%; object-fit:cover; }
+        .prop-thumb .no-img { display:flex; align-items:center; justify-content:center; height:100%; font-size:1.5rem; color:rgba(255,255,255,0.2); }
+        .prop-info { flex:1; min-width:0; }
+        .prop-name { font-weight:700; font-size:0.9rem; color:#1A1A1A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .prop-meta { font-size:0.78rem; color:#6B7280; margin-top:0.2rem; }
+        .prop-meta span { margin-left:0.8rem; }
+        .prop-actions { display:flex; gap:0.5rem; flex-shrink:0; }
+        .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; transition:background 0.2s; }
+        .btn-accept:hover { background:#A7F3D0; }
+        .btn-reject { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; transition:background 0.2s; }
+        .btn-reject:hover { background:#FECACA; }
+
+        /* Bookings table */
+        .table-wrap { background:white; border-radius:14px; border:1px solid #E5E0D8; overflow:hidden; margin-bottom:1.5rem; }
+        table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+        thead { background:#F0F7F4; }
+        thead th { padding:0.8rem 1rem; text-align:right; font-weight:700; color:#1B4332; font-size:0.8rem; }
+        tbody tr { border-top:1px solid #F3F4F6; transition:background 0.15s; }
+        tbody tr:hover { background:#FAFAFA; }
+        tbody td { padding:0.8rem 1rem; color:#374151; }
+
+        .badge { font-size:0.72rem; font-weight:700; padding:0.2rem 0.6rem; border-radius:12px; }
+        .badge-pending  { background:#FEF3C7; color:#92400E; }
+        .badge-accepted { background:#D1FAE5; color:#065F46; }
+        .badge-rejected { background:#FEE2E2; color:#991B1B; }
+        .badge-cancelled{ background:#F3F4F6; color:#374151; }
+
+        /* Reject modal */
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:9999; }
+        .modal-overlay.show { display:flex; }
+        .modal { background:white; border-radius:16px; padding:1.5rem; width:90%; max-width:420px; }
+        .modal h3 { font-size:1rem; font-weight:700; color:#C0392B; margin-bottom:0.8rem; }
+        .modal textarea { width:100%; border:1.5px solid #E5E0D8; border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif; font-size:0.875rem; resize:vertical; min-height:80px; margin-bottom:1rem; box-sizing:border-box; outline:none; }
+        .modal textarea:focus { border-color:#C0392B; }
+        .modal-actions { display:flex; gap:0.7rem; }
+        .btn-confirm-reject { flex:1; background:#C0392B; color:white; border:none; border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer; }
+        .btn-cancel-modal   { background:transparent; color:#6B7280; border:1.5px solid #E5E0D8; border-radius:10px; padding:0.7rem 1.2rem; font-family:'Cairo',sans-serif; cursor:pointer; }
+
+        .toast { position:fixed; bottom:2rem; left:2rem; background:#1B4332; color:white; padding:0.9rem 1.4rem; border-radius:10px; font-size:0.9rem; z-index:9999; display:none; align-items:center; gap:0.5rem; }
+        .toast.show { display:flex; }
+
+        .empty-mini { color:#6B7280; font-size:0.85rem; padding:1.5rem; text-align:center; }
+
+        @media(max-width:768px){ .layout{grid-template-columns:1fr;} .sidebar{display:none;} .stats-grid{grid-template-columns:repeat(2,1fr);} .quick-grid{grid-template-columns:1fr;} }
+    </style>
+</head>
+<body>
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">حمى <span>لوحة الإدارة</span></div>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="avatar">A</div>
+            <div class="user-name" id="sidebar-name">...</div>
+            <div class="user-role">مشرف النظام</div>
+        </div>
+
+        <div class="nav-section">الإدارة</div>
+        <a class="nav-item active" href="admin-dashboard.html"><i class="fas fa-th-large"></i> لوحة التحكم</a>
+        <a class="nav-item" href="admin-properties.html"><i class="fas fa-building"></i> إدارة العقارات</a>
+        <a class="nav-item" href="admin-bookings.html"><i class="fas fa-calendar-check"></i> إدارة الحجوزات</a>
+
+        <div class="nav-section">النظام</div>
+        <a class="nav-item" href="notifications.html?v=role-sidebar">
+            <i class="fas fa-bell"></i> الإشعارات
+            <span id="notif-badge" style="background:#C0392B;color:white;font-size:0.65rem;padding:1px 6px;border-radius:10px;margin-right:auto;display:none;"></span>
+        </a>
+        <a class="nav-item" href="profile.html?v=role-sidebar"><i class="fas fa-user-cog"></i> الملف الشخصي</a>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <div class="welcome-bar">
+            <div>
+                <h2>لوحة تحكم المشرف 🔧</h2>
+                <p>مرحباً <span id="welcome-name">...</span> — إشراف كامل على المنصة</p>
+            </div>
+            <i class="fas fa-shield-alt icon"></i>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-building"></i></div>
+                <div><div class="stat-num" id="stat-total-props">0</div><div class="stat-lbl">إجمالي العقارات</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon gold"><i class="fas fa-clock"></i></div>
+                <div><div class="stat-num" id="stat-pending">0</div><div class="stat-lbl">بانتظار المراجعة</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
+                <div><div class="stat-num" id="stat-bookings">0</div><div class="stat-lbl">إجمالي الحجوزات</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red"><i class="fas fa-file-contract"></i></div>
+                <div><div class="stat-num" id="stat-active-contracts">0</div><div class="stat-lbl">عقود نشطة</div></div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="section-header"><div class="section-title">إجراءات سريعة</div></div>
+        <div class="quick-grid">
+            <a class="quick-card" href="admin-properties.html">
+                <div class="quick-card-icon" style="background:#FEF3C7;color:#92400E;"><i class="fas fa-hourglass-half"></i></div>
+                <div><div class="quick-card-title">مراجعة العقارات</div><div class="quick-card-sub">قبول أو رفض الطلبات</div></div>
+            </a>
+            <a class="quick-card" href="admin-bookings.html">
+                <div class="quick-card-icon" style="background:#DBEAFE;color:#1E40AF;"><i class="fas fa-calendar-alt"></i></div>
+                <div><div class="quick-card-title">إدارة الحجوزات</div><div class="quick-card-sub">عرض وأرشفة الحجوزات</div></div>
+            </a>
+            <a class="quick-card" href="admin-properties.html">
+                <div class="quick-card-icon" style="background:#D1FAE5;color:#065F46;"><i class="fas fa-check-double"></i></div>
+                <div><div class="quick-card-title">كل العقارات</div><div class="quick-card-sub">إشراف كامل</div></div>
+            </a>
+        </div>
+
+        <!-- Pending Properties -->
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-exclamation-circle me-2" style="color:#D4A853"></i>
+                عقارات بانتظار المراجعة
+            </div>
+            <a class="btn-see-all" href="admin-properties.html">عرض الكل</a>
+        </div>
+        <div id="pending-props">
+            <div class="empty-mini"><i class="fas fa-spinner fa-spin me-2"></i>جارٍ التحميل...</div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="section-header" style="margin-top:1.5rem;">
+            <div class="section-title">آخر الحجوزات</div>
+            <a class="btn-see-all" href="admin-bookings.html">عرض الكل</a>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>العقار</th>
+                        <th>المستأجر</th>
+                        <th>التواريخ</th>
+                        <th>السعر</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="bookings-table">
+                    <tr><td colspan="5" class="empty-mini"><i class="fas fa-spinner fa-spin me-2"></i>جارٍ التحميل...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal-overlay" id="reject-modal">
+    <div class="modal">
+        <h3><i class="fas fa-times-circle me-2"></i>سبب الرفض</h3>
+        <textarea id="reject-reason" placeholder="اكتب سبب الرفض..."></textarea>
+        <div class="modal-actions">
+            <button class="btn-cancel-modal" onclick="closeModal()">إلغاء</button>
+            <button class="btn-confirm-reject" onclick="confirmReject()">تأكيد الرفض</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg"></span></div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const typeMap    = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
+const statusMap  = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض',cancelled:'ملغي'};
+const statusCls  = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected',cancelled:'badge-cancelled'};
+
+let rejectId = null;
+
+async function init(){
+    requireRole('admin', 'admin-login.html');
+    const name = localStorage.getItem('name')||'';
+    document.getElementById('welcome-name').textContent = name;
+    document.getElementById('sidebar-name').textContent = name;
+    document.getElementById('avatar').textContent = name.charAt(0)||'A';
+
+    const [props, bookings, contracts, notifCount] = await Promise.all([
+        fetch(BASE_URL+'/admin/properties',{headers:authHeaders()}).then(r=>r.json()),
+        fetch(BASE_URL+'/admin/bookings',{headers:authHeaders()}).then(r=>r.json()),
+        fetch(BASE_URL+'/contracts',{headers:authHeaders()}).then(r=>r.json()),
+        fetch(BASE_URL+'/notifications/unread-count',{headers:authHeaders()}).then(r=>r.json()),
+    ]);
+
+    // Stats
+    document.getElementById('stat-total-props').textContent    = (props||[]).length;
+    document.getElementById('stat-pending').textContent        = (props||[]).filter(p=>p.status==='pending').length;
+    document.getElementById('stat-bookings').textContent       = (bookings||[]).length;
+    document.getElementById('stat-active-contracts').textContent = (contracts||[]).filter(c=>c.status==='active').length;
+
+    const nc = notifCount?.count||0;
+    if(nc>0){ const b=document.getElementById('notif-badge'); b.textContent=nc; b.style.display='inline'; }
+
+    // Pending properties
+    const pending = (props||[]).filter(p=>p.status==='pending').slice(0,4);
+    const pEl = document.getElementById('pending-props');
+    if(!pending.length){
+        pEl.innerHTML='<div class="empty-mini">✅ لا توجد عقارات بانتظار المراجعة</div>';
+    } else {
+        pEl.innerHTML = pending.map(p=>{
+            const main = p.images?.find(i=>i.is_main)||p.images?.[0];
+            const img  = main?`<img src="${main.url}" alt="">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+            const loc  = [p.governorate?.name,p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
+            return `
+            <div class="prop-card">
+                <div class="prop-thumb">${img}</div>
+                <div class="prop-info">
+                    <div class="prop-name">${p.title}</div>
+                    <div class="prop-meta">
+                        <span><i class="fas fa-map-marker-alt me-1"></i>${loc}</span>
+                        <span><i class="fas fa-tag me-1"></i>${typeMap[p.type]||p.type}</span>
+                        <span><i class="fas fa-money-bill me-1"></i>${Number(p.price||0).toLocaleString('ar')} ₪</span>
+                    </div>
+                </div>
+                <div class="prop-actions">
+                    <button class="btn-accept" onclick="acceptProp(${p.id})"><i class="fas fa-check me-1"></i>قبول</button>
+                    <button class="btn-reject" onclick="openReject(${p.id})"><i class="fas fa-times me-1"></i>رفض</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // Bookings table
+    const recent = (bookings||[]).slice(0,5);
+    const tbody = document.getElementById('bookings-table');
+    if(!recent.length){
+        tbody.innerHTML='<tr><td colspan="5" class="empty-mini">لا توجد حجوزات</td></tr>';
+    } else {
+        tbody.innerHTML = recent.map(b=>`
+        <tr>
+            <td><b>${b.property?.title||'عقار'}</b></td>
+            <td>${b.tenant?.first_name||'مستأجر'}</td>
+            <td style="font-size:0.78rem;color:#6B7280;">${b.start_date?.split('T')[0]||''} → ${b.end_date?.split('T')[0]||''}</td>
+            <td><b style="color:#1B4332;">${Number(b.price||0).toLocaleString('ar')} ₪</b></td>
+            <td><span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span></td>
+        </tr>`).join('');
+    }
+}
+
+async function acceptProp(id){
+    const r = await fetch(`${BASE_URL}/admin/properties/${id}/accept`,{method:'PATCH',headers:authHeaders()});
+    if(r.ok){ showToast('✅ تم قبول العقار ونشره'); init(); }
+}
+
+function openReject(id){ rejectId=id; document.getElementById('reject-reason').value=''; document.getElementById('reject-modal').classList.add('show'); }
+function closeModal(){ rejectId=null; document.getElementById('reject-modal').classList.remove('show'); }
+
+async function confirmReject(){
+    const reason = document.getElementById('reject-reason').value.trim();
+    if(!reason){ alert('يرجى كتابة سبب الرفض'); return; }
+    const r = await fetch(`${BASE_URL}/admin/properties/${rejectId}/reject`,{
+        method:'PATCH', headers:authHeaders(),
+        body:JSON.stringify({rejection_reason:reason})
+    });
+    closeModal();
+    if(r.ok){ showToast('تم رفض العقار'); init(); }
+}
+
+function showToast(msg){
+    const t=document.getElementById('toast');
+    document.getElementById('toast-msg').textContent=msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+init();
+</script>
+</body>
+</html>

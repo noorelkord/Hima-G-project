@@ -10,7 +10,7 @@ function renderNavbar() {
     };
 
     const dashboardMap = {
-        admin: 'dashboard-admin.html',
+        admin: 'admin-dashboard.html',
         host: 'dashboard-host.html',
         tenant: 'dashboard-tenant.html',
     };
@@ -53,7 +53,7 @@ function renderNavbar() {
     `;
 
     const adminLinks = `
-        <a class="drawer-link" href="dashboard-admin.html"><span><i class="fas fa-chart-line"></i></span><b>لوحة المشرف</b></a>
+        <a class="drawer-link" href="admin-dashboard.html"><span><i class="fas fa-chart-line"></i></span><b>لوحة المشرف</b></a>
         <a class="drawer-link" href="admin-properties.html"><span><i class="fas fa-building"></i></span><b>إدارة العقارات</b></a>
         <a class="drawer-link" href="admin-bookings.html"><span><i class="fas fa-calendar-check"></i></span><b>إدارة الحجوزات</b></a>
         <a class="drawer-link" href="notifications.html?v=role-sidebar"><span><i class="fas fa-bell"></i></span><b>الإشعارات</b></a>

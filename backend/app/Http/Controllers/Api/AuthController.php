@@ -88,6 +88,42 @@ class AuthController extends Controller
         ]);
     }
 
+    public function adminLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['message' => 'بيانات الدخول غير صحيحة.'], 401);
+        }
+
+        if (!$user->hasRole('admin')) {
+            return response()->json(['message' => 'غير مصرح لك بالدخول.'], 403);
+        }
+
+        if (!$user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'يرجى تفعيل بريدك الإلكتروني أولاً.'], 403);
+        }
+
+        $user->tokens()->delete();
+        $token = $user->createToken(
+            'admin_auth_token',
+            ['*'],
+            now()->addDays(30)
+        )->plainTextToken;
+
+        return response()->json([
+            'token'               => $token,
+            'role'                => 'admin',
+            'user'                => $user,
+            'is_profile_complete' => $user->isProfileComplete(),
+        ]);
+    }
+
     public function logout(Request $request)
     {
        

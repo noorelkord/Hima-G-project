@@ -32,7 +32,7 @@ function saveLogin(data){
 
 function redirectToDashboard(role){
     if(role === "admin"){
-        goToPage("dashboard-admin.html");
+        goToPage("admin-dashboard.html");
     }
 
     if(role === "host"){
@@ -44,10 +44,28 @@ function redirectToDashboard(role){
     }
 }
 
+function unauthorizedRedirect(destination = "properties.html"){
+    document.body.innerHTML = `
+        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F8F5F0;font-family:'Cairo',sans-serif;direction:rtl;">
+            <div style="background:white;border:1px solid #E5E0D8;border-radius:16px;padding:2rem;max-width:420px;text-align:center;box-shadow:0 18px 40px rgba(27,67,50,0.12);">
+                <div style="font-size:2rem;color:#C0392B;margin-bottom:0.8rem;"><i class="fas fa-ban"></i></div>
+                <h2 style="color:#1B4332;margin-bottom:0.5rem;">غير مصرح لك بالدخول</h2>
+                <p style="color:#6B7280;">هذه الصفحة مخصصة لحسابات المشرف فقط.</p>
+            </div>
+        </div>`;
+    setTimeout(() => goToPage(destination), 1400);
+}
+
 function handleLoginSuccess(data){
     saveLogin(data);
 
     const redirect = getSavedLoginRedirect();
+
+    if(data.role === "admin"){
+        localStorage.removeItem("redirect_after_login");
+        goToPage("admin-dashboard.html");
+        return;
+    }
 
     if(!data.is_profile_complete){
         if(redirect){
@@ -163,6 +181,18 @@ function requireAuth(loginPage = "tenant-login.html"){
     return true;
 }
 
+function requireRole(expectedRole, loginPage = "tenant-login.html", unauthorizedPage = "properties.html"){
+    requireAuth(loginPage);
+
+    const currentRole = localStorage.getItem("role");
+    if(currentRole !== expectedRole){
+        unauthorizedRedirect(unauthorizedPage);
+        throw new Error("Unauthorized role");
+    }
+
+    return true;
+}
+
 function authHeaders(){
     return {
         "Content-Type":"application/json",
@@ -172,14 +202,14 @@ function authHeaders(){
     };
 }
 
-const _authPages = ['tenant-login.html','host-login.html','login.html','register.html','verify.html'];
+const _authPages = ['tenant-login.html','host-login.html','admin-login.html','login.html','register.html','verify.html'];
 (function redirectIfLoggedIn(){
     const page = window.location.pathname.split('/').pop();
     if (!_authPages.includes(page)) return;
     const token = localStorage.getItem('token');
     const role  = localStorage.getItem('role');
     if (!token || !role) return;
-    const dashMap = { tenant:'dashboard-tenant.html', host:'dashboard-host.html', admin:'dashboard-admin.html' };
+    const dashMap = { tenant:'dashboard-tenant.html', host:'dashboard-host.html', admin:'admin-dashboard.html' };
     const dest = dashMap[role] || 'properties.html';
     window.location.replace(appUrl(dest));
 })();

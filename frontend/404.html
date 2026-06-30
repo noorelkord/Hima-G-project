@@ -181,7 +181,7 @@ p{
 <script>
 const role = localStorage.getItem('role');
 if (role) {
-    const dashMap = { tenant: 'dashboard-tenant.html', host: 'dashboard-host.html', admin: 'dashboard-admin.html' };
+    const dashMap = { tenant: 'dashboard-tenant.html', host: 'dashboard-host.html', admin: 'admin-dashboard.html' };
     const dash = dashMap[role];
     if (dash) {
         document.getElementById('home-btn').href = dash;

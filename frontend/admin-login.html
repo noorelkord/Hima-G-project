@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css?v=20260628-auth-tabs">
+<title>حمى | دخول المشرف</title>
+</head>
+<body>
+<div class="center-page">
+    <div class="card auth-card">
+        <div class="logo">حمى</div>
+        <h2>تسجيل دخول المشرف</h2>
+
+        <div id="msg"></div>
+
+        <div class="auth-context">
+            <i class="fas fa-user-shield"></i>
+            <div>
+                لوحة المشرف
+                <span>دخول مخصص لإدارة المنصة فقط</span>
+            </div>
+        </div>
+
+        <input id="email" type="email" placeholder="البريد الإلكتروني" autocomplete="email">
+        <input id="password" type="password" placeholder="كلمة المرور" autocomplete="current-password">
+
+        <button id="login-btn" onclick="adminLogin()">تسجيل الدخول</button>
+    </div>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+async function adminLogin(){
+    const msg = document.getElementById('msg');
+    const btn = document.getElementById('login-btn');
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    msg.innerHTML = '';
+
+    if(!email || !password){
+        msg.innerHTML = '<div class="error">يرجى تعبئة البريد الإلكتروني وكلمة المرور</div>';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'جارٍ الدخول...';
+
+    try {
+        const res = await fetch(BASE_URL + '/admin/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if(!res.ok){
+            msg.innerHTML = '<div class="error">' + (data.message || 'غير مصرح لك بالدخول') + '</div>';
+            return;
+        }
+
+        saveLogin(data);
+        goToPage('admin-dashboard.html');
+    } catch (e) {
+        msg.innerHTML = '<div class="error">تعذر الاتصال بالسيرفر</div>';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'تسجيل الدخول';
+    }
+}
+</script>
+</body>
+</html>
