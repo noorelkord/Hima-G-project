@@ -23,7 +23,7 @@ class AuthController extends Controller
         $user = User::create([
             'first_name' => $data['first_name'],
             'email'      => $data['email'],
-            'password'   => $data['password'],
+            'password'   => Hash::make($data['password']),
         ]);
 
         $user->assignRole($data['role']);
@@ -49,7 +49,20 @@ class AuthController extends Controller
         ]);
         $user = User::where('email', $credentials['email'])->first();
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (!$user) {
+            return response()->json(['message' => 'بيانات الدخول غير صحيحة.'], 401);
+        }
+
+        $passwordMatches = Hash::check($credentials['password'], $user->password);
+
+        if (!$passwordMatches && hash_equals((string) $user->password, $credentials['password'])) {
+            $user->forceFill([
+                'password' => Hash::make($credentials['password']),
+            ])->save();
+            $passwordMatches = true;
+        }
+
+        if (!$passwordMatches) {
             return response()->json(['message' => 'بيانات الدخول غير صحيحة.'], 401);
         }
 

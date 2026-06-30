@@ -243,29 +243,15 @@ a{
 
 .verify-modal-actions {
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr;
     gap:0.7rem;
 }
 
-.verify-modal-actions a,
 .verify-modal-actions button {
     display:flex;
     align-items:center;
     justify-content:center;
     text-align:center;
-}
-
-.verify-modal-actions a {
-    border-radius:8px;
-    background:#2f8f46;
-    color:white;
-    font-size:16px;
-    padding:13px;
-}
-
-.verify-modal-actions a:hover {
-    background:#256d37;
-    color:white;
 }
 
 .verify-modal-actions .secondary {

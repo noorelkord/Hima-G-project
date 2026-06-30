@@ -119,7 +119,7 @@ async function loginWithRole(expectedRole){
     const data = await res.json();
 
     if(!res.ok){
-        msg.innerHTML = '<div class="error">بيانات غير صحيحة</div>';
+        msg.innerHTML = '<div class="error">' + (data.message || 'بيانات غير صحيحة') + '</div>';
         return;
     }
 
