@@ -12,7 +12,12 @@ class PropertyController extends Controller
     // List all properties
     public function index()
     {
-        $properties = Property::with('host:id,first_name,last_name,email')
+        $properties = Property::with([
+                'host:id,first_name,last_name,email,phone',
+                'images',
+                'governorate:id,name',
+                'city:id,name',
+            ])
             ->latest()
             ->get();
 
@@ -22,7 +27,12 @@ class PropertyController extends Controller
     // List pending properties only
     public function pending()
     {
-        $properties = Property::with('host:id,first_name,last_name,email')
+        $properties = Property::with([
+                'host:id,first_name,last_name,email,phone',
+                'images',
+                'governorate:id,name',
+                'city:id,name',
+            ])
             ->where('status', 'pending')
             ->latest()
             ->get();
