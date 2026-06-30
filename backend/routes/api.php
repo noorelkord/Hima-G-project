@@ -181,6 +181,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::delete('/bookings/stale', [AdminBookingController::class, 'archiveStale']);
         Route::get('/bookings',          [AdminBookingController::class, 'index']);
         Route::get('/bookings/{id}',     [AdminBookingController::class, 'show']);
+        Route::delete('/bookings/{id}',  [AdminBookingController::class, 'destroy']);
     });
 
     // =====================

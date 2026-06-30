@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | تفاصيل الحجز</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        :root{
+            --green:#1B4332; --green-2:#2D6A4F; --gold:#D4A853;
+            --bg:#F8F5F0; --card:#ffffff; --border:#ECE7DD; --line:#F3F0E9;
+            --ink:#16241C; --muted:#6B7280; --soft:#9CA3AF;
+        }
+        *{box-sizing:border-box;}
+        body{margin:0;background:var(--bg);font-family:'Cairo',sans-serif;}
+        .layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+
+        /* Sidebar */
+        .sidebar{background:#0D2B1F;padding:1.5rem 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+        .sidebar-logo{font-size:1.4rem;font-weight:900;color:var(--gold);padding:0 1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .sidebar-logo span{color:white;font-weight:300;font-size:0.85rem;display:block;}
+        .sidebar-user{padding:0.8rem 1.2rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .user-avatar{width:44px;height:44px;border-radius:50%;background:#C0392B;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;}
+        .user-name{color:white;font-size:0.9rem;font-weight:700;}
+        .user-role{color:rgba(255,255,255,0.4);font-size:0.75rem;}
+        .nav-section{font-size:0.68rem;color:rgba(255,255,255,0.3);padding:1rem 1.2rem 0.4rem;text-transform:uppercase;letter-spacing:0.8px;}
+        .nav-item{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.2s;font-size:0.875rem;text-decoration:none;border-right:3px solid transparent;}
+        .nav-item:hover{color:white;background:rgba(255,255,255,0.05);}
+        .nav-item.active{color:var(--gold);background:rgba(212,168,83,0.1);border-right-color:var(--gold);}
+        .nav-item i{width:18px;text-align:center;}
+        .btn-logout{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.4);cursor:pointer;font-size:0.875rem;background:none;border:none;font-family:'Cairo',sans-serif;width:100%;text-align:right;margin-top:1rem;}
+        .btn-logout:hover{color:#E74C3C;}
+
+        /* Centered content column */
+        .main{padding:2.2rem 1.5rem 3rem;display:flex;justify-content:center;}
+        .wrap{width:100%;max-width:880px;}
+
+        .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;gap:1rem;flex-wrap:wrap;}
+        .back-link{display:inline-flex;align-items:center;gap:0.5rem;color:var(--green-2);font-weight:700;font-size:0.875rem;text-decoration:none;}
+        .back-link:hover{color:var(--green);}
+        .ref{font-size:0.8rem;color:var(--soft);font-weight:700;}
+
+        /* Hero */
+        .hero{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--border);background:linear-gradient(135deg,var(--green),var(--green-2));box-shadow:0 16px 40px rgba(13,43,31,0.12);margin-bottom:0.8rem;}
+        .hero-img{width:100%;height:320px;display:block;object-fit:cover;}
+        .hero-noimg{height:320px;display:flex;align-items:center;justify-content:center;font-size:3.4rem;color:rgba(255,255,255,0.25);}
+        .hero-overlay{position:absolute;inset:auto 0 0 0;padding:1.6rem;background:linear-gradient(to top,rgba(7,24,17,0.85),rgba(7,24,17,0));display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+        .hero-title{color:#fff;}
+        .hero-title h1{margin:0;font-size:1.5rem;font-weight:900;display:flex;align-items:center;gap:0.55rem;}
+        .hero-title h1 i{color:var(--gold);}
+        .hero-title p{margin:0.3rem 0 0;font-size:0.9rem;color:rgba(255,255,255,0.82);display:flex;align-items:center;gap:0.45rem;}
+
+        .badge{font-size:0.78rem;font-weight:800;padding:0.4rem 1rem;border-radius:999px;white-space:nowrap;backdrop-filter:blur(4px);}
+        .badge-pending{background:rgba(254,243,199,0.95);color:#92400E;}
+        .badge-accepted{background:rgba(209,250,229,0.95);color:#065F46;}
+        .badge-rejected{background:rgba(254,226,226,0.95);color:#991B1B;}
+        .badge-cancelled{background:rgba(243,244,246,0.95);color:#374151;}
+
+        .thumbs{display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.6rem;}
+        .thumbs img{width:78px;height:58px;object-fit:cover;border-radius:9px;cursor:pointer;border:2px solid transparent;transition:border-color 0.2s,transform 0.2s;}
+        .thumbs img:hover{transform:translateY(-2px);}
+        .thumbs img.active{border-color:var(--green-2);}
+
+        /* KPI strip */
+        .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.6rem;}
+        .kpi{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.2rem;text-align:center;}
+        .kpi .ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.6rem;font-size:1.05rem;}
+        .kpi .ico.green{background:#EAF5EF;color:var(--green-2);}
+        .kpi .ico.gold{background:#FBF1DA;color:#B7821F;}
+        .kpi .ico.blue{background:#E7F0FB;color:#2563EB;}
+        .kpi .val{font-size:1.35rem;font-weight:900;color:var(--ink);line-height:1.1;}
+        .kpi .lbl{font-size:0.76rem;color:var(--muted);margin-top:0.25rem;}
+
+        /* Cards grid */
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;align-items:start;}
+        .col{display:flex;flex-direction:column;gap:1.2rem;}
+        @media(max-width:760px){.grid{grid-template-columns:1fr;}.kpis{grid-template-columns:1fr;}}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.4rem;}
+        .card.span{grid-column:1/-1;}
+        .card h3{font-size:0.95rem;font-weight:800;color:var(--green);margin:0 0 0.4rem;display:flex;align-items:center;gap:0.5rem;}
+        .card h3 i{color:var(--green-2);}
+        .card-sub{font-size:0.8rem;color:var(--muted);margin:0 0 0.9rem;}
+
+        .info-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:0.72rem 0;border-bottom:1px solid var(--line);}
+        .info-row:last-child{border-bottom:none;padding-bottom:0;}
+        .info-label{font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:0.55rem;}
+        .info-label i{color:var(--soft);width:16px;text-align:center;}
+        .info-value{font-size:0.9rem;font-weight:700;color:var(--ink);text-align:left;}
+        .info-value.price{color:var(--green);}
+
+        .tenant-box{display:flex;align-items:center;gap:0.85rem;margin-bottom:1rem;}
+        .tenant-avatar{width:52px;height:52px;border-radius:50%;background:var(--green);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.25rem;flex-shrink:0;}
+        .tenant-name{font-size:1rem;font-weight:800;color:var(--ink);}
+        .tenant-id{font-size:0.78rem;color:var(--soft);}
+        .privacy-note{font-size:0.78rem;color:#92400E;background:#FEF9EC;border:1px solid #FDE68A;border-radius:10px;padding:0.7rem 0.8rem;display:flex;gap:0.55rem;align-items:flex-start;line-height:1.65;}
+
+        .btn-archive-stale{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;border-radius:11px;padding:0.7rem 1.4rem;font-family:'Cairo',sans-serif;font-weight:800;font-size:0.88rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem;transition:background 0.2s;}
+        .btn-archive-stale:hover{background:#FECACA;}
+
+        .state{text-align:center;padding:5rem 2rem;color:var(--muted);}
+        .state i{font-size:3rem;color:var(--border);display:block;margin-bottom:1rem;}
+
+        .toast{position:fixed;bottom:2rem;left:2rem;background:var(--green);color:white;padding:0.9rem 1.4rem;border-radius:11px;font-size:0.9rem;z-index:9999;display:none;align-items:center;gap:0.5rem;}
+        .toast.show{display:flex;}
+        @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.hero-img,.hero-noimg{height:230px;}}
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">حمى <span>لوحة الإدارة</span></div>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="avatar">A</div>
+            <div class="user-name" id="sidebar-name">...</div>
+            <div class="user-role">مشرف النظام</div>
+        </div>
+        <div class="nav-section">الإدارة</div>
+        <a class="nav-item" href="admin-dashboard.html"><i class="fas fa-th-large"></i> لوحة التحكم</a>
+        <a class="nav-item" href="admin-properties.html"><i class="fas fa-building"></i> إدارة العقارات</a>
+        <a class="nav-item active" href="admin-bookings.html"><i class="fas fa-calendar-check"></i> إدارة الحجوزات</a>
+        <div class="nav-section">النظام</div>
+        <a class="nav-item" href="notifications.html?v=role-sidebar"><i class="fas fa-bell"></i> الإشعارات</a>
+        <a class="nav-item" href="profile.html?v=role-sidebar"><i class="fas fa-user-cog"></i> الملف الشخصي</a>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </aside>
+
+    <main class="main">
+        <div class="wrap">
+            <div class="topbar">
+                <a class="back-link" href="admin-bookings.html"><i class="fas fa-arrow-right"></i> العودة إلى الحجوزات</a>
+                <span class="ref" id="ref"></span>
+            </div>
+            <div id="content">
+                <div class="state"><i class="fas fa-spinner fa-spin"></i><p>جارٍ تحميل تفاصيل الحجز...</p></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg"></span></div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const typeMap   = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
+const statusMap = {pending:'معلق',accepted:'مقبول',rejected:'مرفوض',cancelled:'ملغي'};
+const statusCls = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected',cancelled:'badge-cancelled'};
+
+const bookingId = new URLSearchParams(location.search).get('id');
+
+function fmtDate(d){
+    if(!d) return '—';
+    const dt = new Date(String(d).replace(' ','T'));
+    if(isNaN(dt)) return String(d).split('T')[0];
+    return dt.toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'});
+}
+function nights(a,b){
+    if(!a||!b) return null;
+    const d1=new Date(String(a).split('T')[0]), d2=new Date(String(b).split('T')[0]);
+    const n=Math.round((d2-d1)/86400000);
+    return n>0?n:null;
+}
+
+async function init(){
+    requireRole('admin', 'admin-login.html');
+    const name = localStorage.getItem('name')||'';
+    document.getElementById('sidebar-name').textContent = name;
+    document.getElementById('avatar').textContent = name.charAt(0)||'A';
+
+    if(!bookingId){
+        document.getElementById('content').innerHTML =
+            '<div class="state"><i class="fas fa-exclamation-triangle"></i><p>رقم الحجز غير محدد</p></div>';
+        return;
+    }
+
+    const r = await fetch(`${BASE_URL}/admin/bookings/${bookingId}`, {headers:authHeaders()});
+    if(!r.ok){
+        document.getElementById('content').innerHTML =
+            '<div class="state"><i class="fas fa-circle-xmark"></i><p>تعذّر العثور على الحجز</p></div>';
+        return;
+    }
+    render(await r.json());
+}
+
+function render(b){
+    const p = b.property||{};
+    const imgs = p.images||[];
+    const mainImg = imgs.find(i=>i.is_main)||imgs[0];
+    const hero = mainImg ? `<img id="hero-img" class="hero-img" src="${mainImg.url}" alt="">` : `<div class="hero-noimg"><i class="fas fa-building"></i></div>`;
+    const thumbs = imgs.length>1 ? `<div class="thumbs">${imgs.map(im=>`<img src="${im.url}" class="${(mainImg&&im.id===mainImg.id)?'active':''}" onclick="swapHero('${im.url}',this)">`).join('')}</div>` : '';
+    const loc = [p.governorate?.name,p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
+    const n = nights(b.start_date,b.end_date);
+    const tName = b.tenant?.first_name||'مستأجر';
+    document.getElementById('ref').textContent = 'رقم الحجز: #'+b.id;
+
+    document.getElementById('content').innerHTML = `
+    <div class="hero">
+        ${hero}
+        <div class="hero-overlay">
+            <div class="hero-title">
+                <h1><i class="fas fa-receipt"></i> حجز #${b.id}</h1>
+                <p><i class="fas fa-home"></i> ${p.title||'عقار'}</p>
+            </div>
+            <span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span>
+        </div>
+    </div>
+    ${thumbs}
+
+    <div class="kpis">
+        <div class="kpi"><div class="ico green"><i class="fas fa-money-bill-wave"></i></div><div class="val">${Number(b.price||0).toLocaleString('ar')} ₪</div><div class="lbl">السعر الإجمالي</div></div>
+        <div class="kpi"><div class="ico gold"><i class="fas fa-moon"></i></div><div class="val">${n?`${n} ليلة`:'—'}</div><div class="lbl">مدة الإقامة</div></div>
+        <div class="kpi"><div class="ico blue"><i class="fas fa-calendar-day"></i></div><div class="val" style="font-size:0.95rem;">${fmtDate(b.start_date)}</div><div class="lbl">تاريخ الوصول</div></div>
+    </div>
+
+    <div class="grid">
+        <div class="col">
+            <div class="card">
+                <h3><i class="fas fa-home"></i> العقار</h3>
+                <div class="info-row"><span class="info-label"><i class="fas fa-tag"></i>العقار</span><span class="info-value">${p.title||'—'}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-shapes"></i>النوع</span><span class="info-value">${typeMap[p.type]||p.type||'—'}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-map-marker-alt"></i>الموقع</span><span class="info-value">${loc}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-road"></i>الشارع</span><span class="info-value">${p.street||'—'}</span></div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-calendar-days"></i> تفاصيل الحجز</h3>
+                <div class="info-row"><span class="info-label"><i class="fas fa-calendar-plus"></i>تاريخ الوصول</span><span class="info-value">${fmtDate(b.start_date)}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-calendar-minus"></i>تاريخ المغادرة</span><span class="info-value">${fmtDate(b.end_date)}</span></div>
+                ${n?`<div class="info-row"><span class="info-label"><i class="fas fa-moon"></i>المدة</span><span class="info-value">${n} ليلة</span></div>`:''}
+                <div class="info-row"><span class="info-label"><i class="fas fa-money-bill-wave"></i>السعر</span><span class="info-value price">${Number(b.price||0).toLocaleString('ar')} ₪</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-clock"></i>تاريخ الطلب</span><span class="info-value">${fmtDate(b.created_at)}</span></div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card">
+                <h3><i class="fas fa-user"></i> المستأجر</h3>
+                <div class="tenant-box">
+                    <div class="tenant-avatar">${tName.charAt(0)}</div>
+                    <div><div class="tenant-name">${tName}</div><div class="tenant-id">رقم المستأجر: ${b.tenant?.id??'—'}</div></div>
+                </div>
+                <div class="privacy-note"><i class="fas fa-shield-halved" style="margin-top:0.15rem;"></i><span>تفاصيل الاتصال (البريد، الهاتف، الهوية) مخفية لحماية خصوصية المستأجر.</span></div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-gear"></i> إجراءات</h3>
+                <p class="card-sub">أرشفة هذا الحجز تزيله من القوائم النشطة دون حذفه نهائياً.</p>
+                <button class="btn-archive-stale" onclick="archiveBooking(${b.id})"><i class="fas fa-archive"></i> أرشفة الحجز</button>
+            </div>
+        </div>
+    </div>`;
+}
+
+function swapHero(url, el){
+    const hero = document.getElementById('hero-img');
+    if(hero) hero.src = url;
+    document.querySelectorAll('.thumbs img').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+}
+
+async function archiveBooking(id){
+    if(!confirm('هل تريد أرشفة هذا الحجز؟')) return;
+    const r = await fetch(`${BASE_URL}/admin/bookings/${id}`, {method:'DELETE', headers:authHeaders()});
+    if(r.ok){
+        showToast('تم أرشفة الحجز');
+        setTimeout(()=>goToPage('admin-bookings.html'), 1200);
+    } else {
+        showToast('تعذّر أرشفة الحجز');
+    }
+}
+
+function showToast(msg){
+    const t=document.getElementById('toast');
+    document.getElementById('toast-msg').textContent=msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+init();
+</script>
+</body>
+</html>

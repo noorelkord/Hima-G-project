@@ -159,6 +159,11 @@ async function init(){
     render(allBookings);
 }
 
+function openBooking(e,id){
+    if(e.target.closest('button')) return;
+    goToPage('admin-booking-details.html?id='+id);
+}
+
 function filterTab(status,el){
     currentTab=status;
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -172,7 +177,7 @@ function render(list){
     tbody.innerHTML=list.map(b=>{
         const main=b.property?.images?.find(i=>i.is_main)||b.property?.images?.[0];
         const img=main?`<img src="${main.url}" alt="">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
-        return `<tr>
+        return `<tr style="cursor:pointer;" onclick="openBooking(event,${b.id})">
             <td><div class="prop-cell">
                 <div class="prop-thumb-sm">${img}</div>
                 <div>
@@ -187,7 +192,7 @@ function render(list){
             <td style="font-size:0.78rem;color:#6B7280;">${b.start_date?.split('T')[0]||''}<br>${b.end_date?.split('T')[0]||''}</td>
             <td><b style="color:#1B4332;">${Number(b.price||0).toLocaleString('ar')} ₪</b></td>
             <td><span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span></td>
-            <td><button class="btn-archive-row" onclick="archiveOne(${b.id})"><i class="fas fa-archive me-1"></i>أرشفة</button></td>
+            <td><button class="btn-archive-row" onclick="event.stopPropagation();archiveOne(${b.id})"><i class="fas fa-archive me-1"></i>أرشفة</button></td>
         </tr>`;
     }).join('');
 }

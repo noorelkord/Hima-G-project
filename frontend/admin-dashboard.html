@@ -301,7 +301,7 @@ async function init(){
         tbody.innerHTML='<tr><td colspan="5" class="empty-mini">لا توجد حجوزات</td></tr>';
     } else {
         tbody.innerHTML = recent.map(b=>`
-        <tr>
+        <tr style="cursor:pointer;" onclick="goToPage('admin-booking-details.html?id=${b.id}')">
             <td><b>${b.property?.title||'عقار'}</b></td>
             <td>${b.tenant?.first_name||'مستأجر'}</td>
             <td style="font-size:0.78rem;color:#6B7280;">${b.start_date?.split('T')[0]||''} → ${b.end_date?.split('T')[0]||''}</td>

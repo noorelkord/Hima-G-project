@@ -13,7 +13,10 @@ class BookingController extends Controller
     public function index()
     {
         $bookings = Booking::with([
-            'property:id,title,type,governorate_id,city_id,neighborhood_id,street',
+            'property:id,title,type,price,governorate_id,city_id,neighborhood_id,street',
+            'property.images',
+            'property.governorate:id,name',
+            'property.city:id,name',
             'tenant:id,first_name',  // only first name, no PII
         ])
         ->latest()
@@ -22,6 +25,7 @@ class BookingController extends Controller
             return [
                 'id'          => $booking->id,
                 'status'      => $booking->status,
+                'price'       => $booking->price,
                 'start_date'  => $booking->start_date,
                 'end_date'    => $booking->end_date,
                 'created_at'  => $booking->created_at,
@@ -39,13 +43,17 @@ class BookingController extends Controller
     public function show($id)
     {
         $booking = Booking::with([
-            'property:id,title,type,governorate_id,city_id,neighborhood_id,street',
+            'property:id,title,type,price,governorate_id,city_id,neighborhood_id,street',
+            'property.images',
+            'property.governorate:id,name',
+            'property.city:id,name',
             'tenant:id,first_name',
         ])->findOrFail($id);
 
         return response()->json([
             'id'         => $booking->id,
             'status'     => $booking->status,
+            'price'      => $booking->price,
             'start_date' => $booking->start_date,
             'end_date'   => $booking->end_date,
             'created_at' => $booking->created_at,
@@ -56,6 +64,17 @@ class BookingController extends Controller
             ],
         ]);
     }
+    // Archive (soft delete) a single booking
+    public function destroy($id)
+    {
+        $booking = Booking::findOrFail($id);
+        $booking->delete(); // soft delete
+
+        return response()->json([
+            'message' => 'تم أرشفة الحجز بنجاح.',
+        ]);
+    }
+
     // Archive stale pending bookings (older than 48 hours)
     public function archiveStale()
     {
