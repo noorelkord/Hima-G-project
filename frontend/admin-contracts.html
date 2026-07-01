@@ -27,13 +27,8 @@
         .main{padding:2rem;}
         .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap;}
         .page-title{font-size:1.5rem;font-weight:900;color:#1B4332;display:flex;align-items:center;gap:0.6rem;}
-        .page-sub{color:#6B7280;font-size:0.85rem;margin-top:0.2rem;}
-        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
-        .stat-mini{background:white;border-radius:12px;border:1px solid #E5E0D8;padding:1rem;text-align:center;}
-        .stat-mini .num{font-size:1.6rem;font-weight:900;color:#1B4332;}
-        .stat-mini .lbl{font-size:0.75rem;color:#6B7280;margin-top:0.2rem;}
         .tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
-        .tab{padding:0.5rem 1.2rem;border-radius:20px;font-size:0.85rem;font-weight:600;cursor:pointer;border:1.5px solid #E5E0D8;background:white;color:#6B7280;font-family:'Cairo',sans-serif;width:auto;flex:0 0 auto;}
+        .tabs .tab{padding:0.5rem 1.2rem;border-radius:20px;font-size:0.85rem;font-weight:600;cursor:pointer;border:1.5px solid #E5E0D8;background:white;color:#6B7280;font-family:'Cairo',sans-serif;width:auto !important;flex:0 0 auto;}
         .tab.active{background:#1B4332;color:white;border-color:#1B4332;}
         .contract-card{background:#fff;border-radius:16px;border:1px solid #E9E4DB;padding:1rem;margin-bottom:1rem;display:flex;gap:1.2rem;align-items:stretch;transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s;cursor:pointer;}
         .contract-card:hover{box-shadow:0 12px 30px rgba(27,67,50,0.10);border-color:#D9D2C6;transform:translateY(-2px);}
@@ -51,11 +46,11 @@
         .badge-cancelled{background:#FEE2E2;color:#991B1B;}
         .badge-expired{background:#F3F4F6;color:#374151;}
         .contract-actions{display:flex;flex-wrap:wrap;gap:0.5rem;width:100%;}
-        .btn-view{background:#EAF5EF;color:#1B4332;border:1px solid #CFE7D8;border-radius:9px;padding:0.45rem 0.95rem;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;width:auto;}
+        .btn-view{background:#EAF5EF;color:#1B4332;border:1px solid #CFE7D8;border-radius:9px;padding:0.45rem 0.95rem;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;width:auto !important;}
         .btn-view:hover{background:#DDEFE5;}
         .empty-state{text-align:center;padding:3rem;color:#6B7280;}
         .empty-state i{font-size:2.5rem;color:#E5E0D8;display:block;margin-bottom:1rem;}
-        @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+        @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}}
         @media(max-width:640px){.contract-card{flex-direction:column;}.contract-icon{width:100%;min-width:0;height:170px;}.contract-side{flex-direction:row;align-items:center;width:100%;justify-content:space-between;border-right:none;border-top:1px solid #F0ECE4;padding-right:0;padding-top:0.8rem;}}
     </style>
 </head>
@@ -81,17 +76,7 @@
 
     <main class="main">
         <div class="page-header">
-            <div>
-                <div class="page-title"><i class="fas fa-file-contract"></i> عقود المنصة</div>
-                <div class="page-sub">عرض سجلات العقود وتفاصيلها للأدمن بدون كشف ملف PDF.</div>
-            </div>
-        </div>
-
-        <div class="stats-row">
-            <div class="stat-mini"><div class="num" id="s-total">0</div><div class="lbl">إجمالي العقود</div></div>
-            <div class="stat-mini"><div class="num" id="s-active" style="color:#065F46;">0</div><div class="lbl">نشطة</div></div>
-            <div class="stat-mini"><div class="num" id="s-expired" style="color:#6B7280;">0</div><div class="lbl">منتهية</div></div>
-            <div class="stat-mini"><div class="num" id="s-cancelled" style="color:#991B1B;">0</div><div class="lbl">ملغية</div></div>
+            <div class="page-title"><i class="fas fa-file-contract"></i> عقود المنصة</div>
         </div>
 
         <div class="tabs">
@@ -124,13 +109,15 @@ async function init(){
     document.getElementById('sidebar-name').textContent=name;
     document.getElementById('avatar').textContent=name.charAt(0)||'A';
 
-    const r=await fetch(BASE_URL+'/contracts',{headers:authHeaders()});
-    allContracts=await r.json();
-    document.getElementById('s-total').textContent=allContracts.length;
-    document.getElementById('s-active').textContent=allContracts.filter(c=>c.status==='active').length;
-    document.getElementById('s-expired').textContent=allContracts.filter(c=>c.status==='expired').length;
-    document.getElementById('s-cancelled').textContent=allContracts.filter(c=>c.status==='cancelled').length;
-    render(allContracts);
+    try{
+        const r=await fetch(BASE_URL+'/contracts',{headers:authHeaders()});
+        const data=await r.json();
+        if(!r.ok) throw new Error(data.message||'تعذر تحميل العقود');
+        allContracts=Array.isArray(data)?data:[];
+        render(allContracts);
+    }catch(err){
+        document.getElementById('list').innerHTML=`<div class="empty-state"><i class="fas fa-circle-exclamation"></i><p>تعذر تحميل العقود</p></div>`;
+    }
 }
 
 function filterTab(status,el){
