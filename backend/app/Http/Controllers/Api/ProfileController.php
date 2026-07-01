@@ -21,7 +21,7 @@ class ProfileController extends Controller
             'second_name' => 'required|string|max:50',
             'third_name'  => 'required|string|max:50',
             'last_name'   => 'required|string|max:50',
-            'national_id' => ['required', 'string', 'regex:/^4[0-9]{8}$/', 'unique:users,national_id,' . $user->id],
+            'national_id' => ['required', 'string', 'regex:/^[0-9]{9}$/', 'unique:users,national_id,' . $user->id],
             'phone'       => ['required', 'string', 'regex:/^\+(970|972)[0-9]{9}$/'],
         ], $this->validationMessages());
         $user->update($data);
@@ -42,7 +42,7 @@ class ProfileController extends Controller
             'second_name' => 'sometimes|string|max:50',
             'third_name'  => 'sometimes|string|max:50',
             'last_name'   => 'sometimes|string|max:50',
-            'national_id' => ['sometimes', 'string', 'regex:/^4[0-9]{8}$/', 'unique:users,national_id,' . $user->id],
+            'national_id' => ['sometimes', 'string', 'regex:/^[0-9]{9}$/', 'unique:users,national_id,' . $user->id],
             'phone'       => ['sometimes', 'string', 'regex:/^\+(970|972)[0-9]{9}$/'],
         ], $this->validationMessages());
 
@@ -112,7 +112,7 @@ class ProfileController extends Controller
     {
         return [
             'phone.regex'       => 'رقم الهاتف يجب أن يبدأ بـ +970 أو +972 ويتكون من 13 رقماً (مثال: +970599123456).',
-            'national_id.regex' => 'رقم الهوية يجب أن يتكون من 9 أرقام ويبدأ بالرقم 4.',
+            'national_id.regex' => 'رقم الهوية يجب أن يتكون من 9 أرقام.',
             'password.min'      => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.',
             'password.confirmed'=> 'تأكيد كلمة المرور غير متطابق.',
         ];
