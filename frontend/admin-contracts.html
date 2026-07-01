@@ -35,28 +35,28 @@
         .tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
         .tab{padding:0.5rem 1.2rem;border-radius:20px;font-size:0.85rem;font-weight:600;cursor:pointer;border:1.5px solid #E5E0D8;background:white;color:#6B7280;font-family:'Cairo',sans-serif;}
         .tab.active{background:#1B4332;color:white;border-color:#1B4332;}
-        .table-wrap{background:white;border-radius:14px;border:1px solid #E5E0D8;overflow:hidden;}
-        table{width:100%;border-collapse:collapse;font-size:0.85rem;}
-        thead{background:#F0F7F4;}
-        thead th{padding:0.9rem 1rem;text-align:right;font-weight:700;color:#1B4332;font-size:0.8rem;}
-        tbody tr{border-top:1px solid #F3F4F6;transition:background 0.15s;cursor:pointer;}
-        tbody tr:hover{background:#FAFAFA;}
-        tbody td{padding:0.85rem 1rem;color:#374151;vertical-align:middle;}
-        .contract-main{display:flex;align-items:center;gap:0.75rem;}
-        .contract-icon{width:46px;height:40px;border-radius:9px;background:#F0F7F4;color:#1B4332;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;}
-        .contract-title{font-weight:800;color:#1A1A1A;font-size:0.88rem;}
+        .contract-card{background:#fff;border-radius:16px;border:1px solid #E9E4DB;padding:1rem;margin-bottom:1rem;display:flex;gap:1.2rem;align-items:stretch;transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s;cursor:pointer;}
+        .contract-card:hover{box-shadow:0 12px 30px rgba(27,67,50,0.10);border-color:#D9D2C6;transform:translateY(-2px);}
+        .contract-icon{width:160px;min-width:160px;height:120px;border-radius:12px;background:linear-gradient(135deg,#1B4332,#2D6A4F);color:#D4A853;display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;}
+        .contract-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:0.55rem;}
+        .contract-title{font-weight:800;color:#16241C;font-size:1.05rem;line-height:1.35;}
         .contract-sub{font-size:0.72rem;color:#6B7280;margin-top:0.1rem;}
-        .party{font-size:0.8rem;color:#374151;}
-        .party b{color:#1A1A1A;}
-        .badge{font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:12px;}
+        .contract-meta{display:flex;flex-wrap:wrap;gap:0.45rem;}
+        .meta-chip{display:inline-flex;align-items:center;gap:0.35rem;background:#F4F1EB;color:#4B5563;font-size:0.78rem;font-weight:600;padding:0.32rem 0.72rem;border-radius:999px;white-space:nowrap;}
+        .meta-chip i{font-size:0.72rem;color:#2D6A4F;}
+        .meta-chip.privacy{background:#FEF9EC;color:#92400E;}
+        .contract-side{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:0.8rem;min-width:150px;padding-right:1.2rem;border-right:1px solid #F0ECE4;}
+        .badge{font-size:0.74rem;font-weight:800;padding:0.32rem 0.85rem;border-radius:999px;white-space:nowrap;}
         .badge-active{background:#D1FAE5;color:#065F46;}
         .badge-cancelled{background:#FEE2E2;color:#991B1B;}
         .badge-expired{background:#F3F4F6;color:#374151;}
-        .btn-view{background:#EAF5EF;color:#1B4332;border:1px solid #CFE7D8;border-radius:8px;padding:0.35rem 0.8rem;font-family:'Cairo',sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;}
+        .contract-actions{display:flex;flex-wrap:wrap;gap:0.5rem;width:100%;}
+        .btn-view{background:#EAF5EF;color:#1B4332;border:1px solid #CFE7D8;border-radius:9px;padding:0.45rem 0.95rem;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;}
         .btn-view:hover{background:#DDEFE5;}
         .empty-state{text-align:center;padding:3rem;color:#6B7280;}
         .empty-state i{font-size:2.5rem;color:#E5E0D8;display:block;margin-bottom:1rem;}
-        @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.stats-row{grid-template-columns:repeat(2,1fr);}.table-wrap{overflow-x:auto;}table{min-width:820px;}}
+        @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+        @media(max-width:640px){.contract-card{flex-direction:column;}.contract-icon{width:100%;min-width:0;height:170px;}.contract-side{flex-direction:row;align-items:center;width:100%;justify-content:space-between;border-right:none;border-top:1px solid #F0ECE4;padding-right:0;padding-top:0.8rem;}}
     </style>
 </head>
 <body>
@@ -101,22 +101,8 @@
             <button class="tab" onclick="filterTab('cancelled',this)">ملغي</button>
         </div>
 
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>العقد</th>
-                        <th>المستأجر</th>
-                        <th>صاحب العقار</th>
-                        <th>التواريخ</th>
-                        <th>الحالة</th>
-                        <th>إجراء</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i></td></tr>
-                </tbody>
-            </table>
+        <div id="list">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i></div>
         </div>
     </main>
 </div>
@@ -159,28 +145,33 @@ function openContract(id){
 }
 
 function render(list){
-    const tbody=document.getElementById('table-body');
+    const el=document.getElementById('list');
     if(!list.length){
-        tbody.innerHTML=`<tr><td colspan="6" class="empty-state"><i class="fas fa-file-circle-xmark"></i><p>لا توجد عقود في هذه الفئة</p></td></tr>`;
+        el.innerHTML=`<div class="empty-state"><i class="fas fa-file-circle-xmark"></i><p>لا توجد عقود في هذه الفئة</p></div>`;
         return;
     }
-    tbody.innerHTML=list.map(c=>`
-        <tr onclick="openContract(${c.id})">
-            <td>
-                <div class="contract-main">
-                    <div class="contract-icon"><i class="fas fa-file-signature"></i></div>
-                    <div>
-                        <div class="contract-title">${c.property?.title||'عقار'}</div>
-                        <div class="contract-sub">عقد #${c.id}</div>
-                    </div>
+    el.innerHTML=list.map(c=>`
+        <div class="contract-card" onclick="openContract(${c.id})">
+            <div class="contract-icon"><i class="fas fa-file-signature"></i></div>
+            <div class="contract-body">
+                <div>
+                    <div class="contract-title">${c.property?.title||'عقار'}</div>
+                    <div class="contract-sub">عقد #${c.id}</div>
                 </div>
-            </td>
-            <td class="party"><b>${c.tenant?.first_name||'—'}</b></td>
-            <td class="party"><b>${c.host?.first_name||'—'} ${c.host?.last_name||''}</b></td>
-            <td style="font-size:0.78rem;color:#6B7280;">${fmtDate(c.start_date)}<br>${fmtDate(c.end_date)}</td>
-            <td><span class="badge ${statusCls[c.status]||''}">${statusMap[c.status]||c.status}</span></td>
-            <td><button class="btn-view" onclick="event.stopPropagation();openContract(${c.id})"><i class="fas fa-eye me-1"></i>عرض</button></td>
-        </tr>`).join('');
+                <div class="contract-meta">
+                    <span class="meta-chip"><i class="fas fa-user"></i>المستأجر: ${c.tenant?.first_name||'—'}</span>
+                    <span class="meta-chip"><i class="fas fa-user-tie"></i>صاحب العقار: ${c.host?.first_name||'—'} ${c.host?.last_name||''}</span>
+                    <span class="meta-chip"><i class="fas fa-calendar-alt"></i>${fmtDate(c.start_date)} → ${fmtDate(c.end_date)}</span>
+                    <span class="meta-chip privacy"><i class="fas fa-shield-halved"></i>ملف PDF غير متاح للأدمن</span>
+                </div>
+            </div>
+            <div class="contract-side">
+                <span class="badge ${statusCls[c.status]||''}">${statusMap[c.status]||c.status}</span>
+                <div class="contract-actions">
+                    <button class="btn-view" onclick="event.stopPropagation();openContract(${c.id})"><i class="fas fa-eye"></i>عرض</button>
+                </div>
+            </div>
+        </div>`).join('');
 }
 
 init();

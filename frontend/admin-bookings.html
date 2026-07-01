@@ -40,31 +40,28 @@
         .tab{padding:0.5rem 1.2rem;border-radius:20px;font-size:0.85rem;font-weight:600;cursor:pointer;border:1.5px solid #E5E0D8;background:white;color:#6B7280;font-family:'Cairo',sans-serif;}
         .tab.active{background:#1B4332;color:white;border-color:#1B4332;}
 
-        /* Table */
-        .table-wrap{background:white;border-radius:14px;border:1px solid #E5E0D8;overflow:hidden;}
-        table{width:100%;border-collapse:collapse;font-size:0.85rem;}
-        thead{background:#F0F7F4;}
-        thead th{padding:0.9rem 1rem;text-align:right;font-weight:700;color:#1B4332;font-size:0.8rem;}
-        tbody tr{border-top:1px solid #F3F4F6;transition:background 0.15s;}
-        tbody tr:hover{background:#FAFAFA;}
-        tbody td{padding:0.85rem 1rem;color:#374151;vertical-align:middle;}
-        .prop-cell{display:flex;align-items:center;gap:0.7rem;}
-        .prop-thumb-sm{width:50px;height:40px;border-radius:7px;background:linear-gradient(135deg,#1B4332,#2D6A4F);overflow:hidden;flex-shrink:0;}
-        .prop-thumb-sm img{width:100%;height:100%;object-fit:cover;}
-        .prop-thumb-sm .no-img{display:flex;align-items:center;justify-content:center;height:100%;font-size:1rem;color:rgba(255,255,255,0.2);}
-        .prop-cell-name{font-weight:700;font-size:0.85rem;color:#1A1A1A;}
-        .prop-cell-loc{font-size:0.72rem;color:#6B7280;}
-        .tenant-cell{font-size:0.82rem;}
-        .tenant-name-val{font-weight:600;color:#1A1A1A;}
-        .tenant-id{font-size:0.72rem;color:#9CA3AF;}
+        .booking-card{background:#fff;border-radius:16px;border:1px solid #E9E4DB;padding:1rem;margin-bottom:1rem;display:flex;gap:1.2rem;align-items:stretch;transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s;cursor:pointer;}
+        .booking-card:hover{box-shadow:0 12px 30px rgba(27,67,50,0.10);border-color:#D9D2C6;transform:translateY(-2px);}
+        .prop-thumb{width:160px;min-width:160px;height:120px;border-radius:12px;background:linear-gradient(135deg,#1B4332,#2D6A4F);overflow:hidden;flex-shrink:0;}
+        .prop-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+        .prop-thumb .no-img{display:flex;align-items:center;justify-content:center;height:100%;font-size:2rem;color:rgba(255,255,255,0.25);}
+        .booking-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:0.55rem;}
+        .booking-name{font-weight:800;font-size:1.05rem;color:#16241C;line-height:1.35;}
+        .booking-meta{display:flex;flex-wrap:wrap;gap:0.45rem;}
+        .meta-chip{display:inline-flex;align-items:center;gap:0.35rem;background:#F4F1EB;color:#4B5563;font-size:0.78rem;font-weight:600;padding:0.32rem 0.72rem;border-radius:999px;white-space:nowrap;}
+        .meta-chip i{font-size:0.72rem;color:#2D6A4F;}
+        .meta-chip.price{background:#EAF5EF;color:#1B4332;}
+        .meta-chip.privacy{background:#FEF9EC;color:#92400E;}
+        .booking-side{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:0.8rem;min-width:150px;padding-right:1.2rem;border-right:1px solid #F0ECE4;}
 
-        .badge{font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:12px;}
+        .badge{font-size:0.74rem;font-weight:800;padding:0.32rem 0.85rem;border-radius:999px;white-space:nowrap;}
         .badge-pending{background:#FEF3C7;color:#92400E;}
         .badge-accepted{background:#D1FAE5;color:#065F46;}
         .badge-rejected{background:#FEE2E2;color:#991B1B;}
         .badge-cancelled{background:#F3F4F6;color:#374151;}
 
-        .btn-archive-row{background:#F3F4F6;color:#6B7280;border:1px solid #E5E0D8;border-radius:7px;padding:0.3rem 0.7rem;font-family:'Cairo',sans-serif;font-size:0.78rem;cursor:pointer;}
+        .booking-actions{display:flex;flex-wrap:wrap;gap:0.5rem;width:100%;}
+        .btn-archive-row{background:#F3F4F6;color:#6B7280;border:1px solid #E5E0D8;border-radius:9px;padding:0.45rem 0.95rem;font-family:'Cairo',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;}
         .btn-archive-row:hover{background:#E5E0D8;}
 
         .empty-state{text-align:center;padding:3rem;color:#6B7280;}
@@ -73,6 +70,7 @@
         .toast{position:fixed;bottom:2rem;left:2rem;background:#1B4332;color:white;padding:0.9rem 1.4rem;border-radius:10px;font-size:0.9rem;z-index:9999;display:none;align-items:center;gap:0.5rem;}
         .toast.show{display:flex;}
         @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+        @media(max-width:640px){.booking-card{flex-direction:column;}.prop-thumb{width:100%;min-width:0;height:170px;}.booking-side{flex-direction:row;align-items:center;width:100%;justify-content:space-between;border-right:none;border-top:1px solid #F0ECE4;padding-right:0;padding-top:0.8rem;}}
     </style>
 </head>
 <body>
@@ -118,22 +116,8 @@
             <button class="tab" onclick="filterTab('cancelled',this)">ملغي</button>
         </div>
 
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>العقار</th>
-                        <th>المستأجر</th>
-                        <th>التواريخ</th>
-                        <th>السعر</th>
-                        <th>الحالة</th>
-                        <th>إجراء</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i></td></tr>
-                </tbody>
-            </table>
+        <div id="list">
+            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i></div>
         </div>
     </main>
 </div>
@@ -173,28 +157,30 @@ function filterTab(status,el){
 }
 
 function render(list){
-    const tbody=document.getElementById('table-body');
-    if(!list.length){tbody.innerHTML=`<tr><td colspan="6" class="empty-state"><i class="fas fa-inbox"></i><p>لا توجد حجوزات</p></td></tr>`;return;}
-    tbody.innerHTML=list.map(b=>{
+    const el=document.getElementById('list');
+    if(!list.length){el.innerHTML=`<div class="empty-state"><i class="fas fa-inbox"></i><p>لا توجد حجوزات</p></div>`;return;}
+    el.innerHTML=list.map(b=>{
         const main=b.property?.images?.find(i=>i.is_main && i.url)||b.property?.images?.find(i=>i.url);
         const img=main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
-        return `<tr style="cursor:pointer;" onclick="openBooking(event,${b.id})">
-            <td><div class="prop-cell">
-                <div class="prop-thumb-sm">${img}</div>
-                <div>
-                    <div class="prop-cell-name">${b.property?.title||'عقار'}</div>
-                    <div class="prop-cell-loc">${b.property?.governorate?.name||''}</div>
+        return `<div class="booking-card" onclick="openBooking(event,${b.id})">
+            <div class="prop-thumb">${img}</div>
+            <div class="booking-body">
+                <div class="booking-name">${b.property?.title||'عقار'}</div>
+                <div class="booking-meta">
+                    <span class="meta-chip"><i class="fas fa-map-marker-alt"></i>${b.property?.governorate?.name||'غير محدد'}</span>
+                    <span class="meta-chip"><i class="fas fa-user"></i>المستأجر: ${b.tenant?.first_name||'—'}</span>
+                    <span class="meta-chip"><i class="fas fa-calendar-alt"></i>${b.start_date?.split('T')[0]||''} → ${b.end_date?.split('T')[0]||''}</span>
+                    <span class="meta-chip price"><i class="fas fa-money-bill-wave"></i>${Number(b.price||0).toLocaleString('ar')} ₪</span>
+                    <span class="meta-chip privacy"><i class="fas fa-shield-halved"></i>بيانات المستأجر مخفية</span>
                 </div>
-            </div></td>
-            <td><div class="tenant-cell">
-                <div class="tenant-name-val">${b.tenant?.first_name||'—'}</div>
-                <div class="tenant-id">مخفي لحماية الخصوصية</div>
-            </div></td>
-            <td style="font-size:0.78rem;color:#6B7280;">${b.start_date?.split('T')[0]||''}<br>${b.end_date?.split('T')[0]||''}</td>
-            <td><b style="color:#1B4332;">${Number(b.price||0).toLocaleString('ar')} ₪</b></td>
-            <td><span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span></td>
-            <td><button class="btn-archive-row" onclick="event.stopPropagation();archiveOne(${b.id})"><i class="fas fa-archive me-1"></i>أرشفة</button></td>
-        </tr>`;
+            </div>
+            <div class="booking-side">
+                <span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span>
+                <div class="booking-actions">
+                    <button class="btn-archive-row" onclick="event.stopPropagation();archiveOne(${b.id})"><i class="fas fa-archive"></i>أرشفة</button>
+                </div>
+            </div>
+        </div>`;
     }).join('');
 }
 
