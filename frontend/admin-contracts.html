@@ -25,10 +25,11 @@
         .btn-logout{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.4);cursor:pointer;font-size:0.875rem;background:none;border:none;font-family:'Cairo',sans-serif;width:100%;text-align:right;margin-top:1rem;}
         .btn-logout:hover{color:#E74C3C;}
         .main{padding:2rem;}
+        .page-header,.tabs,#list{max-width:1100px;margin-left:auto;margin-right:auto;}
         .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap;}
         .page-title{font-size:1.5rem;font-weight:900;color:#1B4332;display:flex;align-items:center;gap:0.6rem;}
         .tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
-        .tabs .tab{padding:0.5rem 1.2rem;border-radius:20px;font-size:0.85rem;font-weight:600;cursor:pointer;border:1.5px solid #E5E0D8;background:white;color:#6B7280;font-family:'Cairo',sans-serif;width:auto !important;flex:0 0 auto;}
+        .tabs .tab{padding:0.5rem 1.2rem;border-radius:20px;font-size:0.85rem;font-weight:600;cursor:pointer;border:1.5px solid #E5E0D8;background:white;color:#6B7280;font-family:'Cairo',sans-serif;width:auto !important;flex:1 1 0;min-width:0;}
         .tab.active{background:#1B4332;color:white;border-color:#1B4332;}
         .contract-card{background:#fff;border-radius:16px;border:1px solid #E9E4DB;padding:1rem;margin-bottom:1rem;display:flex;gap:1.2rem;align-items:stretch;transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s;cursor:pointer;}
         .contract-card:hover{box-shadow:0 12px 30px rgba(27,67,50,0.10);border-color:#D9D2C6;transform:translateY(-2px);}
@@ -51,7 +52,7 @@
         .empty-state{text-align:center;padding:3rem;color:#6B7280;}
         .empty-state i{font-size:2.5rem;color:#E5E0D8;display:block;margin-bottom:1rem;}
         @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}}
-        @media(max-width:640px){.contract-card{flex-direction:column;}.contract-icon{width:100%;min-width:0;height:170px;}.contract-side{flex-direction:row;align-items:center;width:100%;justify-content:space-between;border-right:none;border-top:1px solid #F0ECE4;padding-right:0;padding-top:0.8rem;}}
+        @media(max-width:640px){.main{padding:1.2rem;}.tabs{flex-direction:column;}.contract-card{flex-direction:column;}.contract-icon{width:100%;min-width:0;height:170px;}.contract-side{flex-direction:row;align-items:center;width:100%;justify-content:space-between;border-right:none;border-top:1px solid #F0ECE4;padding-right:0;padding-top:0.8rem;}}
     </style>
 </head>
 <body>
