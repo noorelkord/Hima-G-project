@@ -167,8 +167,8 @@ function render(list){
         return;
     }
     el.innerHTML = list.map(p=>{
-        const main = p.images?.find(i=>i.is_main)||p.images?.[0];
-        const img  = main?`<img src="${main.url}" alt="">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+        const main = p.images?.find(i=>i.is_main && i.url)||p.images?.find(i=>i.url);
+        const img  = main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
         const loc  = [p.governorate?.name,p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
         const host = p.host?`${p.host.first_name||''} ${p.host.last_name||''}`:'غير معروف';
         const actions = p.status==='pending' ? `

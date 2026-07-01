@@ -689,8 +689,8 @@ async function loadProperties(params={}){
 function renderCard(p){
     const role  = localStorage.getItem('role');
     const token = localStorage.getItem('token');
-    const main  = p.images?.find(i=>i.is_main) || p.images?.[0];
-    const img   = main ? `<img src="${main.url}" alt="${p.title}" loading="lazy">` : `<div class="no-img"><i class="fas fa-building"></i></div>`;
+    const main  = p.images?.find(i=>i.is_main && i.url) || p.images?.find(i=>i.url);
+    const img   = main?.url ? `<img src="${main.url}" alt="${p.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">` : `<div class="no-img"><i class="fas fa-building"></i></div>`;
     const fav   = role !== 'host' ? `<button class="prop-fav" onclick="event.stopPropagation();toggleFav(${p.id},this)" title="أضف للمفضلة"><i class="fas fa-heart"></i></button>` : '';
     const loc   = [p.governorate?.name, p.city?.name, p.neighborhood?.name].filter(Boolean).join(' - ') || 'غير محدد';
     return `

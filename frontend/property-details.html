@@ -312,16 +312,18 @@ function render(p){
     document.getElementById('description').textContent = p.description || 'لا يوجد وصف متاح';
 
     // Gallery
-    if(p.images?.length){
-        const main = p.images.find(i=>i.is_main)||p.images[0];
+    const galleryImages = (p.images || []).filter(img => img.url);
+    if(galleryImages.length){
+        const main = galleryImages.find(i=>i.is_main)||galleryImages[0];
         setMainImage(main.url, p.title);
         const thumbs = document.getElementById('thumbs');
-        p.images.forEach((img,i)=>{
+        thumbs.innerHTML = '';
+        galleryImages.forEach((img,i)=>{
             thumbs.innerHTML += `<div class="thumb ${i===0?'active':''}" onclick="switchImg('${img.url}',this)">
-                <img src="${img.url}" alt="">
+                <img src="${img.url}" alt="" onerror="this.closest('.thumb').remove()">
             </div>`;
         });
-        thumbs.classList.toggle('single', p.images.length === 1);
+        thumbs.classList.toggle('single', galleryImages.length === 1);
     }
 
     // Specs
@@ -371,6 +373,11 @@ function setMainImage(url, alt){
     holder.innerHTML = `<img src="${url}" alt="${alt}">`;
 
     const img = holder.querySelector('img');
+    img.onerror = () => {
+        holder.classList.remove('fit-contain');
+        holder.style.backgroundImage = '';
+        holder.innerHTML = '<div class="no-img"><i class="fas fa-building"></i></div>';
+    };
     img.onload = () => {
         const isPortrait = img.naturalHeight > img.naturalWidth;
         if(isPortrait){
