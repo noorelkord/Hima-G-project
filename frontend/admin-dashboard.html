@@ -52,7 +52,7 @@
         .btn-see-all { font-size:0.8rem; color:#2D6A4F; text-decoration:none; font-weight:600; }
 
         /* Quick Links */
-        .quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+        .quick-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
         .quick-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.2rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.8rem; text-decoration:none; }
         .quick-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.1); transform:translateY(-2px); }
         .quick-card-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
@@ -125,6 +125,7 @@
         <a class="nav-item active" href="admin-dashboard.html"><i class="fas fa-th-large"></i> لوحة التحكم</a>
         <a class="nav-item" href="admin-properties.html"><i class="fas fa-building"></i> إدارة العقارات</a>
         <a class="nav-item" href="admin-bookings.html"><i class="fas fa-calendar-check"></i> إدارة الحجوزات</a>
+        <a class="nav-item" href="admin-contracts.html"><i class="fas fa-file-contract"></i> عقود المنصة</a>
 
         <div class="nav-section">النظام</div>
         <a class="nav-item" href="notifications.html?v=role-sidebar">
@@ -160,7 +161,7 @@
                 <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
                 <div><div class="stat-num" id="stat-bookings">0</div><div class="stat-lbl">إجمالي الحجوزات</div></div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" style="cursor:pointer;" onclick="goToPage('admin-contracts.html')">
                 <div class="stat-icon red"><i class="fas fa-file-contract"></i></div>
                 <div><div class="stat-num" id="stat-active-contracts">0</div><div class="stat-lbl">عقود نشطة</div></div>
             </div>
@@ -176,6 +177,10 @@
             <a class="quick-card" href="admin-bookings.html">
                 <div class="quick-card-icon" style="background:#DBEAFE;color:#1E40AF;"><i class="fas fa-calendar-alt"></i></div>
                 <div><div class="quick-card-title">إدارة الحجوزات</div><div class="quick-card-sub">عرض وأرشفة الحجوزات</div></div>
+            </a>
+            <a class="quick-card" href="admin-contracts.html">
+                <div class="quick-card-icon" style="background:#FEE2E2;color:#991B1B;"><i class="fas fa-file-signature"></i></div>
+                <div><div class="quick-card-title">عقود المنصة</div><div class="quick-card-sub">عرض سجلات العقود</div></div>
             </a>
             <a class="quick-card" href="admin-properties.html">
                 <div class="quick-card-icon" style="background:#D1FAE5;color:#065F46;"><i class="fas fa-check-double"></i></div>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | تفاصيل العقد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        :root{--green:#1B4332;--gold:#D4A853;--bg:#F8F5F0;--border:#E5E0D8;--muted:#6B7280;}
+        body{margin:0;background:var(--bg);font-family:'Cairo',sans-serif;}
+        .layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+        .sidebar{background:#0D2B1F;padding:1.5rem 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+        .sidebar-logo{font-size:1.4rem;font-weight:900;color:var(--gold);padding:0 1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .sidebar-logo span{color:white;font-weight:300;font-size:0.85rem;display:block;}
+        .sidebar-user{padding:0.8rem 1.2rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .user-avatar{width:44px;height:44px;border-radius:50%;background:#C0392B;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;}
+        .user-name{color:white;font-size:0.9rem;font-weight:700;}
+        .user-role{color:rgba(255,255,255,0.4);font-size:0.75rem;}
+        .nav-section{font-size:0.68rem;color:rgba(255,255,255,0.3);padding:1rem 1.2rem 0.4rem;text-transform:uppercase;letter-spacing:0.8px;}
+        .nav-item{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.2s;font-size:0.875rem;text-decoration:none;border-right:3px solid transparent;}
+        .nav-item:hover{color:white;background:rgba(255,255,255,0.05);}
+        .nav-item.active{color:var(--gold);background:rgba(212,168,83,0.1);border-right-color:var(--gold);}
+        .nav-item i{width:18px;text-align:center;}
+        .btn-logout{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.4);cursor:pointer;font-size:0.875rem;background:none;border:none;font-family:'Cairo',sans-serif;width:100%;text-align:right;margin-top:1rem;}
+        .btn-logout:hover{color:#E74C3C;}
+        .main{padding:2.2rem 1.5rem 3rem;display:flex;justify-content:center;}
+        .wrap{width:100%;max-width:900px;}
+        .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;gap:1rem;flex-wrap:wrap;}
+        .back-link{display:inline-flex;align-items:center;gap:0.5rem;color:#2D6A4F;font-weight:700;font-size:0.875rem;text-decoration:none;}
+        .ref{font-size:0.8rem;color:#9CA3AF;font-weight:700;}
+        .hero{background:linear-gradient(135deg,#0D2B1F,#1B4332);border-radius:18px;padding:1.6rem 1.8rem;color:white;margin-bottom:1.2rem;display:flex;justify-content:space-between;gap:1rem;align-items:center;}
+        .hero h1{margin:0;font-size:1.45rem;font-weight:900;display:flex;align-items:center;gap:0.6rem;}
+        .hero p{margin:0.35rem 0 0;color:rgba(255,255,255,0.72);font-size:0.88rem;}
+        .badge{font-size:0.78rem;font-weight:800;padding:0.45rem 1rem;border-radius:999px;white-space:nowrap;}
+        .badge-active{background:#D1FAE5;color:#065F46;}
+        .badge-cancelled{background:#FEE2E2;color:#991B1B;}
+        .badge-expired{background:#F3F4F6;color:#374151;}
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;align-items:start;}
+        .card{background:white;border:1px solid var(--border);border-radius:16px;padding:1.35rem;}
+        .card.span{grid-column:1/-1;}
+        .card h3{font-size:0.95rem;font-weight:800;color:var(--green);margin:0 0 0.8rem;display:flex;align-items:center;gap:0.55rem;}
+        .info-row{display:flex;justify-content:space-between;gap:1rem;padding:0.72rem 0;border-bottom:1px solid #F3F0E9;}
+        .info-row:last-child{border-bottom:none;padding-bottom:0;}
+        .info-label{font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:0.5rem;}
+        .info-label i{width:16px;text-align:center;color:#9CA3AF;}
+        .info-value{font-size:0.9rem;font-weight:800;color:#16241C;text-align:left;}
+        .privacy-note{background:#FEF9EC;border:1px solid #FDE68A;color:#92400E;border-radius:12px;padding:0.9rem 1rem;font-size:0.8rem;line-height:1.7;display:flex;gap:0.6rem;align-items:flex-start;}
+        .state{text-align:center;padding:5rem 2rem;color:var(--muted);}
+        .state i{font-size:3rem;color:var(--border);display:block;margin-bottom:1rem;}
+        @media(max-width:760px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.grid{grid-template-columns:1fr;}.hero{align-items:flex-start;flex-direction:column;}}
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">حمى <span>لوحة الإدارة</span></div>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="avatar">A</div>
+            <div class="user-name" id="sidebar-name">...</div>
+            <div class="user-role">مشرف النظام</div>
+        </div>
+        <div class="nav-section">الإدارة</div>
+        <a class="nav-item" href="admin-dashboard.html"><i class="fas fa-th-large"></i> لوحة التحكم</a>
+        <a class="nav-item" href="admin-properties.html"><i class="fas fa-building"></i> إدارة العقارات</a>
+        <a class="nav-item" href="admin-bookings.html"><i class="fas fa-calendar-check"></i> إدارة الحجوزات</a>
+        <a class="nav-item active" href="admin-contracts.html"><i class="fas fa-file-contract"></i> عقود المنصة</a>
+        <div class="nav-section">النظام</div>
+        <a class="nav-item" href="notifications.html?v=role-sidebar"><i class="fas fa-bell"></i> الإشعارات</a>
+        <a class="nav-item" href="profile.html?v=role-sidebar"><i class="fas fa-user-cog"></i> الملف الشخصي</a>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </aside>
+
+    <main class="main">
+        <div class="wrap">
+            <div class="topbar">
+                <a class="back-link" href="admin-contracts.html"><i class="fas fa-arrow-right"></i> العودة إلى عقود المنصة</a>
+                <span class="ref" id="ref"></span>
+            </div>
+            <div id="content">
+                <div class="state"><i class="fas fa-spinner fa-spin"></i><p>جارٍ تحميل تفاصيل العقد...</p></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const statusMap={active:'نشط',cancelled:'ملغي',expired:'منتهي'};
+const statusCls={active:'badge-active',cancelled:'badge-cancelled',expired:'badge-expired'};
+const contractId=new URLSearchParams(location.search).get('id');
+
+function fmtDate(d){
+    if(!d) return '—';
+    const dt=new Date(String(d).replace(' ','T'));
+    if(isNaN(dt)) return String(d).split('T')[0];
+    return dt.toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'});
+}
+
+function days(a,b){
+    if(!a||!b) return '—';
+    const d1=new Date(String(a).split('T')[0]), d2=new Date(String(b).split('T')[0]);
+    const n=Math.round((d2-d1)/86400000);
+    return n>0 ? `${n} يوم` : '—';
+}
+
+async function init(){
+    requireRole('admin', 'admin-login.html');
+    const name=localStorage.getItem('name')||'';
+    document.getElementById('sidebar-name').textContent=name;
+    document.getElementById('avatar').textContent=name.charAt(0)||'A';
+
+    if(!contractId){
+        document.getElementById('content').innerHTML='<div class="state"><i class="fas fa-exclamation-triangle"></i><p>رقم العقد غير محدد</p></div>';
+        return;
+    }
+
+    const r=await fetch(`${BASE_URL}/contracts/${contractId}`,{headers:authHeaders()});
+    if(!r.ok){
+        document.getElementById('content').innerHTML='<div class="state"><i class="fas fa-circle-xmark"></i><p>تعذّر العثور على العقد</p></div>';
+        return;
+    }
+    render(await r.json());
+}
+
+function render(c){
+    const p=c.property||{};
+    const tenant=c.tenant||{};
+    const host=c.host||{};
+    const loc=[p.governorate?.name,p.city?.name,p.neighborhood?.name,p.street].filter(Boolean).join(' - ')||'غير محدد';
+    document.getElementById('ref').textContent='رقم العقد: #'+c.id;
+    document.getElementById('content').innerHTML=`
+        <div class="hero">
+            <div>
+                <h1><i class="fas fa-file-signature" style="color:#D4A853;"></i> عقد #${c.id}</h1>
+                <p>${p.title||'عقار'} — ${loc}</p>
+            </div>
+            <span class="badge ${statusCls[c.status]||''}">${statusMap[c.status]||c.status}</span>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3><i class="fas fa-home"></i> العقار</h3>
+                <div class="info-row"><span class="info-label"><i class="fas fa-tag"></i>العقار</span><span class="info-value">${p.title||'—'}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-map-marker-alt"></i>الموقع</span><span class="info-value">${loc}</span></div>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-calendar-days"></i> مدة العقد</h3>
+                <div class="info-row"><span class="info-label"><i class="fas fa-calendar-plus"></i>تاريخ البداية</span><span class="info-value">${fmtDate(c.start_date)}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-calendar-minus"></i>تاريخ النهاية</span><span class="info-value">${fmtDate(c.end_date)}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-hourglass-half"></i>المدة</span><span class="info-value">${days(c.start_date,c.end_date)}</span></div>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-user"></i> المستأجر</h3>
+                <div class="info-row"><span class="info-label"><i class="fas fa-id-badge"></i>الاسم</span><span class="info-value">${tenant.first_name||'—'}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-hashtag"></i>رقم المستخدم</span><span class="info-value">${tenant.id??'—'}</span></div>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-user-tie"></i> صاحب العقار</h3>
+                <div class="info-row"><span class="info-label"><i class="fas fa-id-badge"></i>الاسم</span><span class="info-value">${host.first_name||'—'} ${host.last_name||''}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-phone"></i>الهاتف</span><span class="info-value">${host.phone||'—'}</span></div>
+            </div>
+            <div class="card span">
+                <h3><i class="fas fa-shield-halved"></i> ملاحظة خصوصية</h3>
+                <div class="privacy-note"><i class="fas fa-circle-info" style="margin-top:0.2rem;"></i><span>الأدمن يستطيع رؤية سجل العقد وتفاصيله الإدارية فقط. ملف العقد PDF غير متاح للأدمن حسب حماية الباك اند الحالية.</span></div>
+            </div>
+        </div>`;
+}
+
+init();
+</script>
+</body>
+</html>
