@@ -7,6 +7,33 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Hima Property Images on S3
+
+Uploaded property images are stored with Laravel Storage. In production, Render should use the S3 disk so files survive redeploys and are served to the frontend through temporary signed URLs.
+
+Required Render environment variables:
+
+```env
+FILESYSTEM_DISK=s3
+AWS_ACCESS_KEY_ID=your_iam_access_key
+AWS_SECRET_ACCESS_KEY=your_iam_secret_key
+AWS_DEFAULT_REGION=eu-north-1
+AWS_BUCKET=hima-property-images-noor
+AWS_USE_PATH_STYLE_ENDPOINT=false
+```
+
+Do not commit AWS keys or secrets.
+
+The S3 bucket is private. The API returns `url` as a temporary signed URL using `Storage::disk('s3')->temporaryUrl(...)`. Existing checked-in seed images still resolve from local public storage when present. If an image path cannot be resolved from local public storage or S3, the API returns `url: null` so the frontend shows the building placeholder.
+
+Test checklist:
+
+1. Upload a new property image from the host property form.
+2. Confirm the new object appears in the `hima-property-images-noor` bucket under `property_images/`.
+3. Confirm the property image appears in the frontend.
+4. Redeploy Render.
+5. Confirm the same image still appears after redeploy.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

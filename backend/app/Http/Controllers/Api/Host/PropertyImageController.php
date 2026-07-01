@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\PropertyImage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class PropertyImageController extends Controller
 {
@@ -22,9 +21,10 @@ class PropertyImageController extends Controller
         ]);
 
         $uploaded = [];
+        $disk = PropertyImage::uploadDisk();
 
         foreach ($request->file('images') as $image) {
-            $path = $image->store('property_images', 'public');
+            $path = $image->store('property_images', $disk);
 
             // First image is main by default
             $isMain = $property->images()->count() === 0 && count($uploaded) === 0;
@@ -77,8 +77,7 @@ class PropertyImageController extends Controller
         $image = PropertyImage::where('property_id', $property->id)
             ->findOrFail($imageId);
 
-        // Delete from storage
-        Storage::disk('public')->delete($image->image_path);
+        $image->deleteStoredFile();
         $image->delete();
 
         // If deleted image was main, set first remaining as main
