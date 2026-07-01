@@ -33,7 +33,7 @@ class PropertyImage extends Model
                 return Storage::disk('public')->url($this->image_path);
             }
 
-            if ($this->shouldUseS3() && Storage::disk('s3')->exists($this->image_path)) {
+            if ($this->shouldUseS3()) {
                 return Storage::disk('s3')->temporaryUrl(
                     $this->image_path,
                     now()->addMinutes(30)
@@ -63,7 +63,7 @@ class PropertyImage extends Model
                 return;
             }
 
-            if ($this->shouldUseS3() && Storage::disk('s3')->exists($this->image_path)) {
+            if ($this->shouldUseS3()) {
                 Storage::disk('s3')->delete($this->image_path);
             }
         } catch (\Throwable) {

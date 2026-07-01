@@ -180,6 +180,17 @@
 const statusMap = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض'};
 const statusCls = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected'};
 
+async function fetchJson(path, fallback){
+    try{
+        const response = await fetch(BASE_URL+path,{headers:authHeaders()});
+        if(!response.ok) return fallback;
+        const data = await response.json();
+        return Array.isArray(fallback) && !Array.isArray(data) ? fallback : data;
+    }catch(err){
+        return fallback;
+    }
+}
+
 async function init(){
     requireAuth('host-login.html');
     const name = localStorage.getItem('name')||'';
@@ -188,10 +199,10 @@ async function init(){
     document.getElementById('avatar').textContent = name.charAt(0)||'H';
 
     const [props, bookings, contracts, notifCount] = await Promise.all([
-        fetch(BASE_URL+'/host/properties',{headers:authHeaders()}).then(r=>r.json()),
-        fetch(BASE_URL+'/host/bookings',{headers:authHeaders()}).then(r=>r.json()),
-        fetch(BASE_URL+'/contracts',{headers:authHeaders()}).then(r=>r.json()),
-        fetch(BASE_URL+'/notifications/unread-count',{headers:authHeaders()}).then(r=>r.json()),
+        fetchJson('/host/properties', []),
+        fetchJson('/host/bookings', []),
+        fetchJson('/contracts', []),
+        fetchJson('/notifications/unread-count', {count:0}),
     ]);
 
     // Stats
