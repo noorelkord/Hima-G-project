@@ -37,7 +37,7 @@ class PropertyImageController extends Controller
 
             $uploaded[] = [
                 'id'       => $propertyImage->id,
-                'url'      => asset('storage/' . $path),
+                'url'      => $propertyImage->url,
                 'is_main'  => $isMain,
             ];
         }
@@ -103,7 +103,7 @@ class PropertyImageController extends Controller
             ->map(function ($image) {
                 return [
                     'id'      => $image->id,
-                    'url'     => asset('storage/' . $image->image_path),
+                    'url'     => $image->url,
                     'is_main' => $image->is_main,
                 ];
             });

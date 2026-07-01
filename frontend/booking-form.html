@@ -203,8 +203,8 @@ async function loadProperty(){
     if(!r.ok){ window.location.href='properties.html'; return; }
     property = await r.json();
 
-    const main = property.images?.find(i=>i.is_main)||property.images?.[0];
-    const img  = main?`<img src="${main.url}" alt="">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+    const main = property.images?.find(i=>i.is_main && i.url)||property.images?.find(i=>i.url);
+    const img  = main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
     const loc  = [property.governorate?.name, property.city?.name, property.neighborhood?.name].filter(Boolean).join(' - ')||'غير محدد';
 
     document.getElementById('prop-summary').innerHTML = `

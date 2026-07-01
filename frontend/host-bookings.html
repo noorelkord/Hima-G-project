@@ -179,8 +179,8 @@ function render(list){
         el.innerHTML=`<div class="empty-state"><i class="fas fa-inbox"></i><p>لا توجد طلبات في هذه الفئة</p></div>`; return;
     }
     el.innerHTML = list.map(b=>{
-        const main = b.property?.images?.find(i=>i.is_main)||b.property?.images?.[0];
-        const img  = main?`<img src="${main.url}" alt="">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+        const main = b.property?.images?.find(i=>i.is_main && i.url)||b.property?.images?.find(i=>i.url);
+        const img  = main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
         const isPending = b.status==='pending';
         return `
         <div class="booking-card">

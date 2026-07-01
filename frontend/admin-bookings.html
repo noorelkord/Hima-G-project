@@ -175,8 +175,8 @@ function render(list){
     const tbody=document.getElementById('table-body');
     if(!list.length){tbody.innerHTML=`<tr><td colspan="6" class="empty-state"><i class="fas fa-inbox"></i><p>لا توجد حجوزات</p></td></tr>`;return;}
     tbody.innerHTML=list.map(b=>{
-        const main=b.property?.images?.find(i=>i.is_main)||b.property?.images?.[0];
-        const img=main?`<img src="${main.url}" alt="">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+        const main=b.property?.images?.find(i=>i.is_main && i.url)||b.property?.images?.find(i=>i.url);
+        const img=main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
         return `<tr style="cursor:pointer;" onclick="openBooking(event,${b.id})">
             <td><div class="prop-cell">
                 <div class="prop-thumb-sm">${img}</div>
