@@ -39,7 +39,19 @@ class PropertyController extends Controller
 
         return response()->json($properties);
     }
+// Show a single property with full details
+public function show($id)
+{
+    $property = Property::with([
+        'host:id,first_name,last_name,email,phone,national_id',
+        'images',
+        'governorate:id,name',
+        'city:id,name',
+        'neighborhood:id,name',
+    ])->findOrFail($id);
 
+    return response()->json($property);
+}
     // Accept a property
     public function accept($id) {
         $property = Property::findOrFail($id);

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حمى | تفاصيل العقار</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
+    <style>
+        body { margin:0; background:#F8F5F0; }
+        .layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+        .sidebar{background:#0D2B1F;padding:1.5rem 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+        .sidebar-logo{font-size:1.4rem;font-weight:900;color:#D4A853;padding:0 1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .sidebar-logo span{color:white;font-weight:300;font-size:0.85rem;display:block;}
+        .sidebar-user{padding:0.8rem 1.2rem 1.2rem;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:1rem;}
+        .user-avatar{width:44px;height:44px;border-radius:50%;background:#C0392B;border:2px solid #D4A853;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;}
+        .user-name{color:white;font-size:0.9rem;font-weight:700;}
+        .user-role{color:rgba(255,255,255,0.4);font-size:0.75rem;}
+        .nav-section{font-size:0.68rem;color:rgba(255,255,255,0.3);padding:1rem 1.2rem 0.4rem;text-transform:uppercase;letter-spacing:0.8px;}
+        .nav-item{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.2s;font-size:0.875rem;text-decoration:none;border-right:3px solid transparent;}
+        .nav-item:hover{color:white;background:rgba(255,255,255,0.05);}
+        .nav-item.active{color:#D4A853;background:rgba(212,168,83,0.1);border-right-color:#D4A853;}
+        .nav-item i{width:18px;text-align:center;}
+        .btn-logout{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 1.2rem;color:rgba(255,255,255,0.4);cursor:pointer;font-size:0.875rem;background:none;border:none;font-family:'Cairo',sans-serif;width:100%;text-align:right;margin-top:1rem;}
+        .btn-logout:hover{color:#E74C3C;}
+
+        .main { padding:2rem; }
+        .container { max-width:1000px; margin:0 auto; }
+
+        /* Breadcrumb */
+        .breadcrumb { font-size:0.85rem; color:#6B7280; margin-bottom:1.2rem; }
+        .breadcrumb a { color:#2D6A4F; text-decoration:none; }
+        .breadcrumb a:hover { text-decoration:underline; }
+
+        /* Gallery */
+        .gallery { border-radius:16px; overflow:hidden; margin-bottom:1.5rem; }
+        .gallery-main {
+            height:320px; background:#E5E0D8; position:relative; overflow:hidden;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .gallery-main img { width:100%; height:100%; object-fit:cover; }
+        .gallery-main .no-img {
+            display:flex; align-items:center; justify-content:center;
+            height:100%; font-size:5rem; color:rgba(27,67,50,0.15);
+        }
+        .gallery-thumbs { display:flex; gap:0.5rem; padding:0.5rem 0 0; flex-wrap:wrap; }
+        .thumb {
+            width:80px; height:60px; border-radius:8px; overflow:hidden;
+            cursor:pointer; border:2px solid transparent; transition:border-color 0.2s; flex-shrink:0;
+        }
+        .thumb.active { border-color:#D4A853; }
+        .thumb img { width:100%; height:100%; object-fit:cover; }
+
+        /* Cards */
+        .detail-card {
+            background:white; border-radius:16px; border:1px solid #E5E0D8;
+            padding:1.5rem; margin-bottom:1rem;
+        }
+        .section-title {
+            font-weight:700; font-size:1rem; color:#1B4332;
+            margin-bottom:1rem; padding-bottom:0.6rem;
+            border-bottom:2px solid #E5E0D8;
+            display:flex; align-items:center; gap:0.5rem;
+        }
+
+        /* Property header */
+        .prop-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.8rem; }
+        .prop-title { font-size:1.4rem; font-weight:900; color:#1B4332; }
+        .badge { font-size:0.78rem; font-weight:800; padding:0.35rem 1rem; border-radius:999px; }
+        .badge-pending  { background:#FEF3C7; color:#92400E; }
+        .badge-accepted { background:#D1FAE5; color:#065F46; }
+        .badge-rejected { background:#FEE2E2; color:#991B1B; }
+
+        .prop-location { color:#6B7280; font-size:0.9rem; display:flex; align-items:center; gap:0.4rem; margin-bottom:1rem; }
+        .prop-location i { color:#2D6A4F; }
+
+        /* Specs */
+        .specs-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0.8rem; margin-bottom:1rem; }
+        .spec-item { background:#F8F5F0; border-radius:10px; padding:0.8rem; text-align:center; }
+        .spec-item i { font-size:1.2rem; color:#2D6A4F; margin-bottom:0.3rem; display:block; }
+        .spec-item .val { font-weight:700; font-size:0.95rem; color:#1A1A1A; }
+        .spec-item .lbl { font-size:0.72rem; color:#6B7280; }
+
+        /* Services */
+        .services-row { display:flex; gap:0.7rem; flex-wrap:wrap; }
+        .service-badge {
+            display:flex; align-items:center; gap:0.4rem;
+            background:#F0FDF4; color:#065F46; border:1px solid #BBF7D0;
+            font-size:0.82rem; font-weight:600; padding:0.35rem 0.8rem; border-radius:20px;
+        }
+        .service-badge.off { background:#F9FAFB; color:#6B7280; border-color:#E5E0D8; }
+
+        /* Host info */
+        .host-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+        .host-item { display:flex; flex-direction:column; gap:0.2rem; }
+        .host-label { font-size:0.75rem; color:#6B7280; font-weight:600; }
+        .host-value { font-size:0.9rem; color:#1A1A1A; font-weight:700; }
+
+        /* Rejection note */
+        .rejection-box {
+            background:#FEF2F2; border:1px solid #FECACA; border-radius:10px;
+            padding:0.8rem 1rem; font-size:0.85rem; color:#C0392B;
+            display:flex; gap:0.5rem; align-items:flex-start;
+        }
+
+        /* Action bar */
+        .action-bar {
+            background:white; border-radius:16px; border:1px solid #E5E0D8;
+            padding:1.2rem 1.5rem; margin-bottom:1rem;
+            display:flex; align-items:center; justify-content:space-between; gap:1rem;
+        }
+        .action-bar-title { font-weight:700; color:#1B4332; font-size:0.95rem; }
+        .action-btns { display:flex; gap:0.7rem; }
+        .btn-accept {
+            background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0;
+            border-radius:10px; padding:0.6rem 1.4rem;
+            font-family:'Cairo',sans-serif; font-weight:700; font-size:0.9rem;
+            cursor:pointer; display:flex; align-items:center; gap:0.4rem;
+            transition:all 0.2s;
+        }
+        .btn-accept:hover { background:#A7F3D0; }
+        .btn-reject {
+            background:#FEE2E2; color:#991B1B; border:1px solid #FECACA;
+            border-radius:10px; padding:0.6rem 1.4rem;
+            font-family:'Cairo',sans-serif; font-weight:700; font-size:0.9rem;
+            cursor:pointer; display:flex; align-items:center; gap:0.4rem;
+            transition:all 0.2s;
+        }
+        .btn-reject:hover { background:#FECACA; }
+        .btn-back {
+            background:#F3F4F6; color:#6B7280; border:1px solid #E5E0D8;
+            border-radius:10px; padding:0.6rem 1.2rem;
+            font-family:'Cairo',sans-serif; font-weight:600; font-size:0.9rem;
+            cursor:pointer; display:flex; align-items:center; gap:0.4rem;
+        }
+        .btn-back:hover { background:#E9EAEC; }
+
+        /* Modal */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.5);
+            display:none; align-items:center; justify-content:center; z-index:9999;
+        }
+        .modal-overlay.show { display:flex; }
+        .modal { background:white; border-radius:16px; padding:1.5rem; width:90%; max-width:420px; }
+        .modal h3 { font-size:1rem; font-weight:700; color:#C0392B; margin-bottom:0.8rem; }
+        .modal textarea {
+            width:100%; border:1.5px solid #E5E0D8; border-radius:10px;
+            padding:0.7rem; font-family:'Cairo',sans-serif; font-size:0.875rem;
+            resize:vertical; min-height:80px; margin-bottom:1rem;
+            box-sizing:border-box; outline:none;
+        }
+        .modal textarea:focus { border-color:#C0392B; }
+        .modal-actions { display:flex; gap:0.7rem; }
+        .btn-confirm-reject {
+            flex:1; background:#C0392B; color:white; border:none;
+            border-radius:10px; padding:0.7rem;
+            font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer;
+        }
+        .btn-cancel-modal {
+            background:transparent; color:#6B7280; border:1.5px solid #E5E0D8;
+            border-radius:10px; padding:0.7rem 1.2rem;
+            font-family:'Cairo',sans-serif; cursor:pointer;
+        }
+
+        .toast-suc {
+            position:fixed; bottom:2rem; left:2rem;
+            background:#1B4332; color:white; padding:0.9rem 1.4rem;
+            border-radius:10px; font-size:0.9rem; z-index:9999;
+            display:none; align-items:center; gap:0.5rem;
+        }
+        .toast-suc.show { display:flex; }
+
+        .description { color:#6B7280; font-size:0.9rem; line-height:1.8; }
+
+        @media(max-width:768px){
+            .layout{grid-template-columns:1fr;}
+            .sidebar{display:none;}
+            .specs-grid{grid-template-columns:repeat(2,1fr);}
+            .host-grid{grid-template-columns:1fr;}
+            .action-bar{flex-direction:column;align-items:flex-start;}
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">حمى <span>لوحة الإدارة</span></div>
+        <div class="sidebar-user">
+            <div class="user-avatar" id="avatar">A</div>
+            <div class="user-name" id="sidebar-name">...</div>
+            <div class="user-role">مشرف النظام</div>
+        </div>
+        <div class="nav-section">الإدارة</div>
+        <a class="nav-item active" href="admin-properties.html"><i class="fas fa-building"></i> إدارة العقارات</a>
+        <a class="nav-item" href="admin-bookings.html"><i class="fas fa-calendar-check"></i> إدارة الحجوزات</a>
+        <a class="nav-item" href="admin-contracts.html"><i class="fas fa-file-contract"></i> عقود المنصة</a>
+        <div class="nav-section">النظام</div>
+        <a class="nav-item" href="notifications.html?v=role-sidebar"><i class="fas fa-bell"></i> الإشعارات</a>
+        <a class="nav-item" href="profile.html?v=role-sidebar"><i class="fas fa-user-cog"></i> الملف الشخصي</a>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+    </aside>
+
+    <main class="main">
+        <div class="container">
+
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="admin-properties.html">إدارة العقارات</a>
+                <span style="margin:0 0.4rem">/</span>
+                <span id="breadcrumb-title">تفاصيل العقار</span>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="action-bar" id="action-bar" style="display:none;">
+                <div class="action-bar-title">
+                    <i class="fas fa-gavel me-2"></i>
+                    اتخاذ قرار بشأن هذا العقار
+                </div>
+                <div class="action-btns">
+                    <button class="btn-back" onclick="window.location.href='admin-properties.html'">
+                        <i class="fas fa-arrow-right"></i> رجوع
+                    </button>
+                    <button class="btn-reject" id="btn-reject" onclick="openRejectModal()">
+                        <i class="fas fa-times"></i> رفض
+                    </button>
+                    <button class="btn-accept" id="btn-accept" onclick="acceptProperty()">
+                        <i class="fas fa-check"></i> قبول
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gallery -->
+            <div class="gallery">
+                <div class="gallery-main" id="main-img">
+                    <div class="no-img"><i class="fas fa-building"></i></div>
+                </div>
+                <div class="gallery-thumbs" id="thumbs"></div>
+            </div>
+
+            <!-- Basic Info -->
+            <div class="detail-card">
+                <div class="prop-header">
+                    <div class="prop-title" id="title">...</div>
+                    <span class="badge" id="status-badge">...</span>
+                </div>
+                <div class="prop-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="location">...</span>
+                </div>
+
+                <div class="specs-grid" id="specs"></div>
+                <div class="services-row" id="services"></div>
+            </div>
+
+            <!-- Description -->
+            <div class="detail-card">
+                <div class="section-title"><i class="fas fa-align-right"></i> وصف العقار</div>
+                <div class="description" id="description">...</div>
+            </div>
+
+            <!-- Host Info -->
+            <div class="detail-card">
+                <div class="section-title"><i class="fas fa-user"></i> بيانات المضيف</div>
+                <div class="host-grid" id="host-info"></div>
+            </div>
+
+            <!-- Rejection Reason (if rejected) -->
+            <div class="detail-card" id="rejection-card" style="display:none;">
+                <div class="section-title"><i class="fas fa-exclamation-circle"></i> سبب الرفض</div>
+                <div class="rejection-box">
+                    <i class="fas fa-exclamation-circle" style="margin-top:0.15rem;flex-shrink:0;"></i>
+                    <span id="rejection-reason"></span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal-overlay" id="reject-modal">
+    <div class="modal">
+        <h3><i class="fas fa-times-circle me-2"></i>سبب الرفض</h3>
+        <textarea id="reject-reason-input" placeholder="اكتب سبب رفض العقار..."></textarea>
+        <div class="modal-actions">
+            <button class="btn-cancel-modal" onclick="closeRejectModal()">إلغاء</button>
+            <button class="btn-confirm-reject" onclick="confirmReject()">تأكيد الرفض</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-suc" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg"></span></div>
+
+<script src="js/api.js?v=20260628-absolute-nav"></script>
+<script>
+const typeMap   = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
+const damageMap = {intact:'سليم',partial:'أضرار جزئية',renovated:'مرمم'};
+const statusLabel = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض'};
+const statusCls   = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected'};
+
+const params = new URLSearchParams(window.location.search);
+const propId = params.get('id');
+
+if(!propId) window.location.href = 'admin-properties.html';
+
+let currentProperty = null;
+
+async function loadProperty(){
+    const r = await fetch(`${BASE_URL}/admin/properties/${propId}`, {headers: authHeaders()});
+    if(!r.ok){ window.location.href = 'admin-properties.html'; return; }
+    currentProperty = await r.json();
+    render(currentProperty);
+}
+
+function render(p){
+    document.title = `حمى | ${p.title}`;
+    document.getElementById('breadcrumb-title').textContent = p.title;
+    document.getElementById('title').textContent = p.title;
+
+    // Status badge
+    const badge = document.getElementById('status-badge');
+    badge.textContent = statusLabel[p.status] || p.status;
+    badge.className = `badge ${statusCls[p.status] || ''}`;
+// إضافة badge الإتاحة
+const availMap = {available:'متاح', not_available:'غير متاح', booked:'محجوز'};
+const availCls = {available:'badge-accepted', not_available:'badge-not_available', booked:'badge-booked'};
+const availBadge = document.createElement('span');
+availBadge.className = `badge ${availCls[p.availability]||''}`;
+availBadge.textContent = availMap[p.availability]||'';
+availBadge.style.marginRight = '0.5rem';
+badge.parentElement.appendChild(availBadge);
+    // Location
+    const loc = [p.governorate?.name, p.city?.name, p.neighborhood?.name, p.street].filter(Boolean).join(' - ');
+    document.getElementById('location').textContent = loc || 'غير محدد';
+
+    // Description
+    document.getElementById('description').textContent = p.description || 'لا يوجد وصف متاح';
+
+    // Gallery
+    if(p.images?.length){
+        const main = p.images.find(i=>i.is_main && i.url) || p.images.find(i=>i.url);
+        if(main?.url){
+            document.getElementById('main-img').innerHTML = `<img src="${main.url}" alt="${p.title}">`;
+        }
+        if(p.images.length > 1){
+            const thumbs = document.getElementById('thumbs');
+            p.images.filter(i=>i.url).forEach((img,i)=>{
+                const div = document.createElement('div');
+                div.className = `thumb ${i===0?'active':''}`;
+                div.innerHTML = `<img src="${img.url}" alt="">`;
+                div.onclick = () => {
+                    document.getElementById('main-img').innerHTML = `<img src="${img.url}" alt="">`;
+                    document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
+                    div.classList.add('active');
+                };
+                thumbs.appendChild(div);
+            });
+        }
+    }
+
+    // Specs
+    const specs = [
+        `<div class="spec-item"><i class="fas fa-tag"></i><div class="val">${typeMap[p.type]||p.type}</div><div class="lbl">نوع العقار</div></div>`,
+        p.rooms ? `<div class="spec-item"><i class="fas fa-door-open"></i><div class="val">${p.rooms}</div><div class="lbl">عدد الغرف</div></div>` : '',
+        p.area_m2 ? `<div class="spec-item"><i class="fas fa-ruler-combined"></i><div class="val">${p.area_m2}</div><div class="lbl">المساحة م²</div></div>` : '',
+        `<div class="spec-item"><i class="fas fa-money-bill-wave"></i><div class="val">${Number(p.price).toLocaleString('ar')} ₪</div><div class="lbl">السعر الشهري</div></div>`,
+        `<div class="spec-item"><i class="fas fa-hard-hat"></i><div class="val">${damageMap[p.damage_status]||p.damage_status}</div><div class="lbl">حالة العقار</div></div>`,
+    ].filter(Boolean);
+    document.getElementById('specs').innerHTML = specs.join('');
+
+    // Services
+    const svc = [
+        `<span class="service-badge ${p.has_water?'':'off'}"><i class="fas fa-tint"></i>${p.has_water?'ماء متاح':'لا يوجد ماء'}</span>`,
+        `<span class="service-badge ${p.has_electricity?'':'off'}"><i class="fas fa-bolt"></i>${p.has_electricity?'كهرباء متاحة':'لا تيار كهربائي'}</span>`,
+        `<span class="service-badge ${p.is_ready?'':'off'}"><i class="fas fa-check-circle"></i>${p.is_ready?'جاهز للسكن':'غير جاهز'}</span>`,
+    ];
+    document.getElementById('services').innerHTML = svc.join('');
+
+    // Host info
+    if(p.host){
+        document.getElementById('host-info').innerHTML = `
+            <div class="host-item">
+                <div class="host-label">الاسم الكامل</div>
+                <div class="host-value">${p.host.first_name||''} ${p.host.last_name||''}</div>
+            </div>
+            <div class="host-item">
+                <div class="host-label">البريد الإلكتروني</div>
+                <div class="host-value">${p.host.email||'غير متاح'}</div>
+            </div>
+            <div class="host-item">
+                <div class="host-label">رقم الهاتف</div>
+                <div class="host-value">${p.host.phone||'غير متاح'}</div>
+            </div>
+            <div class="host-item">
+                <div class="host-label">رقم الهوية</div>
+                <div class="host-value">${p.host.national_id||'غير متاح'}</div>
+            </div>`;
+    }
+
+    // Rejection reason
+    if(p.status === 'rejected' && p.rejection_reason){
+        document.getElementById('rejection-card').style.display = 'block';
+        document.getElementById('rejection-reason').textContent = p.rejection_reason;
+    }
+
+    // Action bar — يظهر فقط للعقارات التي يمكن اتخاذ قرار بشأنها
+    if(p.status === 'pending' || p.status === 'accepted' || p.status === 'rejected'){
+        const bar = document.getElementById('action-bar');
+        bar.style.display = 'flex';
+
+        // إذا كان مقبولاً نخفي زر القبول ونظهر زر الرفض فقط
+        if(p.status === 'accepted'){
+            document.getElementById('btn-accept').style.display = 'none';
+        }
+        // إذا كان مرفوضاً نخفي زر الرفض ونظهر زر القبول فقط
+        if(p.status === 'rejected'){
+            document.getElementById('btn-reject').style.display = 'none';
+        }
+        // إذا كان محجوزاً نخفي زر الرفض
+        if(p.availability === 'booked'){
+            document.getElementById('btn-reject').style.display = 'none';
+        }
+    }
+}
+
+async function acceptProperty(){
+    const r = await fetch(`${BASE_URL}/admin/properties/${propId}/accept`, {
+        method: 'PATCH', headers: authHeaders()
+    });
+    if(r.ok){
+        showToast('✅ تم قبول العقار ونشره');
+        setTimeout(() => window.location.href = 'admin-properties.html', 1500);
+    } else {
+        const data = await r.json().catch(()=>({}));
+        alert(data.message || 'حدث خطأ');
+    }
+}
+
+function openRejectModal(){
+    document.getElementById('reject-reason-input').value = '';
+    document.getElementById('reject-modal').classList.add('show');
+}
+function closeRejectModal(){
+    document.getElementById('reject-modal').classList.remove('show');
+}
+
+async function confirmReject(){
+    const reason = document.getElementById('reject-reason-input').value.trim();
+    if(!reason){ alert('يرجى كتابة سبب الرفض'); return; }
+    const r = await fetch(`${BASE_URL}/admin/properties/${propId}/reject`, {
+        method: 'PATCH', headers: authHeaders(),
+        body: JSON.stringify({rejection_reason: reason})
+    });
+    closeRejectModal();
+    if(r.ok){
+        showToast('❌ تم رفض العقار');
+        setTimeout(() => window.location.href = 'admin-properties.html', 1500);
+    } else {
+        const data = await r.json().catch(()=>({}));
+        alert(data.message || 'حدث خطأ');
+    }
+}
+
+function showToast(msg){
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+requireRole('admin', 'admin-login.html');
+const adminName = localStorage.getItem('name') || 'Admin';
+document.getElementById('sidebar-name').textContent = adminName;
+document.getElementById('avatar').textContent = adminName.charAt(0) || 'A';
+loadProperty();
+</script>
+</body>
+</html>
