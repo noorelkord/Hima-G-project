@@ -202,11 +202,12 @@ function render(list){
         </div>`; return;
     }
     el.innerHTML = list.map(p=>{
-        const main = p.images?.find(i=>i.is_main && i.url)||p.images?.find(i=>i.url);
-        const img  = main?.url ? `<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">` : `<div class="no-img"><i class="fas fa-building"></i></div>`;
+        const main = p.images?.find(i=>i.is_main)||p.images?.[0];
+        const img  = main ? `<img src="${main.url}" alt="">` : `<div class="no-img"><i class="fas fa-building"></i></div>`;
         const loc  = [p.governorate?.name, p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
         const canToggle = p.status==='accepted' && p.availability!=='booked';
         const isAvail   = p.availability==='available';
+        const isBooked  = p.availability === 'booked';
         return `
         <div class="prop-row" onclick="window.location.href='property-details.html?id=${p.id}'">
             <div class="prop-thumb">${img}</div>
@@ -229,12 +230,32 @@ function render(list){
                 <span style="font-size:0.65rem;color:#6B7280;">${isAvail?'متاح':'مخفي'}</span>
             </div>`:''}
             <div class="prop-actions">
-                <button class="btn-icon btn-edit" title="تعديل" onclick="event.stopPropagation(); window.location.href='property-form.html?id=${p.id}'">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-icon btn-delete" title="أرشفة" onclick="event.stopPropagation(); openModal(${p.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
+                ${isBooked
+                    ? `<button class="btn-icon btn-edit"
+                        style="opacity:0.4;cursor:not-allowed;"
+                        title="لا يمكن تعديل عقار محجوز"
+                        onclick="event.stopPropagation(); alert('لا يمكن تعديل عقار محجوز حالياً.')">
+                        <i class="fas fa-edit"></i>
+                       </button>`
+                    : `<button class="btn-icon btn-edit"
+                        title="تعديل"
+                        onclick="event.stopPropagation(); window.location.href='property-form.html?id=${p.id}'">
+                        <i class="fas fa-edit"></i>
+                       </button>`
+                }
+                ${isBooked
+                    ? `<button class="btn-icon btn-delete"
+                        style="opacity:0.4;cursor:not-allowed;"
+                        title="لا يمكن حذف عقار محجوز"
+                        onclick="event.stopPropagation(); alert('لا يمكن حذف عقار محجوز حالياً.')">
+                        <i class="fas fa-trash"></i>
+                       </button>`
+                    : `<button class="btn-icon btn-delete"
+                        title="أرشفة"
+                        onclick="event.stopPropagation(); openModal(${p.id})">
+                        <i class="fas fa-trash"></i>
+                       </button>`
+                }
             </div>
         </div>`;
     }).join('');
