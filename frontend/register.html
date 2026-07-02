@@ -4,20 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حمى | إنشاء حساب</title>
-    <link rel="stylesheet" href="css/style.css?v=20260628-auth-tabs">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=20260702-guest-signup">
+    <style>
+        .signup-intro {
+            color:#6B7280;
+            text-align:center;
+            margin:-0.4rem 0 1.4rem;
+            font-weight:700;
+        }
+
+        .signup-options {
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:1rem;
+        }
+
+        .signup-option {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            min-height:150px;
+            padding:1.25rem;
+            border:2px solid #E3DED6;
+            border-radius:14px;
+            color:#1A1A1A;
+            background:#fff;
+            text-align:center;
+            transition:0.2s ease;
+        }
+
+        .signup-option:hover {
+            border-color:#1d5c2e;
+            background:#F1F8F3;
+            transform:translateY(-2px);
+        }
+
+        .signup-option i {
+            color:#1d5c2e;
+            font-size:2rem;
+            margin-bottom:0.75rem;
+        }
+
+        .signup-option strong {
+            color:#1d5c2e;
+            font-size:1.25rem;
+            margin-bottom:0.35rem;
+        }
+
+        .signup-option span {
+            color:#6B7280;
+            font-weight:700;
+            line-height:1.7;
+        }
+
+        .signup-login-link {
+            display:block;
+            margin-top:1.35rem;
+            text-align:center;
+            font-weight:700;
+        }
+
+        @media (max-width:620px) {
+            .signup-options {
+                grid-template-columns:1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="center-page">
-    <div class="card">
+    <div class="card auth-card">
         <div class="logo">حمى</div>
-        <h2>جارٍ فتح صفحة إنشاء الحساب...</h2>
+        <h2>إنشاء حساب</h2>
+        <p class="signup-intro">اختر نوع الحساب للمتابعة</p>
+
+        <div class="signup-options">
+            <a class="signup-option" href="tenant-login.html?mode=signup">
+                <i class="fas fa-user"></i>
+                <strong>مستأجر</strong>
+                <span>أنشئ حسابك للبحث والحجز</span>
+            </a>
+            <a class="signup-option" href="host-login.html?mode=signup">
+                <i class="fas fa-building"></i>
+                <strong>صاحب عقار</strong>
+                <span>أنشئ حسابك لإضافة عقاراتك</span>
+            </a>
+        </div>
+
+        <a class="signup-login-link" href="tenant-login.html">لديك حساب؟ تسجيل الدخول</a>
     </div>
 </div>
-
-<script>
-const params = new URLSearchParams(window.location.search);
-const role = params.get('role') === 'host' ? 'host' : 'tenant';
-window.location.replace(role === 'host' ? 'host-login.html?mode=signup' : 'tenant-login.html?mode=signup');
-</script>
 </body>
 </html>

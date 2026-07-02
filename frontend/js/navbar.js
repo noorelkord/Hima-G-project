@@ -20,7 +20,7 @@ function renderNavbar() {
 
     const guestLinks = `
         <a class="drawer-link drawer-link-primary" href="tenant-login.html"><span><i class="fas fa-user"></i></span><b>تسجيل الدخول</b></a>
-        <a class="drawer-link drawer-link-primary" href="host-login.html"><span><i class="fas fa-user-plus"></i></span><b>كن مضيفا</b></a>
+        <a class="drawer-link drawer-link-primary" href="register.html"><span><i class="fas fa-user-plus"></i></span><b>إنشاء حساب</b></a>
         <div class="drawer-divider"></div>
         <a class="drawer-link" href="properties.html"><span><i class="fas fa-home"></i></span><b>الصفحة الرئيسية</b></a>
         <a class="drawer-link" href="properties.html#filters"><span><i class="fas fa-filter"></i></span><b>الفلترة</b></a>
