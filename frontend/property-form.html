@@ -131,6 +131,34 @@
             font-size:0.6rem; font-weight:700; text-align:center; padding:2px;
         }
 
+        /* ─── صور التعديل ─── */
+        .existing-images { display:flex; flex-wrap:wrap; gap:0.7rem; margin-bottom:1rem; }
+        .exist-img-item {
+            position:relative; width:90px; height:70px;
+            border-radius:8px; overflow:hidden;
+            border:2px solid #E5E0D8;
+        }
+        .exist-img-item img { width:100%; height:100%; object-fit:cover; }
+        .exist-img-item .del-exist-btn {
+            position:absolute; top:2px; left:2px;
+            background:rgba(192,57,43,0.9); color:white;
+            border:none; border-radius:4px; width:20px; height:20px;
+            font-size:0.7rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .exist-img-item .main-lbl {
+            position:absolute; bottom:0; right:0; left:0;
+            background:rgba(27,67,50,0.85); color:#D4A853;
+            font-size:0.6rem; font-weight:700; text-align:center; padding:2px;
+        }
+        .exist-img-item .set-main-btn {
+            position:absolute; bottom:0; right:0; left:0;
+            background:rgba(0,0,0,0.6); color:white;
+            border:none; font-size:0.6rem; font-weight:700;
+            text-align:center; padding:2px; cursor:pointer;
+            font-family:'Cairo',sans-serif;
+        }
+
         /* Buttons */
         .form-actions { display:flex; gap:1rem; margin-top:1.5rem; }
         .btn-submit {
@@ -160,8 +188,8 @@
 <body>
 <div id="navbar"></div>
 <div class="container">
-    <div class="page-title"><i class="fas fa-plus-circle me-2"></i>إضافة عقار جديد</div>
-    <div class="page-sub">أضف تفاصيل عقارك ليتم مراجعته والموافقة عليه</div>
+    <div class="page-title" id="page-title"><i class="fas fa-plus-circle me-2"></i>إضافة عقار جديد</div>
+    <div class="page-sub" id="page-sub">أضف تفاصيل عقارك ليتم مراجعته والموافقة عليه</div>
 
     <div class="alert alert-error" id="err"><i class="fas fa-exclamation-circle"></i><span id="err-msg"></span></div>
     <div class="alert alert-success" id="suc"><i class="fas fa-check-circle"></i><span id="suc-msg"></span></div>
@@ -293,6 +321,19 @@
     <!-- Section 5: Images -->
     <div class="form-section">
         <div class="section-header"><i class="fas fa-images"></i> صور العقار</div>
+
+        <!-- الصور الحالية — تظهر فقط في وضع التعديل -->
+        <div id="existing-images-section" style="display:none;">
+            <p style="font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:0.5rem;">
+                الصور الحالية:
+            </p>
+            <div class="existing-images" id="existing-images"></div>
+            <hr style="border:none;border-top:1px solid #E5E0D8;margin:1rem 0;">
+            <p style="font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:0.5rem;">
+                إضافة صور جديدة:
+            </p>
+        </div>
+
         <div class="upload-area" onclick="document.getElementById('img-input').click()">
             <i class="fas fa-cloud-upload-alt"></i>
             <p>اضغط لرفع الصور (JPG, PNG — حتى 10 صور)</p>
@@ -300,13 +341,13 @@
         </div>
         <div class="previews" id="previews"></div>
         <p style="font-size:0.78rem;color:#9CA3AF;margin-top:0.5rem;">
-            * الصور ترفع بعد حفظ العقار — أول صورة تكون الرئيسية تلقائياً
+            * أول صورة تكون الرئيسية تلقائياً
         </p>
     </div>
 
     <div class="form-actions">
         <button class="btn-cancel" onclick="history.back()">إلغاء</button>
-        <button class="btn-submit" onclick="submitProperty()">
+        <button class="btn-submit" id="btn-submit" onclick="submitProperty()">
             <i class="fas fa-save me-1"></i> حفظ وإرسال للمراجعة
         </button>
     </div>
@@ -315,10 +356,16 @@
 <script src="js/api.js?v=20260628-absolute-nav"></script>
 <script src="js/navbar.js?v=20260628-live-fixes"></script>
 <script>
+// ─── وضع الإضافة أم التعديل ───
+const urlParams  = new URLSearchParams(window.location.search);
+const editId     = urlParams.get('id') ? Number(urlParams.get('id')) : null;
+const isEditMode = !!editId;
+
 let selectedDamage = 'intact';
 let selectedImages = [];
 let savedPropertyId = null;
 
+// ─── منع إدخال غير الأرقام ───
 function bindNumericInput(id){
     const input = document.getElementById(id);
     input.addEventListener('input', () => {
@@ -327,7 +374,7 @@ function bindNumericInput(id){
 }
 
 function normalizeDigits(value){
-    const arabicDigits = '٠١٢٣٤٥٦٧٨٩';
+    const arabicDigits  = '٠١٢٣٤٥٦٧٨٩';
     const persianDigits = '۰۱۲۳۴۵۶۷۸۹';
     return String(value).replace(/[٠-٩۰-۹]/g, digit => {
         const arabicIndex = arabicDigits.indexOf(digit);
@@ -336,73 +383,207 @@ function normalizeDigits(value){
     });
 }
 
+// ─── اختيار حالة العقار ───
 function selectDamage(val, el){
     selectedDamage = val;
-    document.querySelectorAll('.damage-card').forEach(c=>c.classList.remove('selected'));
-    el.classList.add('selected');
+    document.querySelectorAll('.damage-card').forEach(c => c.classList.remove('selected'));
+    if(el) el.classList.add('selected');
 }
 
+// ─── تحميل المحافظات ───
 async function loadGovernorates(){
-    const r = await fetch(BASE_URL+'/governorates',{headers:{'Accept':'application/json'}});
+    const r    = await fetch(BASE_URL+'/governorates', {headers:{'Accept':'application/json'}});
     const data = await r.json();
-    const sel = document.getElementById('governorate_id');
-    data.forEach(g=>sel.innerHTML+=`<option value="${g.id}">${g.name}</option>`);
+    const sel  = document.getElementById('governorate_id');
+    data.forEach(g => sel.innerHTML += `<option value="${g.id}">${g.name}</option>`);
+    return data;
 }
 
+// ─── تحميل المدن ───
 async function loadCities(){
     const govId = document.getElementById('governorate_id').value;
-    const sel = document.getElementById('city_id');
+    const sel   = document.getElementById('city_id');
     sel.innerHTML = '<option value="">اختر المدينة</option>';
-    document.getElementById('neighborhood_id').innerHTML='<option value="">اختر الحي</option>';
+    document.getElementById('neighborhood_id').innerHTML = '<option value="">اختر الحي</option>';
     if(!govId) return;
-    const r = await fetch(`${BASE_URL}/governorates/${govId}/cities`,{headers:{'Accept':'application/json'}});
+    const r    = await fetch(`${BASE_URL}/governorates/${govId}/cities`, {headers:{'Accept':'application/json'}});
     const data = await r.json();
-    data.forEach(c=>sel.innerHTML+=`<option value="${c.id}">${c.name}</option>`);
+    data.forEach(c => sel.innerHTML += `<option value="${c.id}">${c.name}</option>`);
 }
 
+// ─── تحميل الأحياء ───
 async function loadNeighborhoods(){
     const cityId = document.getElementById('city_id').value;
-    const sel = document.getElementById('neighborhood_id');
-    sel.innerHTML='<option value="">اختر الحي</option>';
+    const sel    = document.getElementById('neighborhood_id');
+    sel.innerHTML = '<option value="">اختر الحي</option>';
     if(!cityId) return;
-    const r = await fetch(`${BASE_URL}/cities/${cityId}/neighborhoods`,{headers:{'Accept':'application/json'}});
+    const r    = await fetch(`${BASE_URL}/cities/${cityId}/neighborhoods`, {headers:{'Accept':'application/json'}});
     const data = await r.json();
-    data.forEach(n=>sel.innerHTML+=`<option value="${n.id}">${n.name}</option>`);
+    data.forEach(n => sel.innerHTML += `<option value="${n.id}">${n.name}</option>`);
 }
 
+// ─── معاينة الصور الجديدة ───
 function previewImages(input){
     selectedImages = Array.from(input.files);
     const prev = document.getElementById('previews');
     prev.innerHTML = '';
-    selectedImages.forEach((file,i)=>{
+    selectedImages.forEach((file, i) => {
         const url = URL.createObjectURL(file);
         prev.innerHTML += `
             <div class="preview-item" id="prev-${i}">
                 <img src="${url}">
                 <button class="del-btn" onclick="removeImg(${i})"><i class="fas fa-times"></i></button>
-                ${i===0?'<div class="main-lbl">رئيسية</div>':''}
+                ${i === 0 ? '<div class="main-lbl">رئيسية</div>' : ''}
             </div>`;
     });
 }
 
 function removeImg(idx){
-    selectedImages.splice(idx,1);
+    selectedImages.splice(idx, 1);
     document.getElementById(`prev-${idx}`)?.remove();
 }
 
-function showErr(msg){ const e=document.getElementById('err'); document.getElementById('err-msg').textContent=msg; e.classList.add('show'); }
-function showSuc(msg){ const s=document.getElementById('suc'); document.getElementById('suc-msg').textContent=msg; s.classList.add('show'); }
-function hideAlerts(){ document.getElementById('err').classList.remove('show'); document.getElementById('suc').classList.remove('show'); }
+// ─── رسائل التنبيه ───
+function showErr(msg){
+    const e = document.getElementById('err');
+    document.getElementById('err-msg').textContent = msg;
+    e.classList.add('show');
+}
+function showSuc(msg){
+    const s = document.getElementById('suc');
+    document.getElementById('suc-msg').textContent = msg;
+    s.classList.add('show');
+}
+function hideAlerts(){
+    document.getElementById('err').classList.remove('show');
+    document.getElementById('suc').classList.remove('show');
+}
 
+// ─── جلب بيانات العقار وتعبئة الحقول (وضع التعديل) ───
+async function loadPropertyForEdit(id){
+    const r    = await fetch(`${BASE_URL}/host/properties/${id}`, {headers: authHeaders()});
+    const data = await r.json();
+    const p    = data.property || data;
+
+    document.getElementById('title').value       = p.title        || '';
+    document.getElementById('type').value        = p.type         || '';
+    document.getElementById('price').value       = p.price ? Math.round(p.price) : '';
+    document.getElementById('description').value = p.description  || '';
+    document.getElementById('rooms').value       = p.rooms        || '';
+    document.getElementById('area_m2').value     = p.area_m2 ? Math.round(p.area_m2) : '';
+    document.getElementById('street').value      = p.street       || '';
+
+    document.getElementById('has_water').checked       = !!p.has_water;
+    document.getElementById('has_electricity').checked = !!p.has_electricity;
+    document.getElementById('is_ready').checked        = !!p.is_ready;
+
+    // حالة العقار
+    const dmgCard = document.querySelector(`.damage-card input[value="${p.damage_status}"]`)?.closest('.damage-card');
+    if(dmgCard) selectDamage(p.damage_status, dmgCard);
+
+    // الموقع — بالترتيب لضمان تحميل كل قائمة قبل التالية
+    if(p.governorate_id){
+        document.getElementById('governorate_id').value = p.governorate_id;
+        await loadCities();
+    }
+    if(p.city_id){
+        document.getElementById('city_id').value = p.city_id;
+        await loadNeighborhoods();
+    }
+    if(p.neighborhood_id){
+        document.getElementById('neighborhood_id').value = p.neighborhood_id;
+    }
+
+    // الصور الحالية
+    if(p.images && p.images.length > 0){
+        renderExistingImages(p.images);
+    } else {
+        document.getElementById('existing-images-section').style.display = 'block';
+    }
+}
+
+// ─── عرض الصور الحالية ───
+function renderExistingImages(images){
+    document.getElementById('existing-images-section').style.display = 'block';
+    const container = document.getElementById('existing-images');
+    container.innerHTML = images
+        .filter(img => img.url) // نعرض فقط الصور التي لها رابط صالح
+        .map(img => `
+            <div class="exist-img-item" id="exist-${img.id}">
+                <img src="${img.url}" alt=""
+                     onerror="this.parentElement.style.display='none'">
+                <button class="del-exist-btn" onclick="deleteExistingImage(${img.id})" title="حذف">
+                    <i class="fas fa-times"></i>
+                </button>
+                ${img.is_main
+                    ? '<div class="main-lbl">رئيسية</div>'
+                    : `<button class="set-main-btn" onclick="setMainImage(${img.id})">تعيين رئيسية</button>`
+                }
+            </div>
+        `).join('');
+}
+
+// ─── حذف صورة موجودة ───
+async function deleteExistingImage(imageId){
+    if(!confirm('هل تريد حذف هذه الصورة؟')) return;
+    const r = await fetch(`${BASE_URL}/host/properties/${editId}/images/${imageId}`, {
+        method:  'DELETE',
+        headers: authHeaders()
+    });
+    if(r.ok){
+        document.getElementById(`exist-${imageId}`)?.remove();
+    } else {
+        alert('لم يتمكن من حذف الصورة، حاول مرة أخرى.');
+    }
+}
+
+// ─── تعيين صورة رئيسية ───
+async function setMainImage(imageId){
+    const r = await fetch(`${BASE_URL}/host/properties/${editId}/images/${imageId}/main`, {
+        method:  'PATCH',
+        headers: authHeaders()
+    });
+    if(r.ok){
+        document.querySelectorAll('.exist-img-item').forEach(item => {
+            const id      = Number(item.id.replace('exist-', ''));
+            const mainLbl = item.querySelector('.main-lbl');
+            const setBtn  = item.querySelector('.set-main-btn');
+            if(id === imageId){
+                if(setBtn) setBtn.outerHTML = '<div class="main-lbl">رئيسية</div>';
+            } else {
+                if(mainLbl) mainLbl.outerHTML = `<button class="set-main-btn" onclick="setMainImage(${id})">تعيين رئيسية</button>`;
+            }
+        });
+    } else {
+        alert('لم يتمكن من تعيين الصورة الرئيسية، حاول مرة أخرى.');
+    }
+}
+
+// ─── رفع الصور الجديدة ───
+async function uploadImages(propId){
+    const fd = new FormData();
+    selectedImages.forEach(f => fd.append('images[]', f));
+    await fetch(`${BASE_URL}/host/properties/${propId}/images`, {
+        method:  'POST',
+        headers: {
+            'Accept':        'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: fd
+    });
+}
+
+// ─── حفظ العقار (إضافة أو تعديل) ───
 async function submitProperty(){
     hideAlerts();
-    const title = document.getElementById('title').value.trim();
-    const type  = document.getElementById('type').value;
-    const price = document.getElementById('price').value;
-    const govId = document.getElementById('governorate_id').value;
-    const cityId= document.getElementById('city_id').value;
 
-    if(!title||!type||!price||!govId||!cityId){
+    const title  = document.getElementById('title').value.trim();
+    const type   = document.getElementById('type').value;
+    const price  = document.getElementById('price').value;
+    const govId  = document.getElementById('governorate_id').value;
+    const cityId = document.getElementById('city_id').value;
+
+    if(!title || !type || !price || !govId || !cityId){
         showErr('يرجى ملء جميع الحقول الإلزامية *'); return;
     }
     if(!/^\d+$/.test(price) || Number(price) <= 0){
@@ -410,52 +591,67 @@ async function submitProperty(){
     }
 
     const body = {
-        title, type, price: Number(price),
-        governorate_id: Number(govId),
-        city_id: Number(cityId),
-        description: document.getElementById('description').value,
-        rooms: Number(document.getElementById('rooms').value)||null,
-        area_m2: Number(document.getElementById('area_m2').value)||null,
-        street: document.getElementById('street').value,
-        damage_status: selectedDamage,
-        has_water: document.getElementById('has_water').checked,
+        title,
+        type,
+        price:           Number(price),
+        governorate_id:  Number(govId),
+        city_id:         Number(cityId),
+        description:     document.getElementById('description').value,
+        rooms:           Number(document.getElementById('rooms').value) || null,
+        area_m2:         Number(document.getElementById('area_m2').value) || null,
+        street:          document.getElementById('street').value,
+        damage_status:   selectedDamage,
+        has_water:       document.getElementById('has_water').checked,
         has_electricity: document.getElementById('has_electricity').checked,
-        is_ready: document.getElementById('is_ready').checked,
+        is_ready:        document.getElementById('is_ready').checked,
     };
+
     const nbr = document.getElementById('neighborhood_id').value;
     if(nbr) body.neighborhood_id = Number(nbr);
 
-    const r = await fetch(BASE_URL+'/host/properties',{
-        method:'POST', headers:authHeaders(), body:JSON.stringify(body)
-    });
+    // POST للإضافة — PUT للتعديل
+    const url    = isEditMode
+        ? `${BASE_URL}/host/properties/${editId}`
+        : `${BASE_URL}/host/properties`;
+    const method = isEditMode ? 'PUT' : 'POST';
+
+    const r    = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
     const data = await r.json();
 
     if(r.ok){
-        savedPropertyId = data.property.id;
+        savedPropertyId = data.property?.id || editId;
         if(selectedImages.length) await uploadImages(savedPropertyId);
-        showSuc('تم إرسال العقار للمراجعة بنجاح ✅');
-        setTimeout(()=>window.location.href='my-properties.html', 2000);
-    } else if(r.status===403){
-        window.location.href='complete-profile.html';
+        showSuc(isEditMode
+            ? 'تم تحديث العقار بنجاح ✅'
+            : 'تم إرسال العقار للمراجعة بنجاح ✅'
+        );
+        setTimeout(() => window.location.href = 'my-properties.html', 2000);
+    } else if(r.status === 403){
+        window.location.href = 'complete-profile.html';
     } else {
         showErr(Object.values(data.errors||{})[0]?.[0] || data.message || 'حدث خطأ');
     }
 }
 
-async function uploadImages(propId){
-    const fd = new FormData();
-    selectedImages.forEach(f=>fd.append('images[]',f));
-    await fetch(`${BASE_URL}/host/properties/${propId}/images`,{
-        method:'POST',
-        headers:{'Accept':'application/json','Authorization':'Bearer '+localStorage.getItem('token')},
-        body: fd
-    });
-}
-
+// ─── تهيئة الصفحة ───
 requireAuth('host-login.html');
 bindNumericInput('price');
 bindNumericInput('area_m2');
-loadGovernorates();
+
+loadGovernorates().then(async () => {
+    if(isEditMode){
+        // تعديل عنوان الصفحة والزر
+        document.getElementById('page-title').innerHTML =
+            '<i class="fas fa-edit me-2"></i>تعديل العقار';
+        document.getElementById('page-sub').textContent =
+            'عدّل تفاصيل عقارك — سيعود للمراجعة بعد الحفظ';
+        document.getElementById('btn-submit').innerHTML =
+            '<i class="fas fa-save me-1"></i> حفظ التعديلات';
+
+        // جلب بيانات العقار وتعبئة الحقول
+        await loadPropertyForEdit(editId);
+    }
+});
 </script>
 </body>
 </html>
