@@ -55,15 +55,15 @@
         .quick-card-title { font-weight:700; font-size:0.9rem; color:#1A1A1A; }
         .quick-card-sub   { font-size:0.75rem; color:#6B7280; }
 
-        .booking-row { background:white; border-radius:12px; border:1px solid #E5E0D8; padding:1rem 1.2rem; margin-bottom:0.7rem; display:flex; align-items:center; gap:1rem; }
+        .booking-row { background:white; border-radius:12px; border:1px solid #E5E0D8; padding:1rem 1.2rem; margin-bottom:0.7rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
         .booking-info { flex:1; min-width:0; }
         .booking-prop-name { font-weight:700; font-size:0.9rem; color:#1A1A1A; }
         .booking-tenant { font-size:0.78rem; color:#6B7280; margin-top:0.2rem; }
         .booking-dates  { font-size:0.78rem; color:#6B7280; }
-        .booking-actions { display:flex; gap:0.5rem; flex-shrink:0; }
+        .booking-actions { display:flex; gap:0.5rem; flex-shrink:0; flex-wrap:nowrap; }
 
-        .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; }
-        .btn-reject { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; }
+        .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; white-space:nowrap; }
+        .btn-reject { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; white-space:nowrap; }
 
         .badge { font-size:0.72rem; font-weight:700; padding:0.2rem 0.6rem; border-radius:12px; }
         .badge-pending  { background:#FEF3C7; color:#92400E; }
@@ -228,10 +228,11 @@ async function init(){
                 <div class="booking-tenant"><i class="fas fa-user me-1"></i>${b.tenant?.first_name||'مستأجر'}</div>
                 <div class="booking-dates"><i class="fas fa-calendar me-1"></i>${b.start_date?.split('T')[0]} → ${b.end_date?.split('T')[0]}</div>
             </div>
-            <div style="font-weight:700;color:#1B4332;font-size:0.9rem;">${Number(b.price||0).toLocaleString('ar')} ₪</div>
+            <div style="font-weight:700;color:#1B4332;font-size:0.9rem;white-space:nowrap;">${Number(b.price||0).toLocaleString('ar')} ₪</div>
             <div class="booking-actions">
-                <button class="btn-accept" onclick="acceptBooking(${b.id})"><i class="fas fa-check me-1"></i>قبول</button>
-                <button class="btn-reject" onclick="rejectBooking(${b.id})"><i class="fas fa-times me-1"></i>رفض</button>
+               <button class="btn-accept" onclick="acceptBooking(${b.id})"><i class="fas fa-check"></i> قبول</button>
+               <button class="btn-reject" onclick="rejectBooking(${b.id})"><i class="fas fa-times"></i> رفض</button>
+            </div>
             </div>
         </div>`).join('');
     }
@@ -254,9 +255,8 @@ async function init(){
     }
 }
 
-async function acceptBooking(id){
-    const r = await fetch(`${BASE_URL}/host/bookings/${id}/accept`,{method:'PATCH',headers:authHeaders()});
-    if(r.ok){ alert('✅ تم قبول الحجز'); init(); }
+function acceptBooking(id){
+    window.location.href = `host-bookings.html?accept=${id}`;
 }
 
 async function rejectBooking(id){

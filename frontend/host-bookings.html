@@ -33,7 +33,7 @@
         #pending-count { display:none; align-items:center; justify-content:center; min-width:18px; height:18px; background:#D4A853; color:#1B4332; font-size:0.65rem; padding:1px 6px; border-radius:10px; }
         #pending-count:not(:empty) { display:inline-flex; }
 
-        .booking-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.3rem; margin-bottom:0.9rem; transition:box-shadow 0.2s; }
+        .booking-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.3rem; margin-bottom:0.9rem; transition:box-shadow 0.2s; cursor:pointer; }
         .booking-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.1); }
         .booking-top { display:flex; gap:1rem; align-items:flex-start; }
         .prop-thumb { width:90px; height:68px; border-radius:10px; background:linear-gradient(135deg,#1B4332,#2D6A4F); overflow:hidden; flex-shrink:0; }
@@ -51,10 +51,12 @@
         .badge-cancelled{ background:#F3F4F6; color:#374151; }
 
         .booking-footer { display:flex; justify-content:space-between; align-items:center; margin-top:1rem; padding-top:0.9rem; border-top:1px solid #F3F4F6; }
-        .booking-actions { display:flex; gap:0.6rem; align-items:center; }
-        .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; border-radius:8px; padding:0.45rem 1.1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:background 0.2s; }
+        .booking-actions { display:flex; gap:0.6rem; align-items:center; flex-wrap:nowrap; }
+        .btn-details { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; border-radius:8px; padding:0.45rem 1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:background 0.2s; display:inline-flex; align-items:center; gap:0.4rem; white-space:nowrap; }
+        .btn-details:hover { background:#DBEAFE; }
+        .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; border-radius:8px; padding:0.45rem 1.1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:background 0.2s; white-space:nowrap; display:inline-flex; align-items:center; gap:0.4rem; }
         .btn-accept:hover { background:#A7F3D0; }
-        .btn-reject { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.45rem 1.1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; }
+        .btn-reject { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.45rem 1.1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:0.4rem;white-space:nowrap; }
         .btn-reject:hover { background:#FECACA; }
 
         /* Discount modal */
@@ -63,8 +65,12 @@
         .modal { background:white; border-radius:16px; padding:1.5rem; width:90%; max-width:440px; }
         .modal h3 { font-size:1rem; font-weight:700; color:#1B4332; margin-bottom:0.5rem; }
         .modal p  { color:#6B7280; font-size:0.875rem; margin-bottom:1rem; }
-        .modal input { width:100%; border:1.5px solid #E5E0D8; border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif; font-size:0.9rem; outline:none; margin-bottom:1rem; box-sizing:border-box; }
+        .price-range-info { background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:0.7rem 0.9rem; font-size:0.82rem; color:#065F46; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
+        .modal input { width:100%; border:1.5px solid #E5E0D8; border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif; font-size:0.9rem; outline:none; margin-bottom:0.5rem; box-sizing:border-box; }
         .modal input:focus { border-color:#2D6A4F; }
+        .modal input.error { border-color:#C0392B; }
+        .price-error { color:#C0392B; font-size:0.8rem; margin-bottom:0.8rem; display:none; }
+        .price-error.show { display:block; }
         .modal-actions { display:flex; gap:0.7rem; }
         .btn-confirm-accept { flex:1; background:#1B4332; color:white; border:none; border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer; }
         .btn-cancel-modal   { background:transparent; color:#6B7280; border:1.5px solid #E5E0D8; border-radius:10px; padding:0.7rem 1.2rem; font-family:'Cairo',sans-serif; cursor:pointer; }
@@ -77,6 +83,7 @@
 
         .toast { position:fixed; bottom:2rem; left:2rem; background:#1B4332; color:white; padding:0.9rem 1.4rem; border-radius:10px; font-size:0.9rem; z-index:9999; display:none; align-items:center; gap:0.5rem; }
         .toast.show { display:flex; }
+        .toast.error { background:#C0392B; }
         .empty-state { text-align:center; padding:3rem; color:#6B7280; }
         .empty-state i { font-size:3rem; color:#E5E0D8; display:block; margin-bottom:1rem; }
         @media(max-width:768px){ .layout{grid-template-columns:1fr;} .sidebar{display:none;} .tabs{grid-template-columns:repeat(2,minmax(0,1fr));} }
@@ -125,8 +132,13 @@
     <div class="modal">
         <h3><i class="fas fa-check-circle me-2"></i>قبول طلب الحجز</h3>
         <p>يمكنك قبول الحجز بالسعر الأصلي أو تقديم سعر مخفض.</p>
+        <div class="price-range-info" id="price-range-info">
+            <i class="fas fa-info-circle"></i>
+            <span id="price-range-text"></span>
+        </div>
         <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:0.4rem;">السعر المخفض (اختياري) ₪</label>
-        <input type="number" id="discount-price" placeholder="اتركه فارغاً لاستخدام السعر الأصلي">
+        <input type="number" id="discount-price" placeholder="اتركه فارغاً لاستخدام السعر الأصلي" oninput="validatePrice()">
+        <div class="price-error" id="price-error"></div>
         <div class="modal-actions">
             <button class="btn-cancel-modal" onclick="closeModals()">إلغاء</button>
             <button class="btn-confirm-accept" onclick="confirmAccept()"><i class="fas fa-check me-1"></i>قبول الحجز</button>
@@ -152,7 +164,7 @@
 <script>
 const statusMap = {pending:'معلق',accepted:'مقبول',rejected:'مرفوض',cancelled:'ملغي'};
 const statusCls = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected',cancelled:'badge-cancelled'};
-let allBookings=[], actionId=null, currentTab='all';
+let allBookings=[], actionId=null, currentTab='all', currentBooking=null;
 
 async function init(){
     requireAuth('host-login.html');
@@ -164,6 +176,13 @@ async function init(){
     const pendingCount = allBookings.filter(b=>b.status==='pending').length;
     if(pendingCount>0) document.getElementById('pending-count').textContent = pendingCount;
     render(allBookings);
+
+    // فتح modal القبول إذا جاء من لوحة التحكم
+const acceptId = new URLSearchParams(location.search).get('accept');
+if(acceptId){
+    const booking = allBookings.find(b=>b.id===Number(acceptId));
+    if(booking) openAccept(booking.id, booking.price);
+}
 }
 
 function filterTab(status, el){
@@ -200,37 +219,135 @@ function render(list){
                     ${b.created_at?.split('T')[0]||''}
                 </div>
                 <div class="booking-actions">
+                    <button class="btn-details" onclick="event.stopPropagation(); window.location.href='host-booking-details.html?id=${b.id}'">
+                        <i class="fas fa-eye"></i> عرض التفاصيل
+                    </button>
                     ${isPending?`
-                        <button class="btn-accept" onclick="openAccept(${b.id})"><i class="fas fa-check me-1"></i>قبول</button>
-                        <button class="btn-reject" onclick="openReject(${b.id})"><i class="fas fa-times me-1"></i>رفض</button>
+                        
+                       <button class="btn-accept" onclick="event.stopPropagation(); openAccept(${b.id}, ${b.price})"><i class="fas fa-check"></i> قبول</button>
+                       <button class="btn-reject" onclick="event.stopPropagation(); openReject(${b.id})"><i class="fas fa-times"></i> رفض</button>
                     `:''}
-                    ${b.status==='accepted'?`<span style="font-size:0.8rem;color:#065F46;"><i class="fas fa-file-contract me-1"></i>تم إنشاء عقد تلقائياً</span>`:''}
+                    ${b.status==='accepted'?`<div style="font-size:0.8rem;color:#065F46;white-space:nowrap;"><i class="fas fa-file-contract me-1"></i>تم إنشاء عقد تلقائياً</div>`:''}
                 </div>
             </div>
         </div>`;
     }).join('');
 }
 
-function openAccept(id){ actionId=id; document.getElementById('discount-price').value=''; document.getElementById('accept-modal').classList.add('show'); }
-function openReject(id){ actionId=id; document.getElementById('reject-reason').value=''; document.getElementById('reject-modal').classList.add('show'); }
-function closeModals(){ actionId=null; document.getElementById('accept-modal').classList.remove('show'); document.getElementById('reject-modal').classList.remove('show'); }
+function validatePrice(){
+    if(!currentBooking) return true;
+    const input = document.getElementById('discount-price');
+    const errEl = document.getElementById('price-error');
+    const val = input.value.trim();
+
+    if(!val){
+        input.classList.remove('error');
+        errEl.classList.remove('show');
+        return true;
+    }
+
+    const price = Number(val);
+    const minPrice = Math.ceil(currentBooking.price * 0.50);
+    const maxPrice = currentBooking.price;
+
+    if(isNaN(price) || price <= 0){
+        input.classList.add('error');
+        errEl.textContent = 'يرجى إدخال سعر صحيح';
+        errEl.classList.add('show');
+        return false;
+    }
+
+    if(price < minPrice){
+        input.classList.add('error');
+        errEl.textContent = `السعر المخفض لا يمكن أن يقل عن ${minPrice.toLocaleString('ar')} ₪ (50% من السعر الأصلي)`;
+        errEl.classList.add('show');
+        return false;
+    }
+
+    if(price > maxPrice){
+        input.classList.add('error');
+        errEl.textContent = `السعر المخفض لا يمكن أن يزيد عن ${maxPrice.toLocaleString('ar')} ₪ (السعر الأصلي)`;
+        errEl.classList.add('show');
+        return false;
+    }
+
+    input.classList.remove('error');
+    errEl.classList.remove('show');
+    return true;
+}
+
+function openAccept(id, price){
+    actionId = id;
+    currentBooking = { id, price };
+    document.getElementById('discount-price').value = '';
+    document.getElementById('discount-price').classList.remove('error');
+    document.getElementById('price-error').classList.remove('show');
+    const minPrice = Math.ceil(price * 0.50);
+    document.getElementById('price-range-text').textContent =
+        `النطاق المسموح: من ${minPrice.toLocaleString('ar')} ₪ إلى ${Number(price).toLocaleString('ar')} ₪`;
+    document.getElementById('accept-modal').classList.add('show');
+}
+
+function openReject(id){
+    actionId=id;
+    document.getElementById('reject-reason').value='';
+    document.getElementById('reject-modal').classList.add('show');
+}
+
+function closeModals(){
+    actionId=null;
+    currentBooking=null;
+    document.getElementById('accept-modal').classList.remove('show');
+    document.getElementById('reject-modal').classList.remove('show');
+}
 
 async function confirmAccept(){
-    const disc = document.getElementById('discount-price').value;
+    if(!validatePrice()) return;
+
+    const disc = document.getElementById('discount-price').value.trim();
     const body = {};
     if(disc) body.discounted_price = Number(disc);
-    const r = await fetch(`${BASE_URL}/host/bookings/${actionId}/accept`,{method:'PATCH',headers:authHeaders(),body:JSON.stringify(body)});
-    closeModals();
-    if(r.ok){ allBookings=allBookings.map(b=>b.id===actionId?{...b,status:'accepted'}:b); filterTab(currentTab,document.querySelector('.tab.active')); showToast('✅ تم قبول الحجز وإنشاء العقد تلقائياً'); }
+
+    const r = await fetch(`${BASE_URL}/host/bookings/${actionId}/accept`,{
+        method:'PATCH', headers:authHeaders(), body:JSON.stringify(body)
+    });
+
+    if(r.ok){
+        closeModals();
+        allBookings = allBookings.map(b=>b.id===actionId?{...b,status:'accepted'}:b);
+        filterTab(currentTab, document.querySelector('.tab.active'));
+        showToast('✅ تم قبول الحجز وإنشاء العقد تلقائياً');
+    } else {
+        const data = await r.json().catch(()=>({}));
+        if(r.status === 422 && data.errors?.discounted_price){
+            const input = document.getElementById('discount-price');
+            const errEl = document.getElementById('price-error');
+            input.classList.add('error');
+            errEl.textContent = data.errors.discounted_price[0];
+            errEl.classList.add('show');
+        } else {
+            showToast(data.message || 'حدث خطأ، يرجى المحاولة مجدداً', true);
+        }
+    }
 }
 
 async function confirmReject(){
     const r = await fetch(`${BASE_URL}/host/bookings/${actionId}/reject`,{method:'PATCH',headers:authHeaders()});
     closeModals();
-    if(r.ok){ allBookings=allBookings.map(b=>b.id===actionId?{...b,status:'rejected'}:b); filterTab(currentTab,document.querySelector('.tab.active')); showToast('تم رفض الحجز'); }
+    if(r.ok){
+        allBookings=allBookings.map(b=>b.id===actionId?{...b,status:'rejected'}:b);
+        filterTab(currentTab,document.querySelector('.tab.active'));
+        showToast('تم رفض الحجز');
+    }
 }
 
-function showToast(msg){ const t=document.getElementById('toast'); document.getElementById('toast-msg').textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+function showToast(msg, isError=false){
+    const t=document.getElementById('toast');
+    document.getElementById('toast-msg').textContent=msg;
+    t.classList.toggle('error', isError);
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3000);
+}
 
 init();
 </script>
