@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Host;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
+use App\Models\PropertyImage;
 use Illuminate\Http\Request;
 use App\Services\NotificationService;
 class PropertyController extends Controller
@@ -44,7 +45,10 @@ class PropertyController extends Controller
             'has_water'       => 'boolean',
             'has_electricity' => 'boolean',
             'is_ready'        => 'boolean',
+            'images'          => 'sometimes|array|max:10',
+            'images.*'        => 'image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
+        unset($data['images']);
 
         $property = Property::create([
             ...$data,
@@ -52,6 +56,10 @@ class PropertyController extends Controller
             'status'       => 'pending',
             'availability' => 'not_available',
         ]);
+
+        $this->storeUploadedImages($request, $property);
+        $property->load(['images', 'mainImage', 'governorate', 'city', 'neighborhood']);
+
         // Notify all admins
         $admins = \App\Models\User::role('admin')->get();
         foreach ($admins as $admin) {
@@ -107,7 +115,10 @@ class PropertyController extends Controller
             'has_water'       => 'boolean',
             'has_electricity' => 'boolean',
             'is_ready'        => 'boolean',
+            'images'          => 'sometimes|array|max:10',
+            'images.*'        => 'image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
+        unset($data['images']);
 
         // Update essential fields to include location fields
         $essentialFields = ['title', 'type', 'governorate_id', 'city_id', 'neighborhood_id', 'price', 'damage_status'];
@@ -134,6 +145,8 @@ class PropertyController extends Controller
 }
 
 $property->update($data);
+$this->storeUploadedImages($request, $property);
+$property->load(['images', 'mainImage', 'governorate', 'city', 'neighborhood']);
         
         // Notify admins only if essential data changed
         if ($hasEssentialChange) {
@@ -152,6 +165,17 @@ $property->update($data);
             'message'  => 'تم تحديث العقار بنجاح.',
             'property' => $property,
         ]);
+    }
+
+    private function storeUploadedImages(Request $request, Property $property): void
+    {
+        if (!$request->hasFile('images')) {
+            return;
+        }
+
+        foreach ($request->file('images') as $image) {
+            PropertyImage::createForProperty($property, $image);
+        }
     }
 
     // Toggle availability (available <-> not_available)

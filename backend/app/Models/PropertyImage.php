@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class PropertyImage extends Model
 {
@@ -49,6 +51,31 @@ class PropertyImage extends Model
     public static function uploadDisk(): string
     {
         return config('filesystems.default') === 's3' ? 's3' : 'public';
+    }
+
+    public static function createForProperty(Property $property, UploadedFile $image): self
+    {
+        $path = $image->store('property_images', self::uploadDisk());
+        if (!$path) {
+            throw ValidationException::withMessages([
+                'images' => ['تعذر رفع الصور. يرجى المحاولة مرة أخرى.'],
+            ]);
+        }
+
+        return self::create([
+            'property_id' => $property->id,
+            'image_path'  => $path,
+            'is_main'     => !$property->images()->exists(),
+        ]);
+    }
+
+    public function toApiArray(): array
+    {
+        return [
+            'id'       => $this->id,
+            'url'      => $this->url,
+            'is_main'  => $this->is_main,
+        ];
     }
 
     public function deleteStoredFile(): void

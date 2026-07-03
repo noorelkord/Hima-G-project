@@ -17,29 +17,13 @@ class PropertyImageController extends Controller
 
         $request->validate([
             'images'   => 'required|array|max:10',
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $uploaded = [];
-        $disk = PropertyImage::uploadDisk();
 
         foreach ($request->file('images') as $image) {
-            $path = $image->store('property_images', $disk);
-
-            // First image is main by default
-            $isMain = $property->images()->count() === 0 && count($uploaded) === 0;
-
-            $propertyImage = PropertyImage::create([
-                'property_id' => $property->id,
-                'image_path'  => $path,
-                'is_main'     => $isMain,
-            ]);
-
-            $uploaded[] = [
-                'id'       => $propertyImage->id,
-                'url'      => $propertyImage->url,
-                'is_main'  => $isMain,
-            ];
+            $uploaded[] = PropertyImage::createForProperty($property, $image)->toApiArray();
         }
 
         return response()->json([
@@ -99,13 +83,7 @@ class PropertyImageController extends Controller
 
         $images = PropertyImage::where('property_id', $property->id)
             ->get()
-            ->map(function ($image) {
-                return [
-                    'id'      => $image->id,
-                    'url'     => $image->url,
-                    'is_main' => $image->is_main,
-                ];
-            });
+            ->map(fn ($image) => $image->toApiArray());
 
         return response()->json($images);
     }

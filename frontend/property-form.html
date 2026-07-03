@@ -559,18 +559,34 @@ async function setMainImage(imageId){
     }
 }
 
-// ─── رفع الصور الجديدة ───
-async function uploadImages(propId){
+function authFormHeaders(){
+    return {
+        'Accept':        'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+    };
+}
+
+function buildPropertyFormData(){
     const fd = new FormData();
+    fd.append('title', document.getElementById('title').value.trim());
+    fd.append('type', document.getElementById('type').value);
+    fd.append('price', normalizeDigits(document.getElementById('price').value));
+    fd.append('governorate_id', document.getElementById('governorate_id').value);
+    fd.append('city_id', document.getElementById('city_id').value);
+    fd.append('description', document.getElementById('description').value);
+    fd.append('rooms', normalizeDigits(document.getElementById('rooms').value));
+    fd.append('area_m2', normalizeDigits(document.getElementById('area_m2').value));
+    fd.append('street', document.getElementById('street').value);
+    fd.append('damage_status', selectedDamage);
+    fd.append('has_water', document.getElementById('has_water').checked ? '1' : '0');
+    fd.append('has_electricity', document.getElementById('has_electricity').checked ? '1' : '0');
+    fd.append('is_ready', document.getElementById('is_ready').checked ? '1' : '0');
+
+    const nbr = document.getElementById('neighborhood_id').value;
+    if(nbr) fd.append('neighborhood_id', nbr);
+
     selectedImages.forEach(f => fd.append('images[]', f));
-    await fetch(`${BASE_URL}/host/properties/${propId}/images`, {
-        method:  'POST',
-        headers: {
-            'Accept':        'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem('token')
-        },
-        body: fd
-    });
+    return fd;
 }
 
 // ─── حفظ العقار (إضافة أو تعديل) ───
@@ -590,37 +606,18 @@ async function submitProperty(){
         showErr('يرجى إدخال سعر شهري صحيح'); return;
     }
 
-    const body = {
-        title,
-        type,
-        price:           Number(price),
-        governorate_id:  Number(govId),
-        city_id:         Number(cityId),
-        description:     document.getElementById('description').value,
-        rooms:           Number(document.getElementById('rooms').value) || null,
-        area_m2:         Number(document.getElementById('area_m2').value) || null,
-        street:          document.getElementById('street').value,
-        damage_status:   selectedDamage,
-        has_water:       document.getElementById('has_water').checked,
-        has_electricity: document.getElementById('has_electricity').checked,
-        is_ready:        document.getElementById('is_ready').checked,
-    };
-
-    const nbr = document.getElementById('neighborhood_id').value;
-    if(nbr) body.neighborhood_id = Number(nbr);
-
     // POST للإضافة — PUT للتعديل
+    const body   = buildPropertyFormData();
     const url    = isEditMode
         ? `${BASE_URL}/host/properties/${editId}`
         : `${BASE_URL}/host/properties`;
-    const method = isEditMode ? 'PUT' : 'POST';
+    if(isEditMode) body.append('_method', 'PUT');
 
-    const r    = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+    const r    = await fetch(url, { method: 'POST', headers: authFormHeaders(), body });
     const data = await r.json();
 
     if(r.ok){
         savedPropertyId = data.property?.id || editId;
-        if(selectedImages.length) await uploadImages(savedPropertyId);
         showSuc(isEditMode
             ? 'تم تحديث العقار بنجاح ✅'
             : 'تم إرسال العقار للمراجعة بنجاح ✅'
