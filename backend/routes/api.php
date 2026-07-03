@@ -173,6 +173,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         // Properties
         Route::get('/properties/pending',       [AdminPropertyController::class, 'pending']);
         Route::get('/properties',               [AdminPropertyController::class, 'index']);
+        Route::get('/properties/{id}',          [AdminPropertyController::class, 'show']);
         Route::patch('/properties/{id}/accept', [AdminPropertyController::class, 'accept']);
         Route::patch('/properties/{id}/reject', [AdminPropertyController::class, 'reject']);
         Route::delete('/properties/{id}',       [AdminPropertyController::class, 'destroy']);
