@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
+use App\Models\Review;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
@@ -21,6 +22,18 @@ class PropertyController extends Controller
             ->latest()
             ->get();
 
+        // Add host rating to each property
+        $properties = $properties->map(function ($property) {
+            $reviews = Review::where('reviewee_id', $property->host_id)
+                ->where('type', 'tenant_to_host')
+                ->get();
+            $property->host_rating = $reviews->count() > 0
+                ? round($reviews->avg('rating'), 1)
+                : null;
+            $property->host_reviews_count = $reviews->count();
+            return $property;
+        });
+
         return response()->json($properties);
     }
 
@@ -37,21 +50,44 @@ class PropertyController extends Controller
             ->latest()
             ->get();
 
+        // Add host rating
+        $properties = $properties->map(function ($property) {
+            $reviews = Review::where('reviewee_id', $property->host_id)
+                ->where('type', 'tenant_to_host')
+                ->get();
+            $property->host_rating = $reviews->count() > 0
+                ? round($reviews->avg('rating'), 1)
+                : null;
+            $property->host_reviews_count = $reviews->count();
+            return $property;
+        });
+
         return response()->json($properties);
     }
-// Show a single property with full details
-public function show($id)
-{
-    $property = Property::with([
-        'host:id,first_name,last_name,email,phone,national_id',
-        'images',
-        'governorate:id,name',
-        'city:id,name',
-        'neighborhood:id,name',
-    ])->findOrFail($id);
 
-    return response()->json($property);
-}
+    // Show a single property with full details
+    public function show($id)
+    {
+        $property = Property::with([
+            'host:id,first_name,last_name,email,phone,national_id',
+            'images',
+            'governorate:id,name',
+            'city:id,name',
+            'neighborhood:id,name',
+        ])->findOrFail($id);
+
+        // Add host rating
+        $reviews = Review::where('reviewee_id', $property->host_id)
+            ->where('type', 'tenant_to_host')
+            ->get();
+        $property->host_rating = $reviews->count() > 0
+            ? round($reviews->avg('rating'), 1)
+            : null;
+        $property->host_reviews_count = $reviews->count();
+
+        return response()->json($property);
+    }
+
     // Accept a property
     public function accept($id) {
         $property = Property::findOrFail($id);

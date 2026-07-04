@@ -9,427 +9,100 @@
     <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
     <style>
         body { margin: 0; background:#F8F5F0; }
-
-        .layout {
-            display:grid;
-            grid-template-columns:240px 1fr;
-            min-height:100vh;
-        }
-        .sidebar {
-            background:#0D2B1F;
-            padding:1.5rem 0;
-            position:sticky;
-            top:0;
-            height:100vh;
-            overflow-y:auto;
-        }
-        .sidebar-logo {
-            color:#D4A853;
-            padding:0 1.2rem 1.5rem;
-            border-bottom:1px solid rgba(255,255,255,0.08);
-            margin-bottom:1rem;
-        }
-        .sidebar-logo a {
-            color:inherit;
-            text-decoration:none;
-            display:flex;
-            align-items:center;
-            gap:0.65rem;
-            font-size:1.4rem;
-            font-weight:900;
-        }
+        .layout { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+        .sidebar { background:#0D2B1F; padding:1.5rem 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+        .sidebar-logo { color:#D4A853; padding:0 1.2rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; }
+        .sidebar-logo a { color:inherit; text-decoration:none; display:flex; align-items:center; gap:0.65rem; font-size:1.4rem; font-weight:900; }
         .sidebar-logo span { color:white; font-weight:300; font-size:0.85rem; display:block; margin-top:0.15rem; }
-        .sidebar-guest {
-            padding:0.8rem 1.2rem 1.2rem;
-            border-bottom:1px solid rgba(255,255,255,0.08);
-            margin-bottom:1rem;
-        }
-        .guest-avatar {
-            width:44px;
-            height:44px;
-            border-radius:50%;
-            background:#1B4332;
-            border:2px solid #D4A853;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:#D4A853;
-            font-size:1.1rem;
-            font-weight:700;
-            margin-bottom:0.5rem;
-        }
+        .sidebar-guest { padding:0.8rem 1.2rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; }
+        .guest-avatar { width:44px; height:44px; border-radius:50%; background:#1B4332; border:2px solid #D4A853; display:flex; align-items:center; justify-content:center; color:#D4A853; font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; }
         .guest-name { color:white; font-size:0.9rem; font-weight:700; }
         .guest-role { color:rgba(255,255,255,0.4); font-size:0.75rem; }
-        .nav-section {
-            font-size:0.68rem;
-            color:rgba(255,255,255,0.3);
-            padding:1rem 1.2rem 0.4rem;
-            text-transform:uppercase;
-            letter-spacing:0.8px;
-        }
-        .nav-item {
-            display:flex;
-            align-items:center;
-            gap:0.7rem;
-            padding:0.7rem 1.2rem;
-            color:rgba(255,255,255,0.6);
-            cursor:pointer;
-            transition:all 0.2s;
-            font-size:0.875rem;
-            text-decoration:none;
-            border-right:3px solid transparent;
-            background:none;
-            border-top:none;
-            border-bottom:none;
-            border-left:none;
-            font-family:'Cairo',sans-serif;
-            width:100%;
-            text-align:right;
-        }
+        .nav-section { font-size:0.68rem; color:rgba(255,255,255,0.3); padding:1rem 1.2rem 0.4rem; text-transform:uppercase; letter-spacing:0.8px; }
+        .nav-item { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 1.2rem; color:rgba(255,255,255,0.6); cursor:pointer; transition:all 0.2s; font-size:0.875rem; text-decoration:none; border-right:3px solid transparent; background:none; border-top:none; border-bottom:none; border-left:none; font-family:'Cairo',sans-serif; width:100%; text-align:right; }
         .nav-item:hover { color:white; background:rgba(255,255,255,0.05); }
-        .nav-item.active {
-            color:#D4A853;
-            background:rgba(212,168,83,0.1);
-            border-right-color:#D4A853;
-        }
+        .nav-item.active { color:#D4A853; background:rgba(212,168,83,0.1); border-right-color:#D4A853; }
         .nav-item i { width:18px; text-align:center; }
         .guest-main { min-width:0; }
 
-        .page-header {
-            background:#F8F5F0;
-            padding:2rem 2rem 0.5rem;
-            color:#1B4332;
-            max-width:1200px;
-            margin:0 auto;
-        }
+        .page-header { background:#F8F5F0; padding:2rem 2rem 0.5rem; color:#1B4332; max-width:1200px; margin:0 auto; }
         .page-header h1 { font-size:1.05rem; font-weight:800; margin-bottom:0.25rem; }
         .page-header p  { color:#6B7280; font-size:0.9rem; }
 
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.2rem;
-            max-width: 1200px;
-            margin: 1rem auto 2rem;
-            padding: 0 1.5rem;
-        }
+        .main-layout { display:grid; grid-template-columns:1fr; gap:1.2rem; max-width:1200px; margin:1rem auto 2rem; padding:0 1.5rem; }
 
-        .filter-search-wrap {
-            margin:0;
-            padding:1.2rem 1.5rem 0;
-        }
-        .filter-search-bar {
-            width:100%;
-            max-width:980px;
-            margin:0 auto;
-            background:white;
-            color:#6B7280;
-            border:none;
-            border-radius:999px;
-            padding:1.05rem 1.45rem;
-            display:flex;
-            align-items:center;
-            justify-content:flex-start;
-            gap:1.15rem;
-            font-family:'Cairo',sans-serif;
-            direction:rtl;
-            box-shadow:0 12px 28px rgba(27,67,50,0.18);
-        }
-        .filter-search-bar:hover {
-            background:#FFFDF7;
-            box-shadow:0 14px 34px rgba(27,67,50,0.22);
-        }
-        .filter-search-main {
-            display:flex;
-            align-items:center;
-            gap:1rem;
-            font-weight:700;
-            font-size:1.05rem;
-            color:#6F6F80;
-        }
-        .filter-search-main i {
-            color:#7EA06C;
-            font-size:1.45rem;
-        }
-        .filter-search-hint {
-            display:none;
-        }
+        .filter-search-wrap { margin:0; padding:1.2rem 1.5rem 0; }
+        .filter-search-bar { width:100%; max-width:980px; margin:0 auto; background:white; color:#6B7280; border:none; border-radius:999px; padding:1.05rem 1.45rem; display:flex; align-items:center; justify-content:flex-start; gap:1.15rem; font-family:'Cairo',sans-serif; direction:rtl; box-shadow:0 12px 28px rgba(27,67,50,0.18); }
+        .filter-search-bar:hover { background:#FFFDF7; box-shadow:0 14px 34px rgba(27,67,50,0.22); }
+        .filter-search-main { display:flex; align-items:center; gap:1rem; font-weight:700; font-size:1.05rem; color:#6F6F80; }
+        .filter-search-main i { color:#7EA06C; font-size:1.45rem; }
 
-        .filter-modal {
-            position:fixed;
-            inset:0;
-            background:rgba(13,43,31,0.58);
-            z-index:1100;
-            display:none;
-            align-items:flex-start;
-            justify-content:center;
-            padding:5rem 1rem 1.5rem;
-            overflow:auto;
-        }
+        .filter-modal { position:fixed; inset:0; background:rgba(13,43,31,0.58); z-index:1100; display:none; align-items:flex-start; justify-content:center; padding:5rem 1rem 1.5rem; overflow:auto; }
         .filter-modal.show { display:flex; }
-        .filter-panel {
-            width:min(760px,100%);
-            background:white;
-            border-radius:14px;
-            border:1px solid #E5E0D8;
-            box-shadow:0 18px 55px rgba(13,43,31,0.22);
-        }
-        .filter-panel-head {
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            padding:1rem 1.2rem;
-            border-bottom:1px solid #E5E0D8;
-        }
-        .filter-panel-head h3 {
-            margin:0;
-            font-size:1rem;
-            color:#1B4332;
-            display:flex;
-            align-items:center;
-            gap:0.5rem;
-        }
-        .filter-close {
-            width:34px;
-            height:34px;
-            padding:0;
-            border-radius:8px;
-            background:#F8F5F0;
-            color:#1B4332;
-            font-size:1.25rem;
-        }
+        .filter-panel { width:min(760px,100%); background:white; border-radius:14px; border:1px solid #E5E0D8; box-shadow:0 18px 55px rgba(13,43,31,0.22); }
+        .filter-panel-head { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.2rem; border-bottom:1px solid #E5E0D8; }
+        .filter-panel-head h3 { margin:0; font-size:1rem; color:#1B4332; display:flex; align-items:center; gap:0.5rem; }
+        .filter-close { width:34px; height:34px; padding:0; border-radius:8px; background:#F8F5F0; color:#1B4332; font-size:1.25rem; }
         .filter-close:hover { background:#E5E0D8; }
 
-        /* ── SIDEBAR FILTERS ── */
-        .filters-sidebar {
-            padding: 1.2rem;
-        }
-        .filters-sidebar h3 {
-            display:none;
-        }
-        .filter-group { margin-bottom: 1.2rem; }
-        .filter-group label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #6B7280;
-            margin-bottom: 0.4rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .filter-group select,
-        .filter-group input {
-            width: 100%;
-            border: 1.5px solid #E5E0D8;
-            border-radius: 8px;
-            padding: 0.55rem 0.8rem;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.85rem;
-            color: #1A1A1A;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .filter-group select:focus,
-        .filter-group input:focus { border-color: #2D6A4F; }
+        .filters-sidebar { padding:1.2rem; }
+        .filters-sidebar h3 { display:none; }
+        .filter-group { margin-bottom:1.2rem; }
+        .filter-group label { display:block; font-size:0.8rem; font-weight:600; color:#6B7280; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.5px; }
+        .filter-group select, .filter-group input { width:100%; border:1.5px solid #E5E0D8; border-radius:8px; padding:0.55rem 0.8rem; font-family:'Cairo',sans-serif; font-size:0.85rem; color:#1A1A1A; outline:none; transition:border-color 0.2s; }
+        .filter-group select:focus, .filter-group input:focus { border-color:#2D6A4F; }
+        .price-row { display:flex; gap:0.5rem; }
+        .price-row input { flex:1; }
+        .checkbox-group { display:flex; flex-direction:column; gap:0.5rem; }
+        .checkbox-item { display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; cursor:pointer; }
+        .checkbox-item input[type="checkbox"] { accent-color:#1B4332; width:16px; height:16px; }
+        .btn-filter { width:100%; background:#1B4332; color:white; border:none; border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer; margin-top:0.5rem; transition:background 0.2s; }
+        .btn-filter:hover { background:#2D6A4F; }
+        .btn-reset { width:100%; background:transparent; color:#6B7280; border:1px solid #E5E0D8; border-radius:10px; padding:0.6rem; font-family:'Cairo',sans-serif; font-size:0.85rem; cursor:pointer; margin-top:0.5rem; }
 
-        .price-row { display: flex; gap: 0.5rem; }
-        .price-row input { flex: 1; }
+        .results-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; }
+        .results-count { font-size:0.9rem; color:#6B7280; }
+        .results-count span { font-weight:700; color:#1B4332; }
 
-        .checkbox-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-        .checkbox-item input[type="checkbox"] { accent-color: #1B4332; width: 16px; height: 16px; }
+        .properties-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.2rem; }
 
-        .btn-filter {
-            width: 100%;
-            background: #1B4332;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.7rem;
-            font-family: 'Cairo', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            transition: background 0.2s;
-        }
-        .btn-filter:hover { background: #2D6A4F; }
+        .prop-card { background:white; border-radius:16px; border:1px solid #E5E0D8; overflow:hidden; transition:all 0.3s; cursor:pointer; }
+        .prop-card:hover { transform:translateY(-4px); box-shadow:0 8px 32px rgba(27,67,50,0.15); }
+        .prop-img { height:190px; background:linear-gradient(135deg,#1B4332,#2D6A4F); position:relative; overflow:hidden; }
+        .prop-img img { width:100%; height:100%; object-fit:cover; }
+        .prop-img .no-img { display:flex; align-items:center; justify-content:center; height:100%; font-size:3rem; color:rgba(255,255,255,0.15); }
+        .prop-type-badge { position:absolute; top:0.8rem; right:0.8rem; background:#D4A853; color:#1B4332; font-size:0.72rem; font-weight:700; padding:0.25rem 0.7rem; border-radius:20px; }
+        .prop-fav { position:absolute; top:0.8rem; left:0.8rem; background:rgba(255,255,255,0.9); border:none; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#9CA3AF; font-size:0.9rem; transition:all 0.2s; }
+        .prop-fav:hover, .prop-fav.active { color:#E74C3C; }
 
-        .btn-reset {
-            width: 100%;
-            background: transparent;
-            color: #6B7280;
-            border: 1px solid #E5E0D8;
-            border-radius: 10px;
-            padding: 0.6rem;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
+        .prop-body { padding:1rem; }
+        .prop-title { font-weight:700; font-size:0.95rem; color:#1A1A1A; margin-bottom:0.3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .prop-location { color:#6B7280; font-size:0.8rem; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.3rem; }
+        .prop-location i { color:#2D6A4F; font-size:0.75rem; }
 
-        /* ── RESULTS ── */
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.2rem;
-        }
-        .results-count {
-            font-size: 0.9rem;
-            color: #6B7280;
-        }
-        .results-count span { font-weight: 700; color: #1B4332; }
+        /* Host rating */
+        .host-rating { display:flex; align-items:center; gap:0.35rem; margin-bottom:0.6rem; }
+        .host-rating .stars-val { color:#D4A853; font-size:0.82rem; font-weight:700; }
+        .host-rating .stars-ico { color:#D4A853; font-size:0.75rem; }
+        .host-rating .reviews-count { color:#9CA3AF; font-size:0.75rem; }
+        .host-rating .no-rating { color:#9CA3AF; font-size:0.75rem; }
 
-        .properties-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.2rem;
-        }
+        .prop-tags { display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.8rem; }
+        .prop-tag { background:#F8F5F0; color:#6B7280; font-size:0.72rem; padding:0.2rem 0.5rem; border-radius:6px; display:flex; align-items:center; gap:0.25rem; }
+        .prop-tag i { color:#2D6A4F; font-size:0.68rem; }
+        .prop-footer { display:flex; justify-content:space-between; align-items:center; padding-top:0.7rem; border-top:1px solid #E5E0D8; }
+        .prop-price { font-weight:900; font-size:1.05rem; color:#1B4332; }
+        .prop-price span { font-size:0.72rem; font-weight:400; color:#9CA3AF; }
+        .btn-view { background:#1B4332; color:white; border:none; border-radius:8px; padding:0.38rem 0.9rem; font-family:'Cairo',sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; transition:background 0.2s; text-decoration:none; }
+        .btn-view:hover { background:#2D6A4F; color:white; }
 
-        /* ── PROPERTY CARD ── */
-        .prop-card {
-            background: white;
-            border-radius: 16px;
-            border: 1px solid #E5E0D8;
-            overflow: hidden;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        .prop-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(27,67,50,0.15);
-        }
-        .prop-img {
-            height: 190px;
-            background: linear-gradient(135deg, #1B4332, #2D6A4F);
-            position: relative;
-            overflow: hidden;
-        }
-        .prop-img img { width: 100%; height: 100%; object-fit: cover; }
-        .prop-img .no-img {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            font-size: 3rem;
-            color: rgba(255,255,255,0.15);
-        }
-        .prop-type-badge {
-            position: absolute;
-            top: 0.8rem;
-            right: 0.8rem;
-            background: #D4A853;
-            color: #1B4332;
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 0.25rem 0.7rem;
-            border-radius: 20px;
-        }
-        .prop-fav {
-            position: absolute;
-            top: 0.8rem;
-            left: 0.8rem;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #9CA3AF;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-        .prop-fav:hover, .prop-fav.active { color: #E74C3C; }
-
-        .prop-body { padding: 1rem; }
-        .prop-title {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: #1A1A1A;
-            margin-bottom: 0.3rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .prop-location {
-            color: #6B7280;
-            font-size: 0.8rem;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .prop-location i { color: #2D6A4F; font-size: 0.75rem; }
-        .prop-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-bottom: 0.8rem;
-        }
-        .prop-tag {
-            background: #F8F5F0;
-            color: #6B7280;
-            font-size: 0.72rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        .prop-tag i { color: #2D6A4F; font-size: 0.68rem; }
-        .prop-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 0.7rem;
-            border-top: 1px solid #E5E0D8;
-        }
-        .prop-price { font-weight: 900; font-size: 1.05rem; color: #1B4332; }
-        .prop-price span { font-size: 0.72rem; font-weight: 400; color: #9CA3AF; }
-        .btn-view {
-            background: #1B4332;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.38rem 0.9rem;
-            font-family: 'Cairo', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-decoration: none;
-        }
-        .btn-view:hover { background: #2D6A4F; color: white; }
-
-        /* skeleton */
-        .skeleton {
-            background: linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
+        .skeleton { background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-        .empty-state { text-align: center; padding: 3rem; color: #6B7280; grid-column: 1/-1; }
-        .empty-state i { font-size: 3rem; color: #E5E0D8; display: block; margin-bottom: 1rem; }
+        .empty-state { text-align:center; padding:3rem; color:#6B7280; grid-column:1/-1; }
+        .empty-state i { font-size:3rem; color:#E5E0D8; display:block; margin-bottom:1rem; }
 
-        @media(max-width:768px){
-            .layout { grid-template-columns:1fr; }
-            .sidebar { display:none; }
-            .main-layout { grid-template-columns: 1fr; }
-            .filter-search-bar { align-items:flex-start; flex-direction:column; }
-            .filter-modal { padding-top:4.5rem; }
-        }
+        @media(max-width:768px){ .layout{grid-template-columns:1fr;} .sidebar{display:none;} .main-layout{grid-template-columns:1fr;} .filter-modal{padding-top:4.5rem;} }
     </style>
 </head>
 <body>
@@ -450,7 +123,7 @@
         <div class="nav-section">القائمة الرئيسية</div>
         <a class="nav-item active" href="properties.html"><i class="fas fa-home"></i> الصفحة الرئيسية</a>
         <button class="nav-item" type="button" onclick="openFilters()"><i class="fas fa-filter"></i> الفلترة</button>
-        <a class="nav-item" href="tenant-login.html"><i class="fas fa-user"></i>  تسجيل الدخول / انشاء حساب </a>
+        <a class="nav-item" href="tenant-login.html"><i class="fas fa-user"></i> تسجيل الدخول / انشاء حساب</a>
         <a class="nav-item" href="host-login.html?mode=signup"><i class="fas fa-user-plus"></i> كن مضيفاً</a>
         <a class="nav-item" href="policies.html"><i class="fas fa-file-contract"></i> السياسات والخصوصية</a>
     </aside>
@@ -467,164 +140,120 @@
                     <i class="fas fa-search"></i>
                     ابحث عن عقارات
                 </span>
-                <span class="filter-search-hint">اختر المحافظة، المدينة، السعر، الغرف والخدمات</span>
             </button>
         </div>
 
-<div class="filter-modal" id="filter-modal" onclick="if(event.target===this) closeFilters()">
-    <div class="filter-panel">
-        <div class="filter-panel-head">
-            <h3><i class="fas fa-filter"></i>فلترة النتائج</h3>
-            <button class="filter-close" onclick="closeFilters()">×</button>
-        </div>
-        <aside class="filters-sidebar">
-            <h3><i class="fas fa-filter me-2"></i>فلترة النتائج</h3>
-
-            <div class="filter-group">
-                <label>المحافظة</label>
-                <select id="f-gov" onchange="loadCities()">
-                    <option value="">كل المحافظات</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>المدينة</label>
-                <select id="f-city" onchange="loadNeighborhoods()">
-                    <option value="">كل المدن</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>الحي</label>
-                <select id="f-neighborhood">
-                    <option value="">كل الأحياء</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>نوع العقار</label>
-                <select id="f-type">
-                    <option value="">كل الأنواع</option>
-                    <option value="apartment">شقة</option>
-                    <option value="villa">فيلا</option>
-                    <option value="land">أرض</option>
-                    <option value="chalet">شاليه</option>
-                    <option value="commercial">تجاري</option>
-                    <option value="parking">موقف</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>السعر الشهري (₪)</label>
-                <div class="price-row">
-                    <input type="number" id="f-min" placeholder="من">
-                    <input type="number" id="f-max" placeholder="إلى">
+        <div class="filter-modal" id="filter-modal" onclick="if(event.target===this) closeFilters()">
+            <div class="filter-panel">
+                <div class="filter-panel-head">
+                    <h3><i class="fas fa-filter"></i>فلترة النتائج</h3>
+                    <button class="filter-close" onclick="closeFilters()">×</button>
                 </div>
-            </div>
-
-            <div class="filter-group">
-                <label>عدد الغرف</label>
-                <select id="f-rooms">
-                    <option value="">أي عدد</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5+</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>حالة العقار</label>
-                <select id="f-damage">
-                    <option value="">الكل</option>
-                    <option value="intact">سليم</option>
-                    <option value="partial">أضرار جزئية</option>
-                    <option value="renovated">مرمم</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>الخدمات</label>
-                <div class="checkbox-group">
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="f-water">
-                        <i class="fas fa-tint" style="color:#2D6A4F"></i> ماء
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="f-electricity">
-                        <i class="fas fa-bolt" style="color:#D4A853"></i> كهرباء
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="f-ready">
-                        <i class="fas fa-check-circle" style="color:#2D6A4F"></i> جاهز للسكن
-                    </label>
-                </div>
-            </div>
-
-            <button class="btn-filter" onclick="applyFilters()">
-                <i class="fas fa-search me-1"></i> بحث
-            </button>
-            <button class="btn-reset" onclick="resetFilters()">
-                إعادة تعيين الفلاتر
-            </button>
-        </aside>
-    </div>
-</div>
-
-<div class="main-layout">
-    <!-- RESULTS -->
-    <div>
-        <div class="results-header">
-            <div class="results-count">
-                عرض <span id="count">0</span> عقار
+                <aside class="filters-sidebar">
+                    <div class="filter-group">
+                        <label>المحافظة</label>
+                        <select id="f-gov" onchange="loadCities()">
+                            <option value="">كل المحافظات</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>المدينة</label>
+                        <select id="f-city" onchange="loadNeighborhoods()">
+                            <option value="">كل المدن</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>الحي</label>
+                        <select id="f-neighborhood">
+                            <option value="">كل الأحياء</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>نوع العقار</label>
+                        <select id="f-type">
+                            <option value="">كل الأنواع</option>
+                            <option value="apartment">شقة</option>
+                            <option value="villa">فيلا</option>
+                            <option value="land">أرض</option>
+                            <option value="chalet">شاليه</option>
+                            <option value="commercial">تجاري</option>
+                            <option value="parking">موقف</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>السعر الشهري (₪)</label>
+                        <div class="price-row">
+                            <input type="number" id="f-min" placeholder="من">
+                            <input type="number" id="f-max" placeholder="إلى">
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <label>عدد الغرف</label>
+                        <select id="f-rooms">
+                            <option value="">أي عدد</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5+</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>حالة العقار</label>
+                        <select id="f-damage">
+                            <option value="">الكل</option>
+                            <option value="intact">سليم</option>
+                            <option value="partial">أضرار جزئية</option>
+                            <option value="renovated">مرمم</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>الخدمات</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="f-water">
+                                <i class="fas fa-tint" style="color:#2D6A4F"></i> ماء
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="f-electricity">
+                                <i class="fas fa-bolt" style="color:#D4A853"></i> كهرباء
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="f-ready">
+                                <i class="fas fa-check-circle" style="color:#2D6A4F"></i> جاهز للسكن
+                            </label>
+                        </div>
+                    </div>
+                    <button class="btn-filter" onclick="applyFilters()">
+                        <i class="fas fa-search me-1"></i> بحث
+                    </button>
+                    <button class="btn-reset" onclick="resetFilters()">إعادة تعيين الفلاتر</button>
+                </aside>
             </div>
         </div>
-        <div class="properties-grid" id="grid">
-            <!-- skeletons -->
-            <div class="prop-card" id="sk1">
-                <div class="skeleton" style="height:190px"></div>
-                <div class="prop-body">
-                    <div class="skeleton mb-2" style="height:18px;width:70%"></div>
-                    <div class="skeleton mb-3" style="height:14px;width:50%"></div>
-                    <div class="skeleton" style="height:14px;width:40%"></div>
+
+        <div class="main-layout">
+            <div>
+                <div class="results-header">
+                    <div class="results-count">عرض <span id="count">0</span> عقار</div>
                 </div>
-            </div>
-            <div class="prop-card" id="sk2">
-                <div class="skeleton" style="height:190px"></div>
-                <div class="prop-body">
-                    <div class="skeleton mb-2" style="height:18px;width:70%"></div>
-                    <div class="skeleton mb-3" style="height:14px;width:50%"></div>
-                    <div class="skeleton" style="height:14px;width:40%"></div>
-                </div>
-            </div>
-            <div class="prop-card" id="sk3">
-                <div class="skeleton" style="height:190px"></div>
-                <div class="prop-body">
-                    <div class="skeleton mb-2" style="height:18px;width:70%"></div>
-                    <div class="skeleton mb-3" style="height:14px;width:50%"></div>
-                    <div class="skeleton" style="height:14px;width:40%"></div>
+                <div class="properties-grid" id="grid">
+                    <div class="prop-card" id="sk1"><div class="skeleton" style="height:190px"></div><div class="prop-body"><div class="skeleton mb-2" style="height:18px;width:70%"></div><div class="skeleton mb-3" style="height:14px;width:50%"></div><div class="skeleton" style="height:14px;width:40%"></div></div></div>
+                    <div class="prop-card" id="sk2"><div class="skeleton" style="height:190px"></div><div class="prop-body"><div class="skeleton mb-2" style="height:18px;width:70%"></div><div class="skeleton mb-3" style="height:14px;width:50%"></div><div class="skeleton" style="height:14px;width:40%"></div></div></div>
+                    <div class="prop-card" id="sk3"><div class="skeleton" style="height:190px"></div><div class="prop-body"><div class="skeleton mb-2" style="height:18px;width:70%"></div><div class="skeleton mb-3" style="height:14px;width:50%"></div><div class="skeleton" style="height:14px;width:40%"></div></div></div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
     </main>
 </div>
 
 <script src="js/api.js?v=20260628-absolute-nav"></script>
 <script>
-const typeMap    = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
-const damageMap  = {intact:'سليم',partial:'أضرار جزئية',renovated:'مرمم'};
+const typeMap   = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
+const damageMap = {intact:'سليم',partial:'أضرار جزئية',renovated:'مرمم'};
 
-function openFilters(){
-    document.getElementById('filter-modal').classList.add('show');
-}
-
-function closeFilters(){
-    document.getElementById('filter-modal').classList.remove('show');
-}
+function openFilters(){ document.getElementById('filter-modal').classList.add('show'); }
+function closeFilters(){ document.getElementById('filter-modal').classList.remove('show'); }
 
 async function loadGovernorates(){
     const r = await fetch(BASE_URL+'/governorates',{headers:{'Accept':'application/json'}});
@@ -684,9 +313,22 @@ async function loadProperties(params={}){
     return await r.json();
 }
 
+function renderStars(rating, count){
+    if(!rating || count === 0){
+        return `<div class="host-rating"><span class="no-rating"><i class="fas fa-star"></i> لا توجد تقييمات</span></div>`;
+    }
+    const full  = Math.floor(rating);
+    const half  = rating - full >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+    let stars = '';
+    for(let i=0;i<full;i++)  stars += '<i class="fas fa-star stars-ico"></i>';
+    if(half)                  stars += '<i class="fas fa-star-half-alt stars-ico"></i>';
+    for(let i=0;i<empty;i++) stars += '<i class="far fa-star stars-ico"></i>';
+    return `<div class="host-rating">${stars}<span class="stars-val">${rating}</span><span class="reviews-count">(${count} تقييم)</span></div>`;
+}
+
 function renderCard(p){
     const role  = localStorage.getItem('role');
-    const token = localStorage.getItem('token');
     const main  = p.images?.find(i=>i.is_main && i.url) || p.images?.find(i=>i.url);
     const img   = main?.url ? `<img src="${main.url}" alt="${p.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">` : `<div class="no-img"><i class="fas fa-building"></i></div>`;
     const fav   = role !== 'host' ? `<button class="prop-fav" onclick="event.stopPropagation();toggleFav(${p.id},this)" title="أضف للمفضلة"><i class="fas fa-heart"></i></button>` : '';
@@ -701,6 +343,7 @@ function renderCard(p){
         <div class="prop-body">
             <div class="prop-title">${p.title}</div>
             <div class="prop-location"><i class="fas fa-map-marker-alt"></i>${loc}</div>
+            ${renderStars(p.host_rating, p.host_reviews_count || 0)}
             <div class="prop-tags">
                 ${p.rooms?`<span class="prop-tag"><i class="fas fa-door-open"></i>${p.rooms} غرف</span>`:''}
                 ${p.area_m2?`<span class="prop-tag"><i class="fas fa-ruler-combined"></i>${p.area_m2}م²</span>`:''}
@@ -756,7 +399,6 @@ async function toggleFav(id, btn){
     }
 }
 
-// Init
 loadGovernorates();
 applyFilters();
 </script>

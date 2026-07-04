@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class PropertyController extends Controller
@@ -55,7 +56,21 @@ class PropertyController extends Controller
             $query->where('is_ready', $request->boolean('is_ready'));
         }
 
-        return response()->json($query->get());
+        $properties = $query->get();
+
+        // Add host rating to each property
+        $properties = $properties->map(function ($property) {
+            $reviews = Review::where('reviewee_id', $property->host_id)
+                ->where('type', 'tenant_to_host')
+                ->get();
+            $property->host_rating = $reviews->count() > 0
+                ? round($reviews->avg('rating'), 1)
+                : null;
+            $property->host_reviews_count = $reviews->count();
+            return $property;
+        });
+
+        return response()->json($properties);
     }
 
     // View a single public property
@@ -68,6 +83,15 @@ class PropertyController extends Controller
                 'mainImage',
             ])
             ->findOrFail($id);
+
+        // Add host rating
+        $reviews = Review::where('reviewee_id', $property->host_id)
+            ->where('type', 'tenant_to_host')
+            ->get();
+        $property->host_rating = $reviews->count() > 0
+            ? round($reviews->avg('rating'), 1)
+            : null;
+        $property->host_reviews_count = $reviews->count();
 
         return response()->json($property);
     }
@@ -94,13 +118,11 @@ class PropertyController extends Controller
 
         $phone = preg_replace('/[^0-9+]/', '', $property->host->phone);
 
-        // Normalise to international format for wa.me (no leading + or 00)
         if (str_starts_with($phone, '+')) {
             $phone = substr($phone, 1);
         } elseif (str_starts_with($phone, '00')) {
             $phone = substr($phone, 2);
         } elseif (str_starts_with($phone, '0')) {
-            // Local Palestinian number — prepend country code 970
             $phone = '970' . substr($phone, 1);
         }
 

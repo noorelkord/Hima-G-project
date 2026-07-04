@@ -372,6 +372,12 @@
             gap: 0.3rem;
         }
         .prop-location i { color: #2D6A4F; font-size: 0.75rem; }
+        /* Host rating */
+.host-rating { display:flex; align-items:center; gap:0.35rem; margin-bottom:0.6rem; }
+.host-rating .stars-val { color:#D4A853; font-size:0.82rem; font-weight:700; }
+.host-rating .stars-ico { color:#D4A853; font-size:0.75rem; }
+.host-rating .reviews-count { color:#9CA3AF; font-size:0.75rem; }
+.host-rating .no-rating { color:#9CA3AF; font-size:0.75rem; }
         .prop-tags {
             display: flex;
             flex-wrap: wrap;
@@ -686,6 +692,20 @@ async function loadProperties(params={}){
     return await r.json();
 }
 
+function renderStars(rating, count){
+    if(!rating || count === 0){
+        return `<div class="host-rating"><span class="no-rating"><i class="fas fa-star"></i> لا توجد تقييمات</span></div>`;
+    }
+    const full  = Math.floor(rating);
+    const half  = rating - full >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+    let stars = '';
+    for(let i=0;i<full;i++)  stars += '<i class="fas fa-star stars-ico"></i>';
+    if(half)                  stars += '<i class="fas fa-star-half-alt stars-ico"></i>';
+    for(let i=0;i<empty;i++) stars += '<i class="far fa-star stars-ico"></i>';
+    return `<div class="host-rating">${stars}<span class="stars-val">${rating}</span><span class="reviews-count">(${count} تقييم)</span></div>`;
+}
+
 function renderCard(p){
     const role  = localStorage.getItem('role');
     const token = localStorage.getItem('token');
@@ -703,6 +723,7 @@ function renderCard(p){
         <div class="prop-body">
             <div class="prop-title">${p.title}</div>
             <div class="prop-location"><i class="fas fa-map-marker-alt"></i>${loc}</div>
+            ${renderStars(p.host_rating, p.host_reviews_count || 0)}
             <div class="prop-tags">
                 ${p.rooms?`<span class="prop-tag"><i class="fas fa-door-open"></i>${p.rooms} غرف</span>`:''}
                 ${p.area_m2?`<span class="prop-tag"><i class="fas fa-ruler-combined"></i>${p.area_m2}م²</span>`:''}

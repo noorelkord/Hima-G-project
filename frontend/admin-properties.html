@@ -69,6 +69,9 @@
         }
         .meta-chip i { font-size:0.72rem; color:#2D6A4F; }
         .meta-chip.price { background:#EAF5EF; color:#1B4332; }
+        .host-rating-chip { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; color:#92400E; background:#FEF3C7; padding:0.32rem 0.72rem; border-radius:999px; white-space:nowrap; }
+        .host-rating-chip i { color:#D4A853; font-size:0.72rem; }
+        .host-no-rating { font-size:0.75rem; color:#9CA3AF; }
         .reject-note {
             font-size:0.8rem; color:#B91C1C; background:#FEF2F2;
             border:1px solid #FECACA; border-radius:9px; padding:0.45rem 0.65rem;
@@ -213,8 +216,7 @@
 const typeMap = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
 const statusLabel = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض'};
 const statusCls   = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected'};
-const availMap = {available:'متاح', not_available:'غير متاح', booked:'محجوز'};
-const availCls = {available:'badge-accepted', not_available:'badge-not_available', booked:'badge-booked'};
+
 let allProps = [];
 let rejectId = null;
 let currentTab = 'all';
@@ -257,21 +259,18 @@ function render(list){
                     <span class="meta-chip"><i class="fas fa-tag"></i>${typeMap[p.type]||p.type}</span>
                     <span class="meta-chip"><i class="fas fa-user"></i>${host||'غير معروف'}</span>
                     <span class="meta-chip price"><i class="fas fa-money-bill-wave"></i>${Number(p.price).toLocaleString('ar')} ₪</span>
+                    ${p.host_rating ? `<span class="host-rating-chip"><i class="fas fa-star"></i>${p.host_rating} <span style="color:#6B7280;font-weight:400;">(${p.host_reviews_count} تقييم)</span></span>` : `<span class="host-no-rating"><i class="fas fa-star" style="color:#E5E0D8"></i> لا توجد تقييمات</span>`}
                 </div>
                 ${p.status==='rejected'&&p.rejection_reason?`<div class="reject-note"><i class="fas fa-exclamation-circle" style="margin-top:0.15rem;"></i><span>${p.rejection_reason}</span></div>`:''}
             </div>
             <div class="prop-side">
-              <span class="badge ${statusCls[p.status]}">${statusLabel[p.status]}</span>
-              <span class="badge ${availCls[p.availability]||''}">${availMap[p.availability]||''}</span>
+                <span class="badge ${statusCls[p.status]}">${statusLabel[p.status]}</span>
                 <div class="prop-actions">
                     <button class="btn-details" onclick="window.location.href='admin-property-details.html?id=${p.id}'">
                         <i class="fas fa-eye"></i>عرض التفاصيل
                     </button>
                     ${reviewBtns}
-                  ${p.availability !== 'booked'
-    ? `<button class="btn-archive" onclick="archiveProp(${p.id})"><i class="fas fa-archive"></i>أرشفة</button>`
-    : `<button class="btn-archive" style="opacity:0.4;cursor:not-allowed;" title="لا يمكن أرشفة عقار محجوز" onclick="event.stopPropagation();alert('لا يمكن أرشفة عقار محجوز حالياً.')"><i class="fas fa-archive"></i>أرشفة</button>`
-}
+                    <button class="btn-archive" onclick="archiveProp(${p.id})"><i class="fas fa-archive"></i>أرشفة</button>
                 </div>
             </div>
         </div>`;

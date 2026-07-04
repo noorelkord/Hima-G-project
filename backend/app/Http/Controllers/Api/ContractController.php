@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contract;
-use App\Services\NotificationService;
 use App\Models\ReviewWindow;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class ContractController extends Controller
@@ -29,9 +29,23 @@ class ContractController extends Controller
         }
 
         $contracts = $query->latest()->get();
+
         if ($role === 'admin') {
             $contracts->makeHidden(['price']);
         }
+
+        // Add can_review flag for each contract
+        if (in_array($role, ['tenant', 'host'])) {
+            $contracts = $contracts->map(function ($contract) use ($user) {
+                $window = ReviewWindow::where('contract_id', $contract->id)
+                    ->where('user_id', $user->id)
+                    ->where('status', 'open')
+                    ->exists();
+                $contract->can_review = $window;
+                return $contract;
+            });
+        }
+
         return response()->json($contracts);
     }
 
@@ -42,7 +56,6 @@ class ContractController extends Controller
         $role     = $user->getRoleNames()->first();
         $contract = Contract::findOrFail($id);
 
-        // Access control first ✅
         if ($role === 'tenant' && $contract->tenant_id !== $user->id) {
             return response()->json(['message' => 'غير مصرح.'], 403);
         }
@@ -50,7 +63,6 @@ class ContractController extends Controller
             return response()->json(['message' => 'غير مصرح.'], 403);
         }
 
-        // Load data based on role
         $contract->load([
             'property:id,title,type,governorate_id,city_id,neighborhood_id,street',
             'booking:id,start_date,end_date,status',
@@ -69,6 +81,15 @@ class ContractController extends Controller
             ]);
         }
 
+        // Add can_review flag
+        if (in_array($role, ['tenant', 'host'])) {
+            $window = ReviewWindow::where('contract_id', $contract->id)
+                ->where('user_id', $user->id)
+                ->where('status', 'open')
+                ->exists();
+            $contract->can_review = $window;
+        }
+
         return response()->json($contract);
     }
 
@@ -79,7 +100,6 @@ class ContractController extends Controller
         $role     = $user->getRoleNames()->first();
         $contract = Contract::findOrFail($id);
 
-        // Only tenant or host can cancel
         if ($role === 'tenant' && $contract->tenant_id !== $user->id) {
             return response()->json(['message' => 'غير مصرح.'], 403);
         }
@@ -93,13 +113,11 @@ class ContractController extends Controller
             ], 403);
         }
 
-        // Cancel contract
         $contract->update([
             'status'    => 'cancelled',
             'closed_at' => now(),
         ]);
 
-        // Create review windows for both parties
         ReviewWindow::create([
             'contract_id'      => $contract->id,
             'user_id'          => $contract->tenant_id,
@@ -116,9 +134,8 @@ class ContractController extends Controller
             'last_reminded_at' => now(),
         ]);
 
-        // Free up the property
         $contract->property->update(['availability' => 'available']);
-        // Send review reminder to both parties
+
         NotificationService::send(
             $contract->tenant_id,
             'تذكير بالتقييم',
@@ -134,9 +151,8 @@ class ContractController extends Controller
             'review_reminder',
             $contract->id
         );
-        // Notify the other party
+
         if ($role === 'tenant') {
-            // Notify host
             NotificationService::send(
                 $contract->host_id,
                 'تم إلغاء العقد',
@@ -145,7 +161,6 @@ class ContractController extends Controller
                 $contract->id
             );
         } elseif ($role === 'host') {
-            // Notify tenant
             NotificationService::send(
                 $contract->tenant_id,
                 'تم إلغاء العقد',
@@ -160,14 +175,13 @@ class ContractController extends Controller
             'contract' => $contract,
         ]);
     }
+
     // Download contract PDF
     public function downloadPdf(Request $request, $id)
     {
         $user     = $request->user();
         $role     = $user->getRoleNames()->first();
         $contract = Contract::findOrFail($id);
-
-        // Access control
 
         if ($role === 'admin') {
             return response()->json(['message' => 'غير مصرح.'], 403);
@@ -199,7 +213,6 @@ class ContractController extends Controller
         $role     = $user->getRoleNames()->first();
         $contract = Contract::findOrFail($id);
 
-        // Access control
         if ($role === 'admin') {
             return response()->json(['message' => 'غير مصرح.'], 403);
         }
