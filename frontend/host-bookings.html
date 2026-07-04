@@ -227,7 +227,7 @@ function render(list){
                        <button class="btn-accept" onclick="event.stopPropagation(); openAccept(${b.id}, ${b.price})"><i class="fas fa-check"></i> قبول</button>
                        <button class="btn-reject" onclick="event.stopPropagation(); openReject(${b.id})"><i class="fas fa-times"></i> رفض</button>
                     `:''}
-                    ${b.status==='accepted'?`<div style="font-size:0.8rem;color:#065F46;white-space:nowrap;"><i class="fas fa-file-contract me-1"></i>تم إنشاء عقد تلقائياً</div>`:''}
+                    ${b.status==='accepted'?`<div style="font-size:0.8rem;color:#065F46;white-space:nowrap;display:inline-flex;align-items:center;gap:0.4rem;"><i class="fas fa-file-contract"></i> تم إنشاء عقد تلقائياً</div>`:''}
                 </div>
             </div>
         </div>`;

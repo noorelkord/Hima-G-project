@@ -38,26 +38,27 @@
         .contract-title{font-weight:700;font-size:0.95rem;color:#1A1A1A;margin-bottom:0.2rem;}
         .contract-host{font-size:0.8rem;color:#6B7280;margin-bottom:0.3rem;}
         .contract-dates{font-size:0.8rem;color:#6B7280;display:flex;align-items:center;gap:0.4rem;}
-        .contract-footer{display:flex;justify-content:space-between;align-items:center;padding-top:0.9rem;border-top:1px solid #F3F4F6;}
-        .contract-price{font-weight:700;color:#1B4332;font-size:0.95rem;}
-        .contract-actions{display:flex;gap:0.6rem;}
+        .contract-footer{display:flex;justify-content:space-between;align-items:center;padding-top:0.9rem;border-top:1px solid #F3F4F6;gap:0.7rem;flex-wrap:nowrap;}
+        .contract-price{font-weight:700;color:#1B4332;font-size:0.95rem;white-space:nowrap;flex-shrink:0;}
+        .contract-actions{display:flex;gap:0.5rem;align-items:center;flex-wrap:nowrap;flex-shrink:0;}
 
         .badge{font-size:0.72rem;font-weight:700;padding:0.25rem 0.7rem;border-radius:12px;}
         .badge-active{background:#D1FAE5;color:#065F46;}
         .badge-expired{background:#F3F4F6;color:#374151;}
         .badge-cancelled{background:#FEE2E2;color:#991B1B;}
 
-        .btn-pdf{background:#EFF6FF;color:#2563EB;border:1px solid #BFDBFE;border-radius:8px;padding:0.42rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;}
+        .btn-pdf{background:#EFF6FF;color:#2563EB;border:1px solid #BFDBFE;border-radius:8px;padding:0.42rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;white-space:nowrap;}
         .btn-pdf:hover{background:#DBEAFE;}
-        .btn-cancel-contract{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;border-radius:8px;padding:0.42rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;}
+        .btn-cancel-contract{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;border-radius:8px;padding:0.42rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:0.3rem;white-space:nowrap;}
         .btn-cancel-contract:hover{background:#FECACA;}
-        .btn-review{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;border-radius:8px;padding:0.42rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;}
+        .btn-review{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;border-radius:8px;padding:0.42rem 0.9rem;font-family:'Cairo',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:0.3rem;white-space:nowrap;border:none;}
+        .btn-review:hover{background:#FDE68A;}
 
         .empty-state{text-align:center;padding:3rem;color:#6B7280;}
         .empty-state i{font-size:3rem;color:#E5E0D8;display:block;margin-bottom:1rem;}
 
-        /* Cancel modal */
-        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:9999;}
+        /* Modals */
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:9999;}
         .modal-overlay.show{display:flex;}
         .modal{background:white;border-radius:16px;padding:1.5rem;width:90%;max-width:420px;}
         .modal h3{font-size:1rem;font-weight:700;color:#C0392B;margin-bottom:0.6rem;}
@@ -65,7 +66,34 @@
         .modal-actions{display:flex;gap:0.7rem;}
         .btn-confirm{flex:1;background:#C0392B;color:white;border:none;border-radius:10px;padding:0.7rem;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;}
         .btn-cancel-modal{background:transparent;color:#6B7280;border:1.5px solid #E5E0D8;border-radius:10px;padding:0.7rem 1.2rem;font-family:'Cairo',sans-serif;cursor:pointer;}
+
+        /* Review Modal */
+        .review-modal h3{color:#1B4332;}
+        .contract-summary{background:#F8F5F0;border-radius:10px;padding:0.8rem 1rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.8rem;}
+        .summary-icon{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,#1B4332,#2D6A4F);display:flex;align-items:center;justify-content:center;color:#D4A853;font-size:1rem;flex-shrink:0;}
+        .summary-title{font-weight:700;font-size:0.88rem;color:#1A1A1A;}
+        .summary-sub{font-size:0.76rem;color:#6B7280;}
+        .stars-section{text-align:center;margin-bottom:1.2rem;}
+        .stars-section label{display:block;font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:0.7rem;}
+        .stars{display:flex;justify-content:center;gap:0.4rem;direction:ltr;}
+        .star{font-size:2rem;color:#D1D5DB;cursor:pointer;transition:all 0.15s;}
+        .star:hover,.star.active{color:#D4A853;transform:scale(1.15);}
+        .rating-text{font-size:0.8rem;color:#6B7280;margin-top:0.4rem;min-height:1.2rem;}
+        .review-textarea{width:100%;border:1.5px solid #E5E0D8;border-radius:10px;padding:0.7rem;font-family:'Cairo',sans-serif;font-size:0.875rem;resize:vertical;min-height:90px;margin-bottom:1rem;box-sizing:border-box;outline:none;}
+        .review-textarea:focus{border-color:#2D6A4F;}
+        .btn-submit-review{flex:1;background:#1B4332;color:white;border:none;border-radius:10px;padding:0.7rem;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.4rem;}
+        .btn-submit-review:disabled{opacity:0.6;cursor:not-allowed;}
+        .review-alert{padding:0.7rem 0.9rem;border-radius:9px;font-size:0.82rem;margin-bottom:0.8rem;display:none;align-items:center;gap:0.4rem;}
+        .review-alert.show{display:flex;}
+        .review-alert.error{background:#FEF2F2;border:1px solid #FECACA;color:#C0392B;}
+        .review-alert.success{background:#F0FDF4;border:1px solid #BBF7D0;color:#2D6A4F;}
+
         @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}}
+        @media(max-width:500px){
+            .contract-footer{flex-wrap:wrap;}
+            .contract-actions{flex-wrap:wrap;width:100%;}
+            .btn-pdf,.btn-cancel-contract,.btn-review{flex:1;justify-content:center;}
+        }
     </style>
 </head>
 <body>
@@ -91,14 +119,12 @@
 
     <main class="main">
         <div class="page-title"><i class="fas fa-file-contract me-2"></i>عقودي</div>
-
         <div class="tabs">
             <button class="tab active" onclick="filterTab('all',this)">الكل</button>
             <button class="tab" onclick="filterTab('active',this)">نشط</button>
             <button class="tab" onclick="filterTab('expired',this)">منتهي</button>
             <button class="tab" onclick="filterTab('cancelled',this)">ملغي</button>
         </div>
-
         <div id="list"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جارٍ التحميل...</p></div></div>
     </main>
 </div>
@@ -109,8 +135,35 @@
         <h3><i class="fas fa-times-circle me-2"></i>إلغاء العقد</h3>
         <p>هل أنت متأكد من إلغاء هذا العقد؟ سيتم إشعار الهوست وإعادة العقار للمتاح.</p>
         <div class="modal-actions">
-            <button class="btn-cancel-modal" onclick="closeModal()">تراجع</button>
+            <button class="btn-cancel-modal" onclick="closeCancelModal()">تراجع</button>
             <button class="btn-confirm" onclick="confirmCancel()">نعم، إلغاء العقد</button>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal-overlay" id="review-modal">
+    <div class="modal review-modal">
+        <h3><i class="fas fa-star me-2"></i>تقييم العقد</h3>
+        <div class="contract-summary" id="review-summary"></div>
+        <div class="review-alert" id="review-alert"></div>
+        <div class="stars-section">
+            <label>التقييم *</label>
+            <div class="stars" id="stars">
+                <span class="star" data-val="1">★</span>
+                <span class="star" data-val="2">★</span>
+                <span class="star" data-val="3">★</span>
+                <span class="star" data-val="4">★</span>
+                <span class="star" data-val="5">★</span>
+            </div>
+            <div class="rating-text" id="rating-text">اختر تقييمك</div>
+        </div>
+        <textarea class="review-textarea" id="review-comment" placeholder="شارك تجربتك... (اختياري)"></textarea>
+        <div class="modal-actions">
+            <button class="btn-cancel-modal" onclick="closeReviewModal()">إلغاء</button>
+            <button class="btn-submit-review" id="submit-review-btn" onclick="submitReview()">
+                <i class="fas fa-star"></i> إرسال التقييم
+            </button>
         </div>
     </div>
 </div>
@@ -119,7 +172,8 @@
 <script>
 const statusMap={active:'نشط',expired:'منتهي',cancelled:'ملغي'};
 const statusCls={active:'badge-active',expired:'badge-expired',cancelled:'badge-cancelled'};
-let allContracts=[],cancelId=null,currentTab='all';
+const ratingLabels=['','سيء','مقبول','جيد','جيد جداً','ممتاز'];
+let allContracts=[],cancelId=null,reviewContractId=null,selectedRating=0,currentTab='all';
 
 async function init(){
     requireAuth();
@@ -128,14 +182,38 @@ async function init(){
     document.getElementById('avatar').textContent=name.charAt(0)||'م';
     const r=await fetch(BASE_URL+'/contracts',{headers:authHeaders()});
     allContracts=await r.json();
-    render(allContracts);
+    renderCurrent();
+    initStars();
+}
+
+function initStars(){
+    document.querySelectorAll('.star').forEach(star=>{
+        star.addEventListener('mouseover',()=>highlightStars(+star.dataset.val));
+        star.addEventListener('mouseout',()=>highlightStars(selectedRating));
+        star.addEventListener('click',()=>{
+            selectedRating=+star.dataset.val;
+            highlightStars(selectedRating);
+            document.getElementById('rating-text').textContent=ratingLabels[selectedRating];
+        });
+    });
+}
+
+function highlightStars(val){
+    document.querySelectorAll('.star').forEach(s=>{
+        s.classList.toggle('active',+s.dataset.val<=val);
+    });
 }
 
 function filterTab(status,el){
     currentTab=status;
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
-    render(status==='all'?allContracts:allContracts.filter(c=>c.status===status));
+    renderCurrent();
+}
+
+function renderCurrent(){
+    const filtered=currentTab==='all'?allContracts:allContracts.filter(c=>c.status===currentTab);
+    render(filtered);
 }
 
 function render(list){
@@ -143,7 +221,7 @@ function render(list){
     if(!list.length){el.innerHTML=`<div class="empty-state"><i class="fas fa-file-alt"></i><p>لا توجد عقود في هذه الفئة</p></div>`;return;}
     el.innerHTML=list.map(c=>{
         const isActive=c.status==='active';
-        const canReview=c.status==='expired'||c.status==='cancelled';
+        const canReview=c.can_review===true;
         return `
         <div class="contract-card">
             <div class="contract-top">
@@ -158,9 +236,9 @@ function render(list){
             <div class="contract-footer">
                 <div class="contract-price">${Number(c.price||0).toLocaleString('ar')} ₪ <span style="font-size:0.75rem;font-weight:400;color:#9CA3AF;">/ شهر</span></div>
                 <div class="contract-actions">
-                    ${c.pdf_path?`<button class="btn-pdf" onclick="downloadPdf(${c.id})"><i class="fas fa-file-pdf"></i> تحميل PDF</button>`:''}
-                    ${isActive?`<button class="btn-cancel-contract" onclick="openCancel(${c.id})"><i class="fas fa-times me-1"></i>إلغاء العقد</button>`:''}
-                    ${canReview?`<button class="btn-review" onclick="window.location.href='review-form.html?contract_id=${c.id}'"><i class="fas fa-star me-1"></i>تقييم</button>`:''}
+                    ${c.pdf_path?`<button class="btn-pdf" onclick="downloadPdf(${c.id})"><i class="fas fa-file-pdf"></i> PDF</button>`:''}
+                    ${isActive?`<button class="btn-cancel-contract" onclick="openCancelModal(${c.id})"><i class="fas fa-times"></i> إلغاء</button>`:''}
+                    ${canReview?`<button class="btn-review" onclick="openReviewModal(${c.id},'${c.property?.title||'عقار'}','${c.start_date?.split('T')[0]}','${c.end_date?.split('T')[0]}')"><i class="fas fa-star"></i> تقييم</button>`:''}
                 </div>
             </div>
         </div>`;
@@ -168,33 +246,85 @@ function render(list){
 }
 
 async function downloadPdf(id){
-    const btn = event.currentTarget;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ التحميل...';
-    try {
-        const r = await fetch(`${BASE_URL}/contracts/${id}/download`, {headers: authHeaders()});
-        if (!r.ok) throw new Error();
-        const blob = await r.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `contract-${id}.pdf`;
-        a.click();
+    const btn=event.currentTarget;
+    btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+    try{
+        const r=await fetch(`${BASE_URL}/contracts/${id}/download`,{headers:authHeaders()});
+        if(!r.ok) throw new Error();
+        const blob=await r.blob();
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');a.href=url;a.download=`contract-${id}.pdf`;a.click();
         URL.revokeObjectURL(url);
-    } catch(e) {
-        alert('تعذر تحميل العقد، حاول مجدداً.');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-file-pdf"></i> تحميل PDF';
-    }
+    }catch(e){alert('تعذر تحميل العقد، حاول مجدداً.');}
+    finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-file-pdf"></i> PDF';}
 }
-function openCancel(id){cancelId=id;document.getElementById('cancel-modal').classList.add('show');}
-function closeModal(){cancelId=null;document.getElementById('cancel-modal').classList.remove('show');}
+
+function openCancelModal(id){cancelId=id;document.getElementById('cancel-modal').classList.add('show');}
+function closeCancelModal(){cancelId=null;document.getElementById('cancel-modal').classList.remove('show');}
 
 async function confirmCancel(){
-    const r=await fetch(`${BASE_URL}/contracts/${cancelId}/cancel`,{method:'PATCH',headers:authHeaders()});
-    closeModal();
-    if(r.ok){allContracts=allContracts.map(c=>c.id===cancelId?{...c,status:'cancelled'}:c);filterTab(currentTab,document.querySelector('.tab.active'));}
+    const idToCancel=cancelId;
+    closeCancelModal();
+    const r=await fetch(`${BASE_URL}/contracts/${idToCancel}/cancel`,{method:'PATCH',headers:authHeaders()});
+    if(r.ok){
+        allContracts=allContracts.map(c=>c.id===idToCancel?{...c,status:'cancelled',can_review:true}:c);
+        renderCurrent();
+    }
+}
+
+function openReviewModal(contractId, title, startDate, endDate){
+    reviewContractId=contractId;
+    selectedRating=0;
+    highlightStars(0);
+    document.getElementById('rating-text').textContent='اختر تقييمك';
+    document.getElementById('review-comment').value='';
+    document.getElementById('review-alert').className='review-alert';
+    document.getElementById('review-alert').innerHTML='';
+    document.getElementById('submit-review-btn').disabled=false;
+    document.getElementById('submit-review-btn').innerHTML='<i class="fas fa-star"></i> إرسال التقييم';
+    document.getElementById('review-summary').innerHTML=`
+        <div class="summary-icon"><i class="fas fa-file-contract"></i></div>
+        <div>
+            <div class="summary-title">${title}</div>
+            <div class="summary-sub">${startDate} → ${endDate}</div>
+        </div>`;
+    document.getElementById('review-modal').classList.add('show');
+}
+
+function closeReviewModal(){
+    reviewContractId=null;
+    document.getElementById('review-modal').classList.remove('show');
+}
+
+async function submitReview(){
+    if(!selectedRating){
+        const alert=document.getElementById('review-alert');
+        alert.className='review-alert error show';
+        alert.innerHTML='<i class="fas fa-exclamation-circle"></i> يرجى اختيار تقييم من 1 إلى 5 نجوم';
+        return;
+    }
+    const btn=document.getElementById('submit-review-btn');
+    btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> جارٍ الإرسال...';
+
+    const body={contract_id:reviewContractId,rating:selectedRating,comment:document.getElementById('review-comment').value.trim()||null};
+    const r=await fetch(`${BASE_URL}/reviews`,{method:'POST',headers:authHeaders(),body:JSON.stringify(body)});
+    const data=await r.json();
+
+    if(r.ok){
+        const alert=document.getElementById('review-alert');
+        alert.className='review-alert success show';
+        alert.innerHTML='<i class="fas fa-check-circle"></i> تم إرسال تقييمك بنجاح!';
+        setTimeout(()=>{
+            allContracts=allContracts.map(c=>c.id===reviewContractId?{...c,can_review:false}:c);
+            closeReviewModal();
+            renderCurrent();
+        },1500);
+    } else {
+        const alert=document.getElementById('review-alert');
+        alert.className='review-alert error show';
+        alert.innerHTML=`<i class="fas fa-exclamation-circle"></i> ${Object.values(data.errors||{})[0]?.[0]||data.message||'حدث خطأ'}`;
+        btn.disabled=false;btn.innerHTML='<i class="fas fa-star"></i> إرسال التقييم';
+    }
 }
 
 init();

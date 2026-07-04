@@ -101,14 +101,21 @@
         .stars{color:#D4A853;font-size:0.85rem;}
         .review-text{font-size:0.82rem;color:var(--muted);line-height:1.6;}
         .no-reviews{font-size:0.85rem;color:var(--soft);text-align:center;padding:1rem 0;}
+        /* ✅ Tenant Rating Summary */
+        .tenant-rating-summary{display:flex;align-items:center;gap:1rem;background:#F8F5F0;border-radius:10px;padding:0.8rem 1rem;margin-bottom:1rem;}
+        .tenant-rating-big{font-size:1.8rem;font-weight:900;color:var(--green);line-height:1;}
+        .tenant-rating-stars{display:flex;gap:0.2rem;color:#D4A853;font-size:0.9rem;margin-bottom:0.2rem;}
+        .tenant-rating-count{font-size:0.78rem;color:var(--muted);}
+        .tenant-no-rating{font-size:0.82rem;color:var(--soft);display:flex;align-items:center;gap:0.4rem;}
 
         /* Action bar */
         .action-bar{background:white;border-radius:16px;border:1px solid var(--border);padding:1.2rem 1.5rem;margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
         .action-bar-title{font-weight:700;color:var(--green);font-size:0.95rem;display:flex;align-items:center;gap:0.5rem;}
         .action-btns{display:flex;gap:0.7rem;flex-wrap:nowrap;align-items:center;}
-        .btn-accept{background:#D1FAE5;color:#065F46;border:1px solid #BBF7D0;border-radius:10px;padding:0.6rem 1.4rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;gap:0.4rem;transition:all 0.2s;white-space:nowrap;}
+        .btn-accept,.btn-reject{white-space:nowrap;}
+        .btn-accept{background:#D1FAE5;color:#065F46;border:1px solid #BBF7D0;border-radius:10px;padding:0.6rem 1.4rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;gap:0.4rem;transition:all 0.2s;}
         .btn-accept:hover{background:#A7F3D0;}
-        .btn-reject{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;border-radius:10px;padding:0.6rem 1.4rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;gap:0.4rem;transition:all 0.2s;white-space:nowrap;}
+        .btn-reject{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;border-radius:10px;padding:0.6rem 1.4rem;font-family:'Cairo',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;gap:0.4rem;transition:all 0.2s;}
         .btn-reject:hover{background:#FECACA;}
 
         /* Accept Modal */
@@ -276,6 +283,29 @@ function render(b, reviews){
 
     document.getElementById('ref').textContent = 'طلب حجز رقم: #' + b.id;
 
+    // Tenant Rating Summary
+    let ratingSummaryHtml = '';
+    if(reviews.length > 0){
+        const avg = (reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1);
+        const full  = Math.floor(avg);
+        const half  = avg - full >= 0.5 ? 1 : 0;
+        const empty = 5 - full - half;
+        let starsHtml = '';
+        for(let i=0;i<full;i++)  starsHtml += '<i class="fas fa-star"></i>';
+        if(half)                  starsHtml += '<i class="fas fa-star-half-alt"></i>';
+        for(let i=0;i<empty;i++) starsHtml += '<i class="far fa-star"></i>';
+        ratingSummaryHtml = `
+        <div class="tenant-rating-summary">
+            <div class="tenant-rating-big">${avg}</div>
+            <div>
+                <div class="tenant-rating-stars">${starsHtml}</div>
+                <div class="tenant-rating-count">بناءً على ${reviews.length} تقييم</div>
+            </div>
+        </div>`;
+    } else {
+        ratingSummaryHtml = `<div class="tenant-no-rating"><i class="fas fa-star"></i> لا توجد تقييمات سابقة لهذا المستأجر</div>`;
+    }
+
     // Reviews HTML
     const reviewsHtml = reviews.length
         ? reviews.map(rv=>`
@@ -286,15 +316,15 @@ function render(b, reviews){
                 </div>
                 <div class="review-text">${rv.comment||'بدون تعليق'}</div>
             </div>`).join('')
-        : '<div class="no-reviews"><i class="fas fa-star" style="color:#E5E0D8;margin-left:0.3rem;"></i>لا توجد تقييمات سابقة لهذا المستأجر</div>';
+        : '';
 
     document.getElementById('content').innerHTML = `
     ${isPending ? `
     <div class="action-bar">
         <div class="action-bar-title"><i class="fas fa-gavel"></i> اتخاذ قرار بشأن هذا الطلب</div>
         <div class="action-btns">
-           <button class="btn-accept" onclick="openAccept()"><i class="fas fa-check"></i> قبول</button>
-           <button class="btn-reject" onclick="openReject()"><i class="fas fa-times"></i> رفض</button>
+            <button class="btn-reject" onclick="openReject()"><i class="fas fa-times"></i> رفض</button>
+            <button class="btn-accept" onclick="openAccept()"><i class="fas fa-check"></i> قبول</button>
         </div>
     </div>` : ''}
 
@@ -313,7 +343,7 @@ function render(b, reviews){
     <div class="kpis">
         <div class="kpi">
             <div class="ico green"><i class="fas fa-money-bill-wave"></i></div>
-            <div class="val">${Number(b.property?.price||0).toLocaleString('ar')} ₪</div>
+            <div class="val">${Number(b.property?.price||b.price||0).toLocaleString('ar')} ₪</div>
             <div class="lbl">سعر العقار الأصلي</div>
         </div>
         <div class="kpi">
@@ -335,13 +365,7 @@ function render(b, reviews){
                 <div class="info-row"><span class="info-label"><i class="fas fa-calendar-plus"></i>تاريخ الوصول</span><span class="info-value">${fmtDate(b.start_date)}</span></div>
                 <div class="info-row"><span class="info-label"><i class="fas fa-calendar-minus"></i>تاريخ المغادرة</span><span class="info-value">${fmtDate(b.end_date)}</span></div>
                 ${n?`<div class="info-row"><span class="info-label"><i class="fas fa-moon"></i>المدة</span><span class="info-value">${n} يوم</span></div>`:''}
-                <div class="info-row"><span class="info-label"><i class="fas fa-money-bill-wave"></i>السعرالنهائي للحجز</span>
-<span class="info-value price">
-    ${Number(b.price||0).toLocaleString('ar')} ₪
-    ${b.price < b.property?.price 
-        ? `<span style="font-size:0.75rem;color:#D4A853;margin-right:0.3rem;"><i class="fas fa-tag"></i> سعر مخفض</span>` 
-        : ''}
-</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-money-bill-wave"></i>السعر النهائي للحجز</span><span class="info-value price">${Number(b.price||0).toLocaleString('ar')} ₪ ${Number(b.price) < Number(b.property?.price||b.price) ? '<span style="font-size:0.75rem;color:#D4A853;margin-right:0.3rem;"><i class="fas fa-tag"></i> سعر مخفض</span>' : ''}</span></div>
                 <div class="info-row"><span class="info-label"><i class="fas fa-clock"></i>تاريخ الطلب</span><span class="info-value">${fmtDate(b.created_at)}</span></div>
             </div>
 
@@ -365,12 +389,13 @@ function render(b, reviews){
                         <div class="tenant-sub">رقم المستأجر: #${b.tenant?.id||'—'}</div>
                     </div>
                 </div>
-                <div class="info-row"><span class="info-label"><i class="fas fa-envelope"></i>البريد</span><span class="info-value">${b.tenant?.email||'—'}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-id-card"></i>رقم الهوية</span><span class="info-value">${b.tenant?.national_id||'—'}</span></div>
                 <div class="info-row"><span class="info-label"><i class="fas fa-phone"></i>الهاتف</span><span class="info-value">${b.tenant?.phone||'—'}</span></div>
             </div>
 
             <div class="card">
                 <h3><i class="fas fa-star"></i> تقييمات المستأجر السابقة</h3>
+                ${ratingSummaryHtml}
                 ${reviewsHtml}
             </div>
         </div>
