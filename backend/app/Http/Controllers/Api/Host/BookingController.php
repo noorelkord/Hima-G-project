@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Host;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Contract;
+use App\Models\Review;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use App\Services\ContractPdfService;
@@ -17,11 +18,46 @@ class BookingController extends Controller
         $bookings = Booking::whereHas('property', function ($query) use ($request) {
             $query->where('host_id', $request->user()->id);
         })
-            ->with('property:id,title,governorate_id,city_id,neighborhood_id,street', 'tenant:id,first_name,last_name,email,phone')
+            ->with([
+                'property:id,title,governorate_id,city_id,neighborhood_id,street',
+                'property.images',
+                'property.governorate:id,name',
+                'property.city:id,name',
+                'tenant:id,first_name,last_name,email,phone',
+            ])
             ->latest()
             ->get();
 
         return response()->json($bookings);
+    }
+
+    // Show a single booking request with full details
+    public function show(Request $request, $id)
+    {
+        $booking = Booking::whereHas('property', function ($query) use ($request) {
+            $query->where('host_id', $request->user()->id);
+        })
+            ->with([
+                'property:id,title,type,price,governorate_id,city_id,neighborhood_id,street,rooms,area_m2,damage_status,has_water,has_electricity,is_ready,description',
+                'property.images',
+                'property.governorate:id,name',
+                'property.city:id,name',
+                'property.neighborhood:id,name',
+                'tenant:id,first_name,last_name,national_id,phone,email',
+            ])
+            ->findOrFail($id);
+
+        // Get tenant reviews (reviews written about this tenant)
+        $tenantReviews = Review::where('reviewee_id', $booking->tenant_id)
+            ->where('type', 'host_to_tenant')
+            ->with('reviewer:id,first_name,last_name')
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'booking' => $booking,
+            'tenant_reviews' => $tenantReviews,
+        ]);
     }
 
     // Accept a booking request
@@ -109,9 +145,11 @@ class BookingController extends Controller
             'expiry_reminder_date' => $expiryReminderDate,
             'expiry_reminder_sent' => false,
         ]);
+
         // Generate PDF
         $pdfPath = ContractPdfService::generate($contract);
         $contract->update(['pdf_path' => $pdfPath]);
+
         // Notify tenant - contract activated
         NotificationService::send(
             $booking->tenant_id,

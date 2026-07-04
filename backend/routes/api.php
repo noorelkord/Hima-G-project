@@ -162,6 +162,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         // Bookings
         Route::get('/bookings',               [HostBookingController::class, 'index']);
+        Route::get('/bookings/{id}',          [HostBookingController::class, 'show']);
         Route::patch('/bookings/{id}/accept', [HostBookingController::class, 'accept']);
         Route::patch('/bookings/{id}/reject', [HostBookingController::class, 'reject']);
     });
@@ -194,7 +195,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('/bookings',        [TenantBookingController::class, 'store']);
         Route::get('/bookings/{id}',    [TenantBookingController::class, 'show']);
         Route::put('/bookings/{id}',    [TenantBookingController::class, 'update']);
-        Route::delete('/bookings/{id}', [TenantBookingController::class, 'cancel']); 
+        Route::delete('/bookings/{id}', [TenantBookingController::class, 'cancel']);
 
         // Favorites
         Route::get('/favorites',                 [FavoriteController::class, 'index']);
