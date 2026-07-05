@@ -10,8 +10,6 @@
     <style>
         body { margin:0; background:#F8F5F0; }
         .layout { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
-
-        /* ── SIDEBAR ── */
         .sidebar { background:#0D2B1F; padding:1.5rem 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
         .sidebar-logo { font-size:1.4rem; font-weight:900; color:#D4A853; padding:0 1.2rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; }
         .sidebar-logo span { color:white; font-weight:300; font-size:0.85rem; display:block; }
@@ -26,8 +24,6 @@
         .nav-item i { width:18px; text-align:center; }
         .btn-logout { display:flex; align-items:center; gap:0.7rem; padding:0.7rem 1.2rem; color:rgba(255,255,255,0.4); cursor:pointer; font-size:0.875rem; background:none; border:none; font-family:'Cairo',sans-serif; width:100%; text-align:right; margin-top:1rem; }
         .btn-logout:hover { color:#E74C3C; }
-
-        /* ── MAIN ── */
         .main { padding:2rem; overflow-y:auto; }
 
         .welcome-bar { background:linear-gradient(135deg,#0D2B1F,#1B4332); border-radius:16px; padding:1.5rem 2rem; color:white; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; }
@@ -35,7 +31,6 @@
         .welcome-bar p  { color:rgba(255,255,255,0.7); font-size:0.875rem; }
         .welcome-bar .icon { font-size:3rem; opacity:0.15; }
 
-        /* Stats */
         .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
         .stat-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.2rem; display:flex; align-items:center; gap:1rem; }
         .stat-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
@@ -46,21 +41,19 @@
         .stat-num { font-size:1.6rem; font-weight:900; color:#1B4332; line-height:1; }
         .stat-lbl { font-size:0.78rem; color:#6B7280; margin-top:0.2rem; }
 
-        /* Section */
         .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
         .section-title { font-size:1rem; font-weight:700; color:#1B4332; }
         .btn-see-all { font-size:0.8rem; color:#2D6A4F; text-decoration:none; font-weight:600; }
 
-        /* Quick Links */
         .quick-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
         .quick-card { background:white; border-radius:14px; border:1px solid #E5E0D8; padding:1.2rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:0.8rem; text-decoration:none; }
         .quick-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.1); transform:translateY(-2px); }
-        .quick-card-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+        .quick-card-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
         .quick-card-title { font-weight:700; font-size:0.9rem; color:#1A1A1A; }
         .quick-card-sub   { font-size:0.75rem; color:#6B7280; }
 
-        /* Pending Props */
-        .prop-card { background:white; border-radius:12px; border:1px solid #E5E0D8; padding:1rem 1.2rem; margin-bottom:0.7rem; display:flex; align-items:center; gap:1rem; transition:box-shadow 0.2s; }
+        /* ✅ prop-card محسّن */
+        .prop-card { background:white; border-radius:12px; border:1px solid #E5E0D8; padding:1rem 1.2rem; margin-bottom:0.7rem; display:flex; align-items:center; gap:1rem; transition:box-shadow 0.2s; cursor:default; }
         .prop-card:hover { box-shadow:0 4px 16px rgba(27,67,50,0.08); }
         .prop-thumb { width:80px; height:62px; border-radius:10px; background:linear-gradient(135deg,#1B4332,#2D6A4F); overflow:hidden; flex-shrink:0; }
         .prop-thumb img { width:100%; height:100%; object-fit:cover; }
@@ -69,18 +62,34 @@
         .prop-name { font-weight:700; font-size:0.9rem; color:#1A1A1A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .prop-meta { font-size:0.78rem; color:#6B7280; margin-top:0.2rem; }
         .prop-meta span { margin-left:0.8rem; }
-        .prop-actions { display:flex; gap:0.5rem; flex-shrink:0; }
-        .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; transition:background 0.2s; }
+
+        /* ✅ أزرار القبول والرفض محسّنة — بجانب بعضها بدون أيقونة فوق النص */
+        .prop-actions { display:flex; gap:0.5rem; flex-shrink:0; align-items:center; }
+        .btn-accept {
+            background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0;
+            border-radius:8px; padding:0.45rem 1rem;
+            font-family:'Cairo',sans-serif; font-weight:700; font-size:0.82rem;
+            cursor:pointer; transition:background 0.2s;
+            display:inline-flex; align-items:center; gap:0.4rem;
+            white-space:nowrap;
+        }
         .btn-accept:hover { background:#A7F3D0; }
-        .btn-reject { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.4rem 0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.8rem; cursor:pointer; transition:background 0.2s; }
+        .btn-reject {
+            background:#FEE2E2; color:#991B1B; border:1px solid #FECACA;
+            border-radius:8px; padding:0.45rem 1rem;
+            font-family:'Cairo',sans-serif; font-weight:700; font-size:0.82rem;
+            cursor:pointer; transition:background 0.2s;
+            display:inline-flex; align-items:center; gap:0.4rem;
+            white-space:nowrap;
+        }
         .btn-reject:hover { background:#FECACA; }
 
-        /* Bookings table */
+        /* ✅ جدول الحجوزات — بدون سعر */
         .table-wrap { background:white; border-radius:14px; border:1px solid #E5E0D8; overflow:hidden; margin-bottom:1.5rem; }
         table { width:100%; border-collapse:collapse; font-size:0.85rem; }
         thead { background:#F0F7F4; }
         thead th { padding:0.8rem 1rem; text-align:right; font-weight:700; color:#1B4332; font-size:0.8rem; }
-        tbody tr { border-top:1px solid #F3F4F6; transition:background 0.15s; }
+        tbody tr { border-top:1px solid #F3F4F6; transition:background 0.15s; cursor:pointer; }
         tbody tr:hover { background:#FAFAFA; }
         tbody td { padding:0.8rem 1rem; color:#374151; }
 
@@ -90,7 +99,6 @@
         .badge-rejected { background:#FEE2E2; color:#991B1B; }
         .badge-cancelled{ background:#F3F4F6; color:#374151; }
 
-        /* Reject modal */
         .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:9999; }
         .modal-overlay.show { display:flex; }
         .modal { background:white; border-radius:16px; padding:1.5rem; width:90%; max-width:420px; }
@@ -103,7 +111,6 @@
 
         .toast { position:fixed; bottom:2rem; left:2rem; background:#1B4332; color:white; padding:0.9rem 1.4rem; border-radius:10px; font-size:0.9rem; z-index:9999; display:none; align-items:center; gap:0.5rem; }
         .toast.show { display:flex; }
-
         .empty-mini { color:#6B7280; font-size:0.85rem; padding:1.5rem; text-align:center; }
 
         @media(max-width:768px){ .layout{grid-template-columns:1fr;} .sidebar{display:none;} .stats-grid{grid-template-columns:repeat(2,1fr);} .quick-grid{grid-template-columns:1fr;} }
@@ -111,8 +118,6 @@
 </head>
 <body>
 <div class="layout">
-
-    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-logo">حمى <span>لوحة الإدارة</span></div>
         <div class="sidebar-user">
@@ -120,13 +125,11 @@
             <div class="user-name" id="sidebar-name">...</div>
             <div class="user-role">مشرف النظام</div>
         </div>
-
         <div class="nav-section">الإدارة</div>
         <a class="nav-item active" href="admin-dashboard.html"><i class="fas fa-th-large"></i> لوحة التحكم</a>
         <a class="nav-item" href="admin-properties.html"><i class="fas fa-building"></i> إدارة العقارات</a>
         <a class="nav-item" href="admin-bookings.html"><i class="fas fa-calendar-check"></i> إدارة الحجوزات</a>
         <a class="nav-item" href="admin-contracts.html"><i class="fas fa-file-contract"></i> عقود المنصة</a>
-
         <div class="nav-section">النظام</div>
         <a class="nav-item" href="notifications.html?v=role-sidebar">
             <i class="fas fa-bell"></i> الإشعارات
@@ -136,9 +139,7 @@
         <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
     </aside>
 
-    <!-- MAIN -->
     <main class="main">
-
         <div class="welcome-bar">
             <div>
                 <h2>لوحة تحكم المشرف 🔧</h2>
@@ -147,7 +148,6 @@
             <i class="fas fa-shield-alt icon"></i>
         </div>
 
-        <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon green"><i class="fas fa-building"></i></div>
@@ -155,7 +155,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-icon gold"><i class="fas fa-clock"></i></div>
-                <div><div class="stat-num" id="stat-pending">0</div><div class="stat-lbl">بانتظار المراجعة</div></div>
+                <div><div class="stat-num" id="stat-pending">0</div><div class="stat-lbl">عقارات بانتظار المراجعة</div></div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
@@ -167,7 +167,6 @@
             </div>
         </div>
 
-        <!-- Quick Links -->
         <div class="section-header"><div class="section-title">إجراءات سريعة</div></div>
         <div class="quick-grid">
             <a class="quick-card" href="admin-properties.html">
@@ -188,7 +187,6 @@
             </a>
         </div>
 
-        <!-- Pending Properties -->
         <div class="section-header">
             <div class="section-title">
                 <i class="fas fa-exclamation-circle me-2" style="color:#D4A853"></i>
@@ -200,7 +198,6 @@
             <div class="empty-mini"><i class="fas fa-spinner fa-spin me-2"></i>جارٍ التحميل...</div>
         </div>
 
-        <!-- Recent Bookings -->
         <div class="section-header" style="margin-top:1.5rem;">
             <div class="section-title">آخر الحجوزات</div>
             <a class="btn-see-all" href="admin-bookings.html">عرض الكل</a>
@@ -212,20 +209,17 @@
                         <th>العقار</th>
                         <th>المستأجر</th>
                         <th>التواريخ</th>
-                        <th>السعر</th>
                         <th>الحالة</th>
                     </tr>
                 </thead>
                 <tbody id="bookings-table">
-                    <tr><td colspan="5" class="empty-mini"><i class="fas fa-spinner fa-spin me-2"></i>جارٍ التحميل...</td></tr>
+                    <tr><td colspan="4" class="empty-mini"><i class="fas fa-spinner fa-spin me-2"></i>جارٍ التحميل...</td></tr>
                 </tbody>
             </table>
         </div>
-
     </main>
 </div>
 
-<!-- Reject Modal -->
 <div class="modal-overlay" id="reject-modal">
     <div class="modal">
         <h3><i class="fas fa-times-circle me-2"></i>سبب الرفض</h3>
@@ -241,98 +235,94 @@
 
 <script src="js/api.js?v=20260628-absolute-nav"></script>
 <script>
-const typeMap    = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
-const statusMap  = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض',cancelled:'ملغي'};
-const statusCls  = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected',cancelled:'badge-cancelled'};
-
-let rejectId = null;
+const typeMap   = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
+const statusMap = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض',cancelled:'ملغي'};
+const statusCls = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected',cancelled:'badge-cancelled'};
+let rejectId=null;
 
 async function init(){
-    requireRole('admin', 'admin-login.html');
-    const name = localStorage.getItem('name')||'';
-    document.getElementById('welcome-name').textContent = name;
-    document.getElementById('sidebar-name').textContent = name;
-    document.getElementById('avatar').textContent = name.charAt(0)||'A';
+    requireRole('admin','admin-login.html');
+    const name=localStorage.getItem('name')||'';
+    document.getElementById('welcome-name').textContent=name;
+    document.getElementById('sidebar-name').textContent=name;
+    document.getElementById('avatar').textContent=name.charAt(0)||'A';
 
-    const [props, bookings, contracts, notifCount] = await Promise.all([
+    const [props,bookings,contracts,notifCount]=await Promise.all([
         fetch(BASE_URL+'/admin/properties',{headers:authHeaders()}).then(r=>r.json()),
         fetch(BASE_URL+'/admin/bookings',{headers:authHeaders()}).then(r=>r.json()),
         fetch(BASE_URL+'/contracts',{headers:authHeaders()}).then(r=>r.json()),
         fetch(BASE_URL+'/notifications/unread-count',{headers:authHeaders()}).then(r=>r.json()),
     ]);
 
-    // Stats
-    document.getElementById('stat-total-props').textContent    = (props||[]).length;
-    document.getElementById('stat-pending').textContent        = (props||[]).filter(p=>p.status==='pending').length;
-    document.getElementById('stat-bookings').textContent       = (bookings||[]).length;
-    document.getElementById('stat-active-contracts').textContent = (contracts||[]).filter(c=>c.status==='active').length;
+    document.getElementById('stat-total-props').textContent    =(props||[]).length;
+    document.getElementById('stat-pending').textContent        =(props||[]).filter(p=>p.status==='pending').length;
+    document.getElementById('stat-bookings').textContent       =(bookings||[]).length;
+    document.getElementById('stat-active-contracts').textContent=(contracts||[]).filter(c=>c.status==='active').length;
 
-    const nc = notifCount?.count||0;
-    if(nc>0){ const b=document.getElementById('notif-badge'); b.textContent=nc; b.style.display='inline'; }
+    const nc=notifCount?.count||0;
+    if(nc>0){const b=document.getElementById('notif-badge');b.textContent=nc;b.style.display='inline';}
 
-    // Pending properties
-    const pending = (props||[]).filter(p=>p.status==='pending').slice(0,4);
-    const pEl = document.getElementById('pending-props');
+    // ✅ عقارات معلقة — بدون سعر، أزرار بجانب بعضها
+    const pending=(props||[]).filter(p=>p.status==='pending').slice(0,4);
+    const pEl=document.getElementById('pending-props');
     if(!pending.length){
         pEl.innerHTML='<div class="empty-mini">✅ لا توجد عقارات بانتظار المراجعة</div>';
     } else {
-        pEl.innerHTML = pending.map(p=>{
-            const main = p.images?.find(i=>i.is_main && i.url)||p.images?.find(i=>i.url);
-            const img  = main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
-            const loc  = [p.governorate?.name,p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
+        pEl.innerHTML=pending.map(p=>{
+            const main=p.images?.find(i=>i.is_main && i.url)||p.images?.find(i=>i.url);
+            const img=main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+            const loc=[p.governorate?.name,p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
+            const host=p.host?`${p.host.first_name||''} ${p.host.last_name||''}`.trim():'غير معروف';
             return `
             <div class="prop-card">
                 <div class="prop-thumb">${img}</div>
                 <div class="prop-info">
                     <div class="prop-name">${p.title}</div>
                     <div class="prop-meta">
-                        <span><i class="fas fa-map-marker-alt me-1"></i>${loc}</span>
-                        <span><i class="fas fa-tag me-1"></i>${typeMap[p.type]||p.type}</span>
-                        <span><i class="fas fa-money-bill me-1"></i>${Number(p.price||0).toLocaleString('ar')} ₪</span>
+                        <span><i class="fas fa-map-marker-alt me-1"></i> ${loc}</span>
+                        <span><i class="fas fa-tag me-1"></i> ${typeMap[p.type]||p.type}</span>
+                        <span><i class="fas fa-user me-1"></i> ${host}</span>
+                        <span><i class="fas fa-money-bill-wave me-1"></i> ${Number(p.price||0).toLocaleString('ar')} ₪ / شهرياً</span>
                     </div>
                 </div>
                 <div class="prop-actions">
-                    <button class="btn-accept" onclick="acceptProp(${p.id})"><i class="fas fa-check me-1"></i>قبول</button>
-                    <button class="btn-reject" onclick="openReject(${p.id})"><i class="fas fa-times me-1"></i>رفض</button>
+                    <button class="btn-accept" onclick="acceptProp(${p.id})"><i class="fas fa-check"></i> قبول</button>
+                    <button class="btn-reject" onclick="openReject(${p.id})"><i class="fas fa-times"></i> رفض</button>
                 </div>
             </div>`;
         }).join('');
     }
 
-    // Bookings table
-    const recent = (bookings||[]).slice(0,5);
-    const tbody = document.getElementById('bookings-table');
+    // ✅ جدول الحجوزات — بدون سعر
+    const recent=(bookings||[]).slice(0,5);
+    const tbody=document.getElementById('bookings-table');
     if(!recent.length){
-        tbody.innerHTML='<tr><td colspan="5" class="empty-mini">لا توجد حجوزات</td></tr>';
+        tbody.innerHTML='<tr><td colspan="4" class="empty-mini">لا توجد حجوزات</td></tr>';
     } else {
-        tbody.innerHTML = recent.map(b=>`
-        <tr style="cursor:pointer;" onclick="goToPage('admin-booking-details.html?id=${b.id}')">
+        tbody.innerHTML=recent.map(b=>`
+        <tr onclick="goToPage('admin-booking-details.html?id=${b.id}')">
             <td><b>${b.property?.title||'عقار'}</b></td>
             <td>${b.tenant?.first_name||'مستأجر'}</td>
-            <td style="font-size:0.78rem;color:#6B7280;">${b.start_date?.split('T')[0]||''} → ${b.end_date?.split('T')[0]||''}</td>
-            <td><b style="color:#1B4332;">${Number(b.price||0).toLocaleString('ar')} ₪</b></td>
+            <td style="font-size:0.78rem;color:#6B7280;">${b.start_date?.split('T')[0]||''} ← ${b.end_date?.split('T')[0]||''}</td>
             <td><span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span></td>
         </tr>`).join('');
     }
 }
 
 async function acceptProp(id){
-    const r = await fetch(`${BASE_URL}/admin/properties/${id}/accept`,{method:'PATCH',headers:authHeaders()});
-    if(r.ok){ showToast('✅ تم قبول العقار ونشره'); init(); }
+    const r=await fetch(`${BASE_URL}/admin/properties/${id}/accept`,{method:'PATCH',headers:authHeaders()});
+    if(r.ok){showToast('✅ تم قبول العقار ونشره');init();}
 }
 
-function openReject(id){ rejectId=id; document.getElementById('reject-reason').value=''; document.getElementById('reject-modal').classList.add('show'); }
-function closeModal(){ rejectId=null; document.getElementById('reject-modal').classList.remove('show'); }
+function openReject(id){rejectId=id;document.getElementById('reject-reason').value='';document.getElementById('reject-modal').classList.add('show');}
+function closeModal(){rejectId=null;document.getElementById('reject-modal').classList.remove('show');}
 
 async function confirmReject(){
-    const reason = document.getElementById('reject-reason').value.trim();
-    if(!reason){ alert('يرجى كتابة سبب الرفض'); return; }
-    const r = await fetch(`${BASE_URL}/admin/properties/${rejectId}/reject`,{
-        method:'PATCH', headers:authHeaders(),
-        body:JSON.stringify({rejection_reason:reason})
-    });
+    const reason=document.getElementById('reject-reason').value.trim();
+    if(!reason){alert('يرجى كتابة سبب الرفض');return;}
+    const r=await fetch(`${BASE_URL}/admin/properties/${rejectId}/reject`,{method:'PATCH',headers:authHeaders(),body:JSON.stringify({rejection_reason:reason})});
     closeModal();
-    if(r.ok){ showToast('تم رفض العقار'); init(); }
+    if(r.ok){showToast('تم رفض العقار');init();}
 }
 
 function showToast(msg){
@@ -341,7 +331,6 @@ function showToast(msg){
     t.classList.add('show');
     setTimeout(()=>t.classList.remove('show'),3000);
 }
-
 init();
 </script>
 </body>

@@ -65,13 +65,16 @@ class ContractController extends Controller
 
         $contract->load([
             'property:id,title,type,governorate_id,city_id,neighborhood_id,street',
+            'property.governorate:id,name',
+            'property.city:id,name',
+            'property.neighborhood:id,name',
             'booking:id,start_date,end_date,status',
         ]);
 
         if ($role === 'admin') {
             $contract->load([
                 'tenant:id,first_name',
-                'host:id,first_name,last_name,phone',
+                'host:id,first_name,last_name,phone,national_id',
             ]);
             $contract->makeHidden(['price']);
         } else {

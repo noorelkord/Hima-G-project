@@ -5,15 +5,107 @@ namespace App\Http\Controllers\Api\Tenant;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Property;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use App\Services\NotificationService;
+use Carbon\Carbon;
+
 class BookingController extends Controller
 {
+    // ─────────────────────────────────────────────
+    // دالة مشتركة لحساب المدة والإجمالي
+    // نفس منطق ContractPdfService بالضبط
+    // ─────────────────────────────────────────────
+    private static function calcDurationAndTotal(string $startDate, string $endDate, float $price): array
+    {
+        $start = Carbon::parse($startDate);
+        $end   = Carbon::parse($endDate);
+        $diff  = $start->diff($end);
+
+        $years  = $diff->y;
+        $months = $diff->m;
+        $days   = $diff->d;
+
+        $totalMonths = ($years * 12) + $months;
+        $dailyRate   = $price / 30;
+        $total       = round(($totalMonths * $price) + ($days * $dailyRate), 2);
+
+        return [
+            'years'         => $years,
+            'months'        => $months,
+            'days'          => $days,
+            'total_months'  => $totalMonths,
+            'daily_rate'    => round($dailyRate, 2),
+            'total'         => $total,
+            'duration_text' => self::formatDuration($years, $months, $days),
+        ];
+    }
+
+    // ─────────────────────────────────────────────
+    // تنسيق المدة بالعربي — نفس formatDuration() في PHP
+    // ─────────────────────────────────────────────
+    private static function formatDuration(int $years, int $months, int $days): string
+    {
+        $parts = [];
+
+        if ($years > 0) {
+            $parts[] = $years === 1 ? 'سنة' : $years . ' سنوات';
+        }
+        if ($months > 0) {
+            $parts[] = $months === 1 ? 'شهر' : $months . ' أشهر';
+        }
+        if ($days > 0) {
+            $parts[] = $days === 1 ? 'يوم واحد' : $days . ' يوم';
+        }
+        if (empty($parts)) {
+            return 'يوم واحد';
+        }
+
+        return implode(' و', $parts);
+    }
+
+    // ─────────────────────────────────────────────
+    // حساب تقديري — بدون إنشاء حجز
+    // يستخدم property.price (سعر الإعلان)
+    // ─────────────────────────────────────────────
+    public function calculate(Request $request)
+    {
+        $data = $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'start_date'  => 'required|date|after_or_equal:today',
+            'end_date'    => 'required|date|after:start_date',
+        ]);
+
+        $property = Property::findOrFail($data['property_id']);
+
+        $calc = self::calcDurationAndTotal(
+            $data['start_date'],
+            $data['end_date'],
+            (float) $property->price
+        );
+
+        return response()->json([
+            'price'         => (float) $property->price,
+            'duration_text' => $calc['duration_text'],
+            'total'         => $calc['total'],
+            'daily_rate'    => $calc['daily_rate'],
+            'years'         => $calc['years'],
+            'months'        => $calc['months'],
+            'days'          => $calc['days'],
+        ]);
+    }
+
     // List all bookings for the tenant
     public function index(Request $request)
     {
         $bookings = Booking::where('tenant_id', $request->user()->id)
-            ->with('property:id,title,type,price,governorate_id,city_id,neighborhood_id,street')
+            ->with([
+                'property:id,title,type,price,governorate_id,city_id,neighborhood_id,street',
+                'property.governorate:id,name',
+                'property.city:id,name',
+                'property.neighborhood:id,name',
+                'property.images',
+            ])
             ->latest()
             ->get();
 
@@ -23,13 +115,13 @@ class BookingController extends Controller
     // Submit a booking request
     public function store(Request $request)
     {
-        // تحقق من اكتمال البيانات
         if (!$request->user()->isTenantReady()) {
             return response()->json([
                 'message'  => 'يرجى إكمال ملفك الشخصي قبل الحجز.',
                 'redirect' => 'profile/complete',
             ], 403);
         }
+
         $data = $request->validate([
             'property_id' => 'required|exists:properties,id',
             'start_date'  => 'required|date|after_or_equal:today',
@@ -38,14 +130,12 @@ class BookingController extends Controller
 
         $property = Property::findOrFail($data['property_id']);
 
-        // Only available properties can be booked
         if ($property->status !== 'accepted' || $property->availability !== 'available') {
             return response()->json([
                 'message' => 'هذا العقار غير متاح للحجز.',
             ], 403);
         }
 
-        // Prevent duplicate pending booking by same tenant
         $exists = Booking::where('tenant_id', $request->user()->id)
             ->where('property_id', $data['property_id'])
             ->where('status', 'pending')
@@ -65,7 +155,7 @@ class BookingController extends Controller
             'price'       => $property->price,
             'status'      => 'pending',
         ]);
-        // Notify host
+
         NotificationService::send(
             $property->host_id,
             'طلب حجز جديد',
@@ -73,6 +163,7 @@ class BookingController extends Controller
             'new_booking',
             $booking->id
         );
+
         return response()->json([
             'message' => 'تم إرسال طلب الحجز بنجاح.',
             'booking' => $booking,
@@ -83,8 +174,36 @@ class BookingController extends Controller
     public function show(Request $request, $id)
     {
         $booking = Booking::where('tenant_id', $request->user()->id)
-            ->with('property:id,title,type,price,governorate_id,city_id,neighborhood_id,street')
+            ->with([
+                'property:id,title,type,price,host_id,governorate_id,city_id,neighborhood_id,street',
+                'property.governorate:id,name',
+                'property.city:id,name',
+                'property.neighborhood:id,name',
+                'property.host:id,first_name,last_name,phone',
+                'property.images',
+            ])
             ->findOrFail($id);
+
+        // ✅ حساب المدة والإجمالي بسعر الحجز المتفق عليه
+        $calc = self::calcDurationAndTotal(
+            $booking->start_date,
+            $booking->end_date,
+            (float) $booking->price
+        );
+        $booking->duration_text = $calc['duration_text'];
+        $booking->total         = $calc['total'];
+        $booking->daily_rate    = $calc['daily_rate'];
+
+        // ✅ تقييم المضيف
+        if ($booking->property && $booking->property->host_id) {
+            $reviews = Review::where('reviewee_id', $booking->property->host_id)
+                ->where('type', 'tenant_to_host')
+                ->get();
+            $booking->property->host_rating        = $reviews->count() > 0
+                ? round($reviews->avg('rating'), 1)
+                : null;
+            $booking->property->host_reviews_count = $reviews->count();
+        }
 
         return response()->json($booking);
     }
@@ -102,28 +221,24 @@ class BookingController extends Controller
         }
 
         $data = $request->validate([
-    'start_date' => 'sometimes|date|after_or_equal:today',
-    'end_date'   => 'sometimes|date|after_or_equal:today',
-]);
+            'start_date' => 'sometimes|date|after_or_equal:today',
+            'end_date'   => 'sometimes|date|after_or_equal:today',
+        ]);
 
-// Use existing values if not provided in request
-$startDate = $data['start_date'] ?? $booking->start_date->format('Y-m-d');
-$endDate   = $data['end_date']   ?? $booking->end_date->format('Y-m-d');
+        $startDate = $data['start_date'] ?? $booking->start_date->format('Y-m-d');
+        $endDate   = $data['end_date']   ?? $booking->end_date->format('Y-m-d');
 
-// Validate that end_date is always after start_date
-if ($endDate <= $startDate) {
-    return response()->json([
-        'message' => 'يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية.',
-        'errors'  => [
-            'end_date' => ['يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية.'],
-        ],
-    ], 422);
-}
+        if ($endDate <= $startDate) {
+            return response()->json([
+                'message' => 'يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية.',
+                'errors'  => [
+                    'end_date' => ['يجب أن يكون تاريخ الانتهاء بعد تاريخ البداية.'],
+                ],
+            ], 422);
+        }
 
-$booking->update($data);
+        $booking->update($data);
 
-
-        // Notify host
         $property = $booking->property;
         NotificationService::send(
             $property->host_id,
@@ -132,6 +247,7 @@ $booking->update($data);
             'booking_edited',
             $booking->id
         );
+
         return response()->json([
             'message' => 'تم تحديث الحجز بنجاح.',
             'booking' => $booking,
@@ -151,7 +267,7 @@ $booking->update($data);
         }
 
         $booking->update(['status' => 'cancelled']);
-        // Notify host
+
         $property = $booking->property;
         NotificationService::send(
             $property->host_id,
@@ -160,6 +276,7 @@ $booking->update($data);
             'booking_cancelled',
             $booking->id
         );
+
         return response()->json([
             'message' => 'تم إلغاء الحجز بنجاح.',
         ]);

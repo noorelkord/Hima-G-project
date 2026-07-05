@@ -81,6 +81,9 @@ class PropertyController extends Controller
                 'host:id,first_name,last_name',
                 'images',
                 'mainImage',
+                'governorate:id,name',
+                'city:id,name',
+                'neighborhood:id,name',
             ])
             ->findOrFail($id);
 

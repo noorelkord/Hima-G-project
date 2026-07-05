@@ -128,7 +128,8 @@ function render(c){
     const p=c.property||{};
     const tenant=c.tenant||{};
     const host=c.host||{};
-    const loc=[p.governorate?.name,p.city?.name,p.neighborhood?.name,p.street].filter(Boolean).join(' - ')||'غير محدد';
+    // ✅ الموقع الكامل مع المحافظة والمدينة والحي والشارع
+    const loc=[p.governorate?.name, p.city?.name, p.neighborhood?.name, p.street].filter(Boolean).join(' - ')||'غير محدد';
     document.getElementById('ref').textContent='رقم العقد: #'+c.id;
     document.getElementById('content').innerHTML=`
         <div class="hero">
@@ -160,6 +161,7 @@ function render(c){
                 <h3><i class="fas fa-user-tie"></i> صاحب العقار</h3>
                 <div class="info-row"><span class="info-label"><i class="fas fa-id-badge"></i>الاسم</span><span class="info-value">${host.first_name||'—'} ${host.last_name||''}</span></div>
                 <div class="info-row"><span class="info-label"><i class="fas fa-phone"></i>الهاتف</span><span class="info-value">${host.phone||'—'}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-id-card"></i>رقم الهوية</span><span class="info-value">${host.national_id||'—'}</span></div>
             </div>
             <div class="card span">
                 <h3><i class="fas fa-shield-halved"></i> ملاحظة خصوصية</h3>

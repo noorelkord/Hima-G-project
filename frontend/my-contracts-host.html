@@ -224,7 +224,7 @@ function render(list){
                 <div class="contract-info">
                     <div class="contract-title">${c.property?.title||'عقار'}</div>
                     <div class="contract-sub"><i class="fas fa-user"></i>المستأجر: ${c.tenant?.first_name||'—'} ${c.tenant?.last_name||''}</div>
-                    <div class="contract-sub"><i class="fas fa-calendar-alt"></i>${c.start_date?.split('T')[0]} → ${c.end_date?.split('T')[0]}</div>
+                    <div class="contract-sub"><i class="fas fa-calendar-alt"></i>${c.start_date?.split('T')[0]} ← ${c.end_date?.split('T')[0]}</div>
                 </div>
                 <span class="badge ${statusCls[c.status]||''}">${statusMap[c.status]||c.status}</span>
             </div>
@@ -282,7 +282,7 @@ function openReviewModal(contractId,title,startDate,endDate){
         <div class="summary-icon"><i class="fas fa-file-contract"></i></div>
         <div>
             <div class="summary-title">${title}</div>
-            <div class="summary-sub">${startDate} → ${endDate}</div>
+            <div class="summary-sub">${startDate} ← ${endDate}</div>
         </div>`;
     document.getElementById('review-modal').classList.add('show');
 }
