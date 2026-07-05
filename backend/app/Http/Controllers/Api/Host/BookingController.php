@@ -9,9 +9,43 @@ use App\Models\Review;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use App\Services\ContractPdfService;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
+    // ─────────────────────────────────────────────
+    // نفس منطق ContractPdfService و TenantBookingController
+    // ─────────────────────────────────────────────
+    private static function calcDurationAndTotal(string $startDate, string $endDate, float $price): array
+    {
+        $start = Carbon::parse($startDate);
+        $end   = Carbon::parse($endDate);
+        $diff  = $start->diff($end);
+
+        $years  = $diff->y;
+        $months = $diff->m;
+        $days   = $diff->d;
+
+        $totalMonths = ($years * 12) + $months;
+        $dailyRate   = $price / 30;
+        $total       = round(($totalMonths * $price) + ($days * $dailyRate), 2);
+
+        return [
+            'duration_text' => self::formatDuration($years, $months, $days),
+            'total'         => $total,
+            'daily_rate'    => round($dailyRate, 2),
+        ];
+    }
+
+    private static function formatDuration(int $years, int $months, int $days): string
+    {
+        $parts = [];
+        if ($years > 0)  $parts[] = $years === 1  ? 'سنة'       : $years  . ' سنوات';
+        if ($months > 0) $parts[] = $months === 1 ? 'شهر'       : $months . ' أشهر';
+        if ($days > 0)   $parts[] = $days === 1   ? 'يوم واحد'  : $days   . ' يوم';
+        return empty($parts) ? 'يوم واحد' : implode(' و', $parts);
+    }
+
     // List all booking requests for host's properties
     public function index(Request $request)
     {
@@ -47,7 +81,17 @@ class BookingController extends Controller
             ])
             ->findOrFail($id);
 
-        // Get tenant reviews (reviews written about this tenant)
+        // ✅ إضافة duration_text و total بنفس منطق ContractPdfService
+        $calc = self::calcDurationAndTotal(
+            $booking->start_date,
+            $booking->end_date,
+            (float) $booking->price
+        );
+        $booking->duration_text = $calc['duration_text'];
+        $booking->total         = $calc['total'];
+        $booking->daily_rate    = $calc['daily_rate'];
+
+        // Get tenant reviews
         $tenantReviews = Review::where('reviewee_id', $booking->tenant_id)
             ->where('type', 'host_to_tenant')
             ->with('reviewer:id,first_name,last_name')
@@ -55,7 +99,7 @@ class BookingController extends Controller
             ->get();
 
         return response()->json([
-            'booking' => $booking,
+            'booking'        => $booking,
             'tenant_reviews' => $tenantReviews,
         ]);
     }
@@ -65,38 +109,26 @@ class BookingController extends Controller
     {
         $booking = Booking::whereHas('property', function ($query) use ($request) {
             $query->where('host_id', $request->user()->id);
-        })
-            ->findOrFail($id);
+        })->findOrFail($id);
 
         if ($booking->status !== 'pending') {
-            return response()->json([
-                'message' => 'يمكن قبول الحجوزات المعلقة فقط.',
-            ], 403);
+            return response()->json(['message' => 'يمكن قبول الحجوزات المعلقة فقط.'], 403);
         }
 
-        // Optional discount
-        $minPrice = ceil($booking->price * 0.50); // لا يقل عن 50% من السعر الأصلي
+        $minPrice = ceil($booking->price * 0.50);
         $data = $request->validate([
             'discounted_price' => 'nullable|numeric|min:' . $minPrice . '|max:' . $booking->price,
         ]);
 
-        // Apply discount if provided
-        $finalPrice = isset($data['discounted_price'])
-            ? $data['discounted_price']
-            : $booking->price;
+        $finalPrice = isset($data['discounted_price']) ? $data['discounted_price'] : $booking->price;
 
-        // Update booking price if discounted
         if (isset($data['discounted_price'])) {
             $booking->update(['price' => $finalPrice]);
         }
 
-        // Accept the booking
         $booking->update(['status' => 'accepted']);
-
-        // Update property availability to booked
         $booking->property->update(['availability' => 'booked']);
 
-        // Reject all other pending bookings for the same property
         $rejectedBookings = Booking::where('property_id', $booking->property_id)
             ->where('id', '!=', $booking->id)
             ->where('status', 'pending')
@@ -104,8 +136,6 @@ class BookingController extends Controller
 
         foreach ($rejectedBookings as $rejected) {
             $rejected->update(['status' => 'rejected']);
-
-            // Notify other tenants their booking was rejected
             NotificationService::send(
                 $rejected->tenant_id,
                 'تم رفض طلب الحجز',
@@ -115,7 +145,6 @@ class BookingController extends Controller
             );
         }
 
-        // Calculate expiry reminder date
         $startDate      = \Carbon\Carbon::parse($booking->start_date);
         $endDate        = \Carbon\Carbon::parse($booking->end_date);
         $duration       = $startDate->diffInDays($endDate);
@@ -132,7 +161,6 @@ class BookingController extends Controller
             $expiryReminderDate = null;
         }
 
-        // Auto-create contract with final price
         $contract = Contract::create([
             'booking_id'           => $booking->id,
             'tenant_id'            => $booking->tenant_id,
@@ -146,36 +174,12 @@ class BookingController extends Controller
             'expiry_reminder_sent' => false,
         ]);
 
-        // Generate PDF
         $pdfPath = ContractPdfService::generate($contract);
         $contract->update(['pdf_path' => $pdfPath]);
 
-        // Notify tenant - contract activated
-        NotificationService::send(
-            $booking->tenant_id,
-            'تم تفعيل العقد',
-            'عقد الإيجار الخاص بك لـ "' . $booking->property->title . '" أصبح نشطاً الآن.',
-            'contract_activated',
-            $contract->id
-        );
-
-        // Notify host - contract activated
-        NotificationService::send(
-            $request->user()->id,
-            'تم تفعيل العقد',
-            'تم تفعيل عقد إيجار لـ "' . $booking->property->title . '".',
-            'contract_activated',
-            $contract->id
-        );
-
-        // Notify tenant their booking was accepted
-        NotificationService::send(
-            $booking->tenant_id,
-            'تم قبول طلب الحجز',
-            'تم قبول طلب الحجز لـ "' . $booking->property->title . '". عقدك أصبح نشطاً الآن.',
-            'booking_accepted',
-            $booking->id
-        );
+        NotificationService::send($booking->tenant_id, 'تم تفعيل العقد', 'عقد الإيجار الخاص بك لـ "' . $booking->property->title . '" أصبح نشطاً الآن.', 'contract_activated', $contract->id);
+        NotificationService::send($request->user()->id, 'تم تفعيل العقد', 'تم تفعيل عقد إيجار لـ "' . $booking->property->title . '".', 'contract_activated', $contract->id);
+        NotificationService::send($booking->tenant_id, 'تم قبول طلب الحجز', 'تم قبول طلب الحجز لـ "' . $booking->property->title . '". عقدك أصبح نشطاً الآن.', 'booking_accepted', $booking->id);
 
         return response()->json([
             'message'     => 'تم قبول الحجز وإنشاء العقد.',
@@ -188,24 +192,8 @@ class BookingController extends Controller
                 'price'      => $contract->price,
                 'status'     => $contract->status,
                 'pdf_path'   => $contract->pdf_path,
-                'tenant' => [
-                    'id'          => $contract->tenant->id,
-                    'first_name'  => $contract->tenant->first_name,
-                    'second_name' => $contract->tenant->second_name,
-                    'third_name'  => $contract->tenant->third_name,
-                    'last_name'   => $contract->tenant->last_name,
-                    'national_id' => $contract->tenant->national_id,
-                    'phone'       => $contract->tenant->phone,
-                ],
-                'host' => [
-                    'id'          => $contract->host->id,
-                    'first_name'  => $contract->host->first_name,
-                    'second_name' => $contract->host->second_name,
-                    'third_name'  => $contract->host->third_name,
-                    'last_name'   => $contract->host->last_name,
-                    'national_id' => $contract->host->national_id,
-                    'phone'       => $contract->host->phone,
-                ],
+                'tenant' => ['id' => $contract->tenant->id, 'first_name' => $contract->tenant->first_name, 'second_name' => $contract->tenant->second_name, 'third_name' => $contract->tenant->third_name, 'last_name' => $contract->tenant->last_name, 'national_id' => $contract->tenant->national_id, 'phone' => $contract->tenant->phone],
+                'host'   => ['id' => $contract->host->id,   'first_name' => $contract->host->first_name,   'second_name' => $contract->host->second_name,   'third_name' => $contract->host->third_name,   'last_name' => $contract->host->last_name,   'national_id' => $contract->host->national_id,   'phone' => $contract->host->phone],
             ],
             'final_price' => $finalPrice,
         ]);
@@ -216,29 +204,16 @@ class BookingController extends Controller
     {
         $booking = Booking::whereHas('property', function ($query) use ($request) {
             $query->where('host_id', $request->user()->id);
-        })
-            ->findOrFail($id);
+        })->findOrFail($id);
 
         if ($booking->status !== 'pending') {
-            return response()->json([
-                'message' => 'يمكن رفض الحجوزات المعلقة فقط.',
-            ], 403);
+            return response()->json(['message' => 'يمكن رفض الحجوزات المعلقة فقط.'], 403);
         }
 
         $booking->update(['status' => 'rejected']);
 
-        // Notify tenant
-        NotificationService::send(
-            $booking->tenant_id,
-            'تم رفض طلب الحجز',
-            'تم رفض طلب الحجز لـ "' . $booking->property->title . '" من قبل المضيف.',
-            'booking_rejected',
-            $booking->id
-        );
+        NotificationService::send($booking->tenant_id, 'تم رفض طلب الحجز', 'تم رفض طلب الحجز لـ "' . $booking->property->title . '" من قبل المضيف.', 'booking_rejected', $booking->id);
 
-        return response()->json([
-            'message' => 'تم رفض الحجز.',
-            'booking' => $booking,
-        ]);
+        return response()->json(['message' => 'تم رفض الحجز.', 'booking' => $booking]);
     }
 }

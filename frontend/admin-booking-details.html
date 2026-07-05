@@ -85,6 +85,10 @@
         .tenant-id{font-size:0.78rem;color:var(--soft);}
         .privacy-note{font-size:0.78rem;color:#92400E;background:#FEF9EC;border:1px solid #FDE68A;border-radius:10px;padding:0.7rem 0.8rem;display:flex;gap:0.55rem;align-items:flex-start;line-height:1.65;}
 
+        .host-box{display:flex;align-items:center;gap:0.85rem;margin-bottom:1rem;}
+        .host-avatar{width:52px;height:52px;border-radius:50%;background:var(--green);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.25rem;flex-shrink:0;}
+        .host-name{font-size:1rem;font-weight:800;color:var(--ink);}
+        .host-id{font-size:0.78rem;color:var(--soft);}
         .btn-archive-stale{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;border-radius:11px;padding:0.7rem 1.4rem;font-family:'Cairo',sans-serif;font-weight:800;font-size:0.88rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem;transition:background 0.2s;}
         .btn-archive-stale:hover{background:#FECACA;}
 
@@ -173,6 +177,15 @@ function render(b){
     const imgs=p.images||[];
     // ✅ صورة رئيسية واحدة فقط
     const mainImg=imgs.find(i=>i.is_main && i.url)||imgs.find(i=>i.url);
+
+    // ✅ بيانات المضيف
+    const host = p.host || {};
+    const hName = (host.first_name||'') + ' ' + (host.last_name||'');
+    const hostHtml = host.first_name
+        ? '<div class="host-box"><div class="host-avatar">' + (host.first_name?.charAt(0)||'H') + '</div><div><div class="host-name">' + hName.trim() + '</div><div class="host-id">صاحب العقار</div></div></div>'
+          + '<div class="info-row"><span class="info-label"><i class="fas fa-phone"></i>الهاتف</span><span class="info-value">' + (host.phone||'—') + '</span></div>'
+          + '<div class="info-row"><span class="info-label"><i class="fas fa-id-card"></i>رقم الهوية</span><span class="info-value">' + (host.national_id||'—') + '</span></div>'
+        : '<p style="color:#9CA3AF;font-size:0.85rem;">لا تتوفر بيانات المضيف</p>';
     const hero=mainImg
         ?`<img class="hero-img" src="${mainImg.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;hero-noimg&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`
         :`<div class="hero-noimg"><i class="fas fa-building"></i></div>`;
@@ -203,7 +216,7 @@ function render(b){
         </div>
         <div class="kpi">
             <div class="ico gold"><i class="fas fa-calendar-alt"></i></div>
-            <div class="val">${n?`${n} يوم`:'—'}</div>
+            <div class="val" style="font-size:0.95rem;">${b.duration_text||'—'}</div>
             <div class="lbl">مدة الإقامة</div>
         </div>
         <div class="kpi">
@@ -227,7 +240,7 @@ function render(b){
                 <h3><i class="fas fa-calendar-days"></i> تفاصيل الحجز</h3>
                 <div class="info-row"><span class="info-label"><i class="fas fa-calendar-plus"></i>تاريخ الوصول</span><span class="info-value">${fmtDate(b.start_date)}</span></div>
                 <div class="info-row"><span class="info-label"><i class="fas fa-calendar-minus"></i>تاريخ المغادرة</span><span class="info-value">${fmtDate(b.end_date)}</span></div>
-                ${n?`<div class="info-row"><span class="info-label"><i class="fas fa-moon"></i>المدة</span><span class="info-value">${n} يوم</span></div>`:''}
+
                 <div class="info-row"><span class="info-label"><i class="fas fa-clock"></i>تاريخ الطلب</span><span class="info-value">${fmtDate(b.created_at)}</span></div>
             </div>
         </div>
@@ -249,9 +262,14 @@ function render(b){
             </div>
 
             <div class="card">
+                <h3><i class="fas fa-user-tie"></i> بيانات المضيف</h3>
+                ${hostHtml}
+            </div>
+
+            <div class="card">
                 <h3><i class="fas fa-gear"></i> إجراءات</h3>
                 <p class="card-sub">أرشفة هذا الحجز تزيله من القوائم النشطة دون حذفه نهائياً.</p>
-                <button class="btn-archive-stale" onclick="archiveBooking(${b.id})"><i class="fas fa-archive"></i> أرشفة الحجز</button>
+                <button class="btn-archive-stale" onclick="archiveBooking(\${b.id})"><i class="fas fa-archive"></i> أرشفة الحجز</button>
             </div>
         </div>
     </div>`;

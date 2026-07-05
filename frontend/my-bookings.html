@@ -165,7 +165,7 @@ function render(list){
     el.innerHTML = list.map(b=>{
         const mainImg = b.property?.images?.find(i=>i.is_main&&i.url)||b.property?.images?.find(i=>i.url);
         const thumbHtml = mainImg?.url
-            ? `<div class="prop-thumb"><img src="${mainImg.url}" alt="" onerror="this.parentElement.innerHTML='<div class=\"no-img\"><i class=\"fas fa-building\"></i></div>'"></div>`
+            ? `<div class="prop-thumb"><img src="${mainImg.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'"></div>`
             : `<div class="prop-thumb"><div class="no-img"><i class="fas fa-building"></i></div></div>`;
         const loc = [b.property?.governorate?.name, b.property?.city?.name].filter(Boolean).join(' - ')||'غير محدد';
         const isPending = b.status === 'pending';

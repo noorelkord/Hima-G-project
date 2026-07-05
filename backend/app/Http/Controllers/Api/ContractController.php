@@ -6,10 +6,41 @@ use App\Http\Controllers\Controller;
 use App\Models\Contract;
 use App\Models\ReviewWindow;
 use App\Services\NotificationService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ContractController extends Controller
 {
+
+    // ─────────────────────────────────────────────
+    // نفس منطق ContractPdfService
+    // ─────────────────────────────────────────────
+    private static function calcDurationAndTotal(string $startDate, string $endDate, float $price): array
+    {
+        $start = Carbon::parse($startDate);
+        $end   = Carbon::parse($endDate);
+        $diff  = $start->diff($end);
+        $years  = $diff->y;
+        $months = $diff->m;
+        $days   = $diff->d;
+        $totalMonths = ($years * 12) + $months;
+        $dailyRate   = $price / 30;
+        $total       = round(($totalMonths * $price) + ($days * $dailyRate), 2);
+        return [
+            'duration_text' => self::formatDuration($years, $months, $days),
+            'total'         => $total,
+        ];
+    }
+
+    private static function formatDuration(int $years, int $months, int $days): string
+    {
+        $parts = [];
+        if ($years > 0)  $parts[] = $years === 1  ? 'سنة'      : $years  . ' سنوات';
+        if ($months > 0) $parts[] = $months === 1 ? 'شهر'      : $months . ' أشهر';
+        if ($days > 0)   $parts[] = $days === 1   ? 'يوم واحد' : $days   . ' يوم';
+        return empty($parts) ? 'يوم واحد' : implode(' و', $parts);
+    }
+
     // List contracts based on role
     public function index(Request $request)
     {
@@ -91,6 +122,20 @@ class ContractController extends Controller
                 ->where('status', 'open')
                 ->exists();
             $contract->can_review = $window;
+        }
+
+        // ✅ إضافة duration_text للعقد
+        if ($contract->start_date && $contract->end_date) {
+            $price = in_array($role, ['tenant', 'host']) ? (float) $contract->price : 0;
+            $calc  = self::calcDurationAndTotal(
+                (string) $contract->start_date,
+                (string) $contract->end_date,
+                $price
+            );
+            $contract->duration_text = $calc['duration_text'];
+            if ($role !== 'admin') {
+                $contract->total = $calc['total'];
+            }
         }
 
         return response()->json($contract);

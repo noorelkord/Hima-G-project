@@ -66,7 +66,8 @@
         .review-text { color: #6B7280; font-size: 0.85rem; }
 
         /* Right sidebar */
-        .price-card { background: white; border-radius: 16px; border: 1px solid #E5E0D8; padding: 1.5rem; position: sticky; top: 1rem; }
+        .price-card { background: white; border-radius: 16px; border: 1px solid #E5E0D8; padding: 1.5rem; position: sticky; top: 1rem; visibility:hidden; }
+        .price-card.ready { visibility:visible; }
         .price-amount { font-size: 2rem; font-weight: 900; color: #1B4332; }
         .price-period { font-size: 0.85rem; color: #6B7280; margin-bottom: 1.2rem; }
 
@@ -89,6 +90,26 @@
 
         .divider { border: none; border-top: 1px solid #E5E0D8; margin: 1rem 0; }
 
+
+        /* أزرار المضيف */
+        .host-actions { display:flex; gap:0.7rem; margin-bottom:0.7rem; }
+        .btn-host-edit {
+            flex:1; background:#FEF3C7; color:#92400E; border:1px solid #FDE68A;
+            border-radius:12px; padding:0.75rem; font-family:'Cairo',sans-serif;
+            font-weight:700; font-size:0.9rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; gap:0.5rem;
+            transition:background 0.2s;
+        }
+        .btn-host-edit:hover { background:#FDE68A; }
+        .btn-host-delete {
+            flex:1; background:#FEE2E2; color:#991B1B; border:1px solid #FECACA;
+            border-radius:12px; padding:0.75rem; font-family:'Cairo',sans-serif;
+            font-weight:700; font-size:0.9rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; gap:0.5rem;
+            transition:background 0.2s;
+        }
+        .btn-host-delete:hover { background:#FECACA; }
+        .btn-host-delete:disabled { opacity:0.4; cursor:not-allowed; }
         .skeleton { background: linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
         @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
@@ -146,6 +167,16 @@
                 <div class="price-amount" id="price">...</div>
                 <div class="price-period">₪ / شهرياً</div>
 
+                <!-- أزرار المضيف — تظهر فقط إذا كان المستخدم مضيفاً -->
+                <div class="host-actions" id="host-actions" style="display:none;">
+                    <button class="btn-host-edit" id="btn-host-edit" onclick="handleHostEdit()">
+                        <i class="fas fa-pen"></i> تعديل
+                    </button>
+                    <button class="btn-host-delete" id="btn-host-delete" onclick="handleHostDelete()">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
+
                 <button class="btn-book" id="btn-book" onclick="handleBook()">
                     <i class="fas fa-calendar-check"></i> احجز الآن
                 </button>
@@ -184,10 +215,24 @@ document.getElementById('breadcrumb-properties').href = browsePage;
 if(!propId) window.location.href = browsePage;
 
 async function loadProperty(){
-    const r = await fetch(`${BASE_URL}/properties/${propId}`,{headers:{'Accept':'application/json'}});
+    // المضيف يجلب عقاره من endpoint خاص حتى يرى عقاراته pending/rejected
+    const isHost = localStorage.getItem('role') === 'host';
+    const token  = localStorage.getItem('token');
+    const url    = isHost && token
+        ? `${BASE_URL}/host/properties/${propId}`
+        : `${BASE_URL}/properties/${propId}`;
+    const headers = isHost && token
+        ? authHeaders()
+        : {'Accept':'application/json'};
+
+    const r = await fetch(url, {headers});
     if(!r.ok){ window.location.href=browsePage; return; }
-    const p = await r.json();
+    const raw = await r.json();
+    // host endpoint يرجع {property: {...}} أو مباشرة
+    const p = raw.property || raw;
+
     render(p);
+    document.querySelector('.price-card').classList.add('ready');
     loadReviews();
     loadWhatsapp();
 }
@@ -272,6 +317,21 @@ function render(p){
         // المضيف لا يحتاج زر الحجز ولا واتساب
         btn.style.display = 'none';
         document.getElementById('btn-whatsapp').style.display = 'none';
+
+        // ✅ إظهار أزرار التعديل والحذف للمضيف
+        document.getElementById('host-actions').style.display = 'flex';
+
+        // تعطيل التعديل والحذف إذا كان العقار محجوزاً
+        const editBtn   = document.getElementById('btn-host-edit');
+        const deleteBtn = document.getElementById('btn-host-delete');
+        if(p.availability === 'booked'){
+            editBtn.disabled   = true;
+            editBtn.title      = 'لا يمكن تعديل عقار محجوز';
+            editBtn.style.opacity = '0.4';
+            editBtn.style.cursor  = 'not-allowed';
+            deleteBtn.disabled = true;
+            deleteBtn.title    = 'لا يمكن حذف عقار محجوز';
+        }
     } else if(!token){
         btn.textContent='احجز الآن';
     } else if(roleLocal!=='tenant'){
@@ -354,6 +414,24 @@ async function loadWhatsapp(){
         document.getElementById('btn-whatsapp').href = data.whatsapp_link;
     } else {
         document.getElementById('btn-whatsapp').style.display = 'none';
+    }
+}
+
+function handleHostEdit(){
+    window.location.href = `property-form.html?id=${propId}`;
+}
+
+async function handleHostDelete(){
+    if(!confirm('هل أنت متأكد من أرشفة هذا العقار؟ لن يظهر للعموم بعد ذلك.')) return;
+    const r = await fetch(`${BASE_URL}/host/properties/${propId}`,{
+        method:'DELETE', headers:authHeaders()
+    });
+    if(r.ok){
+        alert('تم أرشفة العقار بنجاح.');
+        window.location.href = 'my-properties.html';
+    } else {
+        const data = await r.json().catch(()=>({}));
+        alert(data.message || 'لا يمكن أرشفة هذا العقار الآن.');
     }
 }
 

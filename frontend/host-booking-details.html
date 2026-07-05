@@ -347,8 +347,8 @@ function render(b, reviews){
             <div class="lbl">سعر الإعلان / شهرياً</div>
         </div>
         <div class="kpi">
-            <div class="ico gold"><i class="fas fa-moon"></i></div>
-            <div class="val">${n ? `${n} يوم` : '—'}</div>
+            <div class="ico gold"><i class="fas fa-calendar-alt"></i></div>
+            <div class="val" style="font-size:0.95rem;">${b.duration_text||'—'}</div>
             <div class="lbl">مدة الإقامة</div>
         </div>
         <div class="kpi">
@@ -364,7 +364,7 @@ function render(b, reviews){
                 <h3><i class="fas fa-calendar-days"></i> تفاصيل الحجز</h3>
                 <div class="info-row"><span class="info-label"><i class="fas fa-calendar-plus"></i>تاريخ الوصول</span><span class="info-value">${fmtDate(b.start_date)}</span></div>
                 <div class="info-row"><span class="info-label"><i class="fas fa-calendar-minus"></i>تاريخ المغادرة</span><span class="info-value">${fmtDate(b.end_date)}</span></div>
-                ${n?`<div class="info-row"><span class="info-label"><i class="fas fa-moon"></i>المدة</span><span class="info-value">${n} يوم</span></div>`:''}
+
                 <div class="info-row"><span class="info-label"><i class="fas fa-money-bill-wave"></i>سعر الحجز المتفق عليه</span><span class="info-value price">${Number(b.price||0).toLocaleString('ar')} ₪ <span style="font-size:0.78rem;color:#6B7280;font-weight:400;">/ شهرياً</span> ${Number(b.price) < Number(b.property?.price||b.price) ? '<span style="font-size:0.75rem;color:#D4A853;margin-right:0.3rem;"><i class="fas fa-tag"></i> سعر مخفض</span>' : ''}</span></div>
                 <div class="info-row"><span class="info-label"><i class="fas fa-clock"></i>تاريخ الطلب</span><span class="info-value">${fmtDate(b.created_at)}</span></div>
             </div>
