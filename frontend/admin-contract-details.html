@@ -150,7 +150,7 @@ function render(c){
                 <h3><i class="fas fa-calendar-days"></i> مدة العقد</h3>
                 <div class="info-row"><span class="info-label"><i class="fas fa-calendar-plus"></i>تاريخ البداية</span><span class="info-value">${fmtDate(c.start_date)}</span></div>
                 <div class="info-row"><span class="info-label"><i class="fas fa-calendar-minus"></i>تاريخ النهاية</span><span class="info-value">${fmtDate(c.end_date)}</span></div>
-                <div class="info-row"><span class="info-label"><i class="fas fa-hourglass-half"></i>المدة</span><span class="info-value">${days(c.start_date,c.end_date)}</span></div>
+                <div class="info-row"><span class="info-label"><i class="fas fa-hourglass-half"></i>المدة</span><span class="info-value">${c.duration_text||'—'}</span></div>
             </div>
             <div class="card">
                 <h3><i class="fas fa-user"></i> المستأجر</h3>

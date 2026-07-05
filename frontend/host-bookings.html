@@ -54,9 +54,9 @@
         .booking-actions { display:flex; gap:0.6rem; align-items:center; }
         .btn-details { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; border-radius:8px; padding:0.45rem 1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; gap:0.4rem; }
         .btn-details:hover { background:#DBEAFE; }
-        .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; border-radius:8px; padding:0.45rem 1.1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:background 0.2s; }
+        .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; border-radius:8px; padding:0.45rem 1.1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:background 0.2s; display:inline-flex; align-items:center; gap:0.4rem; white-space:nowrap; }
         .btn-accept:hover { background:#A7F3D0; }
-        .btn-reject { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.45rem 1.1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; }
+        .btn-reject { background:#FEE2E2; color:#991B1B; border:1px solid #FECACA; border-radius:8px; padding:0.45rem 1.1rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; white-space:nowrap; }
         .btn-reject:hover { background:#FECACA; }
 
         /* Discount modal */
@@ -202,13 +202,13 @@ function render(list){
         const img  = main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
         const isPending = b.status==='pending';
         return `
-        <div class="booking-card">
+        <div class="booking-card" id="booking-card-${b.id}">
             <div class="booking-top">
                 <div class="prop-thumb">${img}</div>
                 <div class="booking-main">
                     <div class="prop-name">${b.property?.title||'عقار'}</div>
-                    <div class="tenant-name"><i class="fas fa-user"></i>${b.tenant?.first_name||'مستأجر'} ${b.tenant?.last_name||''}</div>
-                    <div class="booking-dates"><i class="fas fa-calendar-alt"></i>${b.start_date?.split('T')[0]} ← ${b.end_date?.split('T')[0]}</div>
+                    <div class="tenant-name"><i class="fas fa-user"></i> ${b.tenant?.first_name||'مستأجر'} ${b.tenant?.last_name||''}</div>
+                    <div class="booking-dates"><i class="fas fa-calendar-alt"></i> ${b.start_date?.split('T')[0]} ← ${b.end_date?.split('T')[0]}</div>
                     <div class="booking-price">${Number(b.price||0).toLocaleString('ar')} ₪</div>
                 </div>
                 <span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span>
@@ -312,9 +312,24 @@ async function confirmAccept(){
     });
 
     if(r.ok){
+        // ✅ نحفظ actionId قبل closeModals الذي يصفّره
+        const savedAcceptId = actionId;
         closeModals();
-        allBookings = allBookings.map(b=>b.id===actionId?{...b,status:'accepted'}:b);
-        filterTab(currentTab, document.querySelector('.tab.active'));
+        allBookings = allBookings.map(b=>b.id===savedAcceptId?{...b,status:'accepted'}:b);
+
+        // ✅ تحديث الكارد مباشرة
+        const card = document.getElementById(`booking-card-${savedAcceptId}`);
+        if(card){
+            const badge = card.querySelector('.badge');
+            if(badge){ badge.className='badge badge-accepted'; badge.textContent='مقبول'; }
+            card.querySelectorAll('.btn-accept,.btn-reject').forEach(b=>b.remove());
+            const actions = card.querySelector('.booking-actions');
+            if(actions){
+                actions.insertAdjacentHTML('beforeend',
+                    `<div style="font-size:0.8rem;color:#065F46;display:inline-flex;align-items:center;gap:0.4rem;white-space:nowrap;"><i class="fas fa-file-contract"></i> تم إنشاء عقد تلقائياً</div>`
+                );
+            }
+        }
         showToast('✅ تم قبول الحجز وإنشاء العقد تلقائياً');
     } else {
         const data = await r.json().catch(()=>({}));
@@ -331,11 +346,19 @@ async function confirmAccept(){
 }
 
 async function confirmReject(){
-    const r = await fetch(`${BASE_URL}/host/bookings/${actionId}/reject`,{method:'PATCH',headers:authHeaders()});
+    const savedId = actionId;
+    const r = await fetch(`${BASE_URL}/host/bookings/${savedId}/reject`,{method:'PATCH',headers:authHeaders()});
     closeModals();
     if(r.ok){
-        allBookings=allBookings.map(b=>b.id===actionId?{...b,status:'rejected'}:b);
-        filterTab(currentTab,document.querySelector('.tab.active'));
+        allBookings=allBookings.map(b=>b.id===savedId?{...b,status:'rejected'}:b);
+
+        // ✅ تحديث الكارد مباشرة
+        const card = document.getElementById(`booking-card-${savedId}`);
+        if(card){
+            const badge = card.querySelector('.badge');
+            if(badge){ badge.className='badge badge-rejected'; badge.textContent='مرفوض'; }
+            card.querySelectorAll('.btn-accept,.btn-reject').forEach(b=>b.remove());
+        }
         showToast('تم رفض الحجز');
     }
 }

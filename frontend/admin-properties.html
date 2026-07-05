@@ -203,7 +203,23 @@ function render(list){
 
 async function acceptProp(id){
     const r=await fetch(`${BASE_URL}/admin/properties/${id}/accept`,{method:'PATCH',headers:authHeaders()});
-    if(r.ok){const p=allProps.find(x=>x.id===id);if(p)p.status='accepted';filterTab(currentTab,document.querySelector('.tab.active'));showToast('✅ تم قبول العقار ونشره');}
+    if(r.ok){
+        const p=allProps.find(x=>x.id===id);
+        if(p) p.status='accepted';
+
+        // ✅ تحديث الكارد مباشرة بدون إعادة render
+        const card = document.getElementById('card-'+id);
+        if(card){
+            const badge = card.querySelector('.badge');
+            if(badge){ badge.className='badge badge-accepted'; badge.textContent='مقبول'; }
+            const side = card.querySelector('.prop-actions');
+            if(side){
+                // إزالة أزرار القبول والرفض فقط
+                card.querySelectorAll('.btn-accept,.btn-reject').forEach(b=>b.remove());
+            }
+        }
+        showToast('✅ تم قبول العقار ونشره');
+    }
 }
 
 function openReject(id){rejectId=id;document.getElementById('reject-reason').value='';document.getElementById('reject-modal').classList.add('show');}
@@ -212,9 +228,32 @@ function closeRejectModal(){rejectId=null;document.getElementById('reject-modal'
 async function confirmReject(){
     const reason=document.getElementById('reject-reason').value.trim();
     if(!reason){alert('يرجى كتابة سبب الرفض');return;}
-    const r=await fetch(`${BASE_URL}/admin/properties/${rejectId}/reject`,{method:'PATCH',headers:authHeaders(),body:JSON.stringify({rejection_reason:reason})});
+    // ✅ نحفظ rejectId قبل closeRejectModal الذي يصفّره
+    const savedId = rejectId;
+    const savedReason = reason;
+    const r=await fetch(`${BASE_URL}/admin/properties/${savedId}/reject`,{method:'PATCH',headers:authHeaders(),body:JSON.stringify({rejection_reason:savedReason})});
     closeRejectModal();
-    if(r.ok){const p=allProps.find(x=>x.id===rejectId);if(p){p.status='rejected';p.rejection_reason=reason;}filterTab(currentTab,document.querySelector('.tab.active'));showToast('❌ تم رفض العقار');}
+    if(r.ok){
+        const p=allProps.find(x=>x.id===savedId);
+        if(p){ p.status='rejected'; p.rejection_reason=savedReason; }
+
+        // ✅ تحديث الكارد مباشرة بدون إعادة render
+        const card = document.getElementById('card-'+savedId);
+        if(card){
+            const badge = card.querySelector('.badge');
+            if(badge){ badge.className='badge badge-rejected'; badge.textContent='مرفوض'; }
+            card.querySelectorAll('.btn-accept,.btn-reject').forEach(b=>b.remove());
+            const body = card.querySelector('.prop-body');
+            if(body && savedReason){
+                const existing = body.querySelector('.reject-note');
+                if(existing) existing.remove();
+                body.insertAdjacentHTML('beforeend',
+                    `<div class="reject-note"><i class="fas fa-exclamation-circle" style="margin-top:0.15rem;"></i><span>${savedReason}</span></div>`
+                );
+            }
+        }
+        showToast('❌ تم رفض العقار');
+    }
 }
 
 async function archiveProp(id){

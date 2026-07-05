@@ -136,9 +136,9 @@ async function init(){
         <a class="booking-row" href="property-details.html?id=${b.property?.id}">
             <div class="booking-prop">
                 <div class="booking-prop-name">${b.property?.title||'عقار'}</div>
-                <div class="booking-dates"><i class="fas fa-calendar-alt me-1"></i>${b.start_date?.split('T')[0]} ← ${b.end_date?.split('T')[0]}</div>
+                <div class="booking-dates"><i class="fas fa-calendar-alt"></i> ${b.start_date?.split('T')[0]} ← ${b.end_date?.split('T')[0]}</div>
             </div>
-            <div class="booking-price">${Number(b.price||0).toLocaleString('ar')} ₪</div>
+            <div class="booking-price">${Number(b.price||0).toLocaleString('ar')} ₪ <span style="font-size:0.75rem;font-weight:400;color:#9CA3AF;">/ شهرياً</span></div>
             <span class="badge ${statusCls[b.status]||''}">${statusMap[b.status]||b.status}</span>
         </a>`).join('');
 }

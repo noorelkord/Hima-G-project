@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\Host;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use App\Services\NotificationService;
+
 class PropertyController extends Controller
 {
     // List all properties belonging to the host
@@ -19,16 +21,43 @@ class PropertyController extends Controller
         return response()->json($properties);
     }
 
+    // View a single property ✅ إضافة host و host_rating
+    public function show(Request $request, $id)
+    {
+        $property = Property::where('host_id', $request->user()->id)
+            ->with([
+                'images',
+                'mainImage',
+                'governorate',
+                'city',
+                'neighborhood',
+                'host:id,first_name,last_name,phone',
+            ])
+            ->findOrFail($id);
+
+        // ✅ إضافة تقييم المضيف
+        $reviews = Review::where('reviewee_id', $property->host_id)
+            ->where('type', 'tenant_to_host')
+            ->get();
+
+        $property->host_rating        = $reviews->count() > 0
+            ? round($reviews->avg('rating'), 1)
+            : null;
+        $property->host_reviews_count = $reviews->count();
+
+        return response()->json($property);
+    }
+
     // Submit a new property
     public function store(Request $request)
     {
-        // تحقق من اكتمال البيانات
         if (!$request->user()->isHostReady()) {
             return response()->json([
                 'message'  => 'يرجى إكمال ملفك الشخصي قبل إضافة عقار.',
                 'redirect' => 'profile/complete',
             ], 403);
         }
+
         $data = $request->validate([
             'title'           => 'required|string|max:255',
             'description'     => 'nullable|string',
@@ -52,7 +81,7 @@ class PropertyController extends Controller
             'status'       => 'pending',
             'availability' => 'not_available',
         ]);
-        // Notify all admins
+
         $admins = \App\Models\User::role('admin')->get();
         foreach ($admins as $admin) {
             NotificationService::send(
@@ -63,20 +92,11 @@ class PropertyController extends Controller
                 $property->id
             );
         }
+
         return response()->json([
             'message'  => 'تم تقديم العقار بنجاح. بانتظار موافقة الإدارة.',
             'property' => $property,
         ], 201);
-    }
-
-    // View a single property
-    public function show(Request $request, $id)
-    {
-        $property = Property::where('host_id', $request->user()->id)
-            ->with(['images', 'mainImage', 'governorate', 'city', 'neighborhood'])
-            ->findOrFail($id);
-
-        return response()->json($property);
     }
 
     // Edit a property
@@ -85,7 +105,6 @@ class PropertyController extends Controller
         $property = Property::where('host_id', $request->user()->id)
             ->findOrFail($id);
 
-        // Cannot edit if booked
         if ($property->availability === 'booked') {
             return response()->json([
                 'message' => 'لا يمكن تعديل عقار محجوز.',
@@ -109,9 +128,7 @@ class PropertyController extends Controller
             'is_ready'        => 'boolean',
         ]);
 
-        // Update essential fields to include location fields
         $essentialFields = ['title', 'type', 'governorate_id', 'city_id', 'neighborhood_id', 'price', 'damage_status'];
-
         $hasEssentialChange = collect($essentialFields)->some(fn($f) => isset($data[$f]));
 
         if ($hasEssentialChange && in_array($property->status, ['accepted', 'rejected'])) {
@@ -119,23 +136,21 @@ class PropertyController extends Controller
             $data['availability']     = 'not_available';
             $data['rejection_reason'] = null;
 
-            // Cancel all pending bookings and notify tenants
             $pendingBookings = $property->bookings()->where('status', 'pending')->get();
             foreach ($pendingBookings as $booking) {
                 $booking->update(['status' => 'cancelled']);
-                 NotificationService::send(
-                $booking->tenant_id,
-                'تم إلغاء الحجز',
-                'تم إلغاء طلب الحجز لـ "' . $property->title . '" بسبب تحديث تفاصيل العقار وهو الآن قيد المراجعة.',
-                'booking_cancelled',
-                  $booking->id
-        );
-    }
-}
+                NotificationService::send(
+                    $booking->tenant_id,
+                    'تم إلغاء الحجز',
+                    'تم إلغاء طلب الحجز لـ "' . $property->title . '" بسبب تحديث تفاصيل العقار وهو الآن قيد المراجعة.',
+                    'booking_cancelled',
+                    $booking->id
+                );
+            }
+        }
 
-$property->update($data);
-        
-        // Notify admins only if essential data changed
+        $property->update($data);
+
         if ($hasEssentialChange) {
             $admins = \App\Models\User::role('admin')->get();
             foreach ($admins as $admin) {
@@ -148,6 +163,7 @@ $property->update($data);
                 );
             }
         }
+
         return response()->json([
             'message'  => 'تم تحديث العقار بنجاح.',
             'property' => $property,
