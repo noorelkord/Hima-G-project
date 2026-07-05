@@ -128,12 +128,12 @@
             </div>
 
             <div class="detail-card">
-                <div class="section-title"><i class="fas fa-align-right me-2"></i>وصف العقار</div>
+                <div class="section-title"><i class="fas fa-align-right"></i> وصف العقار</div>
                 <div class="description" id="description">...</div>
             </div>
 
             <div class="detail-card">
-                <div class="section-title"><i class="fas fa-star me-2"></i>تقييمات العقار</div>
+                <div class="section-title"><i class="fas fa-star"></i> تقييمات العقار</div>
                 <div id="rating-summary"></div>
                 <div id="reviews-list">
                     <p style="color:#6B7280;font-size:0.85rem;">لا توجد تقييمات بعد</p>
@@ -263,12 +263,21 @@ function render(p){
             ${ratingHtml}`;
     }
 
-    // Book button
+    // Book button & WhatsApp — حسب الدور
     const roleLocal = localStorage.getItem('role');
     const token = localStorage.getItem('token');
     const btn   = document.getElementById('btn-book');
-    if(!token){ btn.textContent='احجز الآن'; }
-    else if(roleLocal!=='tenant'){ btn.disabled=true; btn.textContent='متاح للمستأجرين فقط'; }
+
+    if(roleLocal === 'host'){
+        // المضيف لا يحتاج زر الحجز ولا واتساب
+        btn.style.display = 'none';
+        document.getElementById('btn-whatsapp').style.display = 'none';
+    } else if(!token){
+        btn.textContent='احجز الآن';
+    } else if(roleLocal!=='tenant'){
+        btn.disabled=true;
+        btn.textContent='متاح للمستأجرين فقط';
+    }
 }
 
 function switchImg(url, el){
@@ -337,6 +346,8 @@ async function loadReviews(){
 }
 
 async function loadWhatsapp(){
+    // المضيف لا يحتاج واتساب
+    if(localStorage.getItem('role') === 'host') return;
     const r = await fetch(`${BASE_URL}/properties/${propId}/whatsapp`,{headers:{'Accept':'application/json'}});
     if(r.ok){
         const data = await r.json();

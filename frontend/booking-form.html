@@ -9,23 +9,12 @@
     <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
     <style>
         body { margin:0; background:#F8F5F0; }
-        .container { max-width:700px; margin:0 auto; padding:2rem 1.5rem; }
-
+        .container { max-width:700px; margin:0 auto; padding:2rem 1.5rem; visibility:hidden; }
+        .container.ready { visibility:visible; }
         .page-title { font-size:1.5rem; font-weight:900; color:#1B4332; margin-bottom:0.3rem; display:flex; align-items:center; gap:0.7rem; }
-        .page-title i { flex-shrink:0; color:#1B4332; }
         .page-sub   { color:#6B7280; font-size:0.875rem; margin-bottom:2rem; }
-
-        /* Property summary card */
-        .prop-summary {
-            background:white; border-radius:16px; border:1px solid #E5E0D8;
-            display:flex; gap:1rem; padding:1.2rem; margin-bottom:1.5rem;
-            align-items:center;
-        }
-        .prop-summary-img {
-            width:100px; height:76px; border-radius:10px;
-            background:linear-gradient(135deg,#1B4332,#2D6A4F);
-            overflow:hidden; flex-shrink:0;
-        }
+        .prop-summary { background:white; border-radius:16px; border:1px solid #E5E0D8; display:flex; gap:1rem; padding:1.2rem; margin-bottom:1.5rem; align-items:center; }
+        .prop-summary-img { width:100px; height:76px; border-radius:10px; background:linear-gradient(135deg,#1B4332,#2D6A4F); overflow:hidden; flex-shrink:0; }
         .prop-summary-img img { width:100%; height:100%; object-fit:cover; }
         .prop-summary-img .no-img { display:flex; align-items:center; justify-content:center; height:100%; font-size:2rem; color:rgba(255,255,255,0.2); }
         .prop-summary-info { flex:1; }
@@ -33,93 +22,48 @@
         .prop-summary-loc   { font-size:0.8rem; color:#6B7280; margin-bottom:0.4rem; }
         .prop-summary-price { font-size:1.1rem; font-weight:900; color:#1B4332; }
         .prop-summary-price span { font-size:0.75rem; font-weight:400; color:#9CA3AF; }
-
-        /* Form card */
         .form-card { background:white; border-radius:16px; border:1px solid #E5E0D8; padding:1.5rem; margin-bottom:1rem; }
         .form-card h3 { font-size:1rem; font-weight:700; color:#1B4332; margin-bottom:1.2rem; padding-bottom:0.7rem; border-bottom:2px solid #E5E0D8; display:flex; align-items:center; gap:0.55rem; }
-        .form-card h3 i { flex-shrink:0; }
-
         .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
         .form-group { display:flex; flex-direction:column; gap:0.4rem; }
         .form-group label { font-size:0.85rem; font-weight:600; color:#374151; }
-        .date-field {
-            border:1.5px solid #E5E0D8;
-            border-radius:10px;
-            background:white;
-            display:flex;
-            align-items:center;
-            cursor:pointer;
-            transition:border-color 0.2s, box-shadow 0.2s;
-            position:relative;
-        }
-        .date-field:focus-within {
-            border-color:#2D6A4F;
-            box-shadow:0 0 0 3px rgba(45,106,79,0.1);
-        }
-        .form-group input {
-            width:100%;
-            border:0; border-radius:10px;
-            padding:0.65rem 0.9rem; font-family:'Cairo',sans-serif;
-            font-size:0.9rem; color:#1A1A1A; outline:none;
-            background:transparent;
-            transition:border-color 0.2s;
-            cursor:pointer;
-            position:relative;
-        }
-        .form-group input:focus { box-shadow:none; }
-        .form-group input:invalid { border-color:#E5E0D8; }
-        .form-group input[type="date"]::-webkit-calendar-picker-indicator {
-            position:absolute;
-            inset:0;
-            width:100%;
-            height:100%;
-            opacity:0;
-            cursor:pointer;
-        }
-
-        /* Summary box */
-        .summary-box {
-            background:#F0F7F4; border:1px solid #BBF7D0; border-radius:12px;
-            padding:1.2rem; margin-top:1rem;
-        }
+        .date-field { border:1.5px solid #E5E0D8; border-radius:10px; background:white; display:flex; align-items:center; cursor:pointer; transition:border-color 0.2s, box-shadow 0.2s; position:relative; }
+        .date-field:focus-within { border-color:#2D6A4F; box-shadow:0 0 0 3px rgba(45,106,79,0.1); }
+        .form-group input { width:100%; border:0; border-radius:10px; padding:0.65rem 0.9rem; font-family:'Cairo',sans-serif; font-size:0.9rem; color:#1A1A1A; outline:none; background:transparent; cursor:pointer; position:relative; }
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+        .summary-box { background:#F0F7F4; border:1px solid #BBF7D0; border-radius:12px; padding:1.2rem; margin-top:1rem; }
         .summary-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem; font-size:0.875rem; }
         .summary-row:last-child { margin-bottom:0; border-top:1px dashed #9CA3AF; padding-top:0.6rem; margin-top:0.4rem; }
         .summary-row .lbl { color:#6B7280; }
         .summary-row .val { font-weight:600; color:#1A1A1A; }
         .summary-row.total .val { font-size:1.1rem; font-weight:900; color:#1B4332; }
-
-        /* Buttons */
-        .btn-submit {
-            width:100%; background:#1B4332; color:white; border:none;
-            border-radius:12px; padding:0.9rem; font-family:'Cairo',sans-serif;
-            font-weight:700; font-size:1rem; cursor:pointer; transition:background 0.2s;
-            display:flex; align-items:center; justify-content:center; gap:0.5rem;
-        }
+        .btn-submit { width:100%; background:#1B4332; color:white; border:none; border-radius:12px; padding:0.9rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:center; gap:0.5rem; }
         .btn-submit:hover { background:#2D6A4F; }
         .btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
-        .btn-back {
-            width:100%; background:transparent; color:#6B7280;
-            border:1.5px solid #E5E0D8; border-radius:12px; padding:0.8rem;
-            font-family:'Cairo',sans-serif; font-size:0.9rem; cursor:pointer;
-            margin-top:0.7rem;
-        }
-
+        .btn-back { width:100%; background:transparent; color:#6B7280; border:1.5px solid #E5E0D8; border-radius:12px; padding:0.8rem; font-family:'Cairo',sans-serif; font-size:0.9rem; cursor:pointer; margin-top:0.7rem; }
         .alert { padding:0.9rem 1rem; border-radius:10px; font-size:0.875rem; margin-bottom:1rem; display:none; align-items:center; gap:0.5rem; }
         .alert.show { display:flex; }
         .alert-error   { background:#FEF2F2; border:1px solid #FECACA; color:#C0392B; }
         .alert-success { background:#F0FDF4; border:1px solid #BBF7D0; color:#2D6A4F; }
-
         .info-note { background:#FFF8E7; border:1px solid #D4A853; border-radius:10px; padding:0.8rem 1rem; font-size:0.82rem; color:#92400E; margin-bottom:1rem; display:flex; gap:0.5rem; align-items:flex-start; }
+        .edit-note { background:#EFF6FF; border:1px solid #BFDBFE; border-radius:10px; padding:0.8rem 1rem; font-size:0.82rem; color:#1D4ED8; margin-bottom:1rem; display:flex; gap:0.5rem; align-items:flex-start; }
     </style>
 </head>
 <body>
 <div id="navbar"></div>
 <div class="container">
+    <div class="page-title" id="page-title"><i class="fas fa-calendar-check"></i><span>طلب حجز</span></div>
+    <div class="page-sub" id="page-sub">حدد تواريخ الإقامة لإرسال طلب الحجز للمالك</div>
+    <script>
+        (function(){
+            const p = new URLSearchParams(window.location.search);
+            if(p.get("edit") === "true"){
+                document.getElementById('page-title').innerHTML = '<i class="fas fa-pen"></i><span>تعديل الحجز</span>';
+                document.getElementById('page-sub').textContent = 'يمكنك تعديل تواريخ الإقامة فقط';
+            }
+        })();
+    </script>
 
-    <div class="page-title"><i class="fas fa-calendar-check"></i><span>طلب حجز</span></div>
-    <div class="page-sub">حدد تواريخ الإقامة لإرسال طلب الحجز للمالك</div>
-
-    <!-- Property Summary -->
     <div class="prop-summary" id="prop-summary">
         <div class="prop-summary-img"><div class="no-img"><i class="fas fa-spinner fa-spin"></i></div></div>
         <div class="prop-summary-info">
@@ -129,17 +73,11 @@
         </div>
     </div>
 
-    <!-- Alerts -->
     <div class="alert alert-error" id="err"><i class="fas fa-exclamation-circle"></i><span id="err-msg"></span></div>
     <div class="alert alert-success" id="suc"><i class="fas fa-check-circle"></i><span id="suc-msg"></span></div>
 
-    <!-- Note -->
-    <div class="info-note">
-        <i class="fas fa-info-circle" style="margin-top:2px;flex-shrink:0;"></i>
-        <span>طلب الحجز سيُرسل للمالك لمراجعته والموافقة عليه. ستستلم إشعاراً فور قبول أو رفض طلبك.</span>
-    </div>
+    <div id="mode-note"></div>
 
-    <!-- Form -->
     <div class="form-card">
         <h3><i class="fas fa-calendar"></i><span>تواريخ الإقامة</span></h3>
         <div class="form-row">
@@ -156,44 +94,31 @@
                 </div>
             </div>
         </div>
-
-        <!-- Summary -->
         <div class="summary-box" id="summary-box" style="display:none;">
-            <div class="summary-row">
-                <span class="lbl">مدة الإقامة</span>
-                <span class="val" id="sum-duration">-</span>
-            </div>
-            <div class="summary-row">
-                <span class="lbl">السعر الشهري</span>
-                <span class="val" id="sum-price">-</span>
-            </div>
-            <div class="summary-row total">
-                <span class="lbl"><b>التكلفة التقديرية</b></span>
-                <span class="val" id="sum-total">-</span>
-            </div>
+            <div class="summary-row"><span class="lbl">مدة الإقامة</span><span class="val" id="sum-duration">-</span></div>
+            <div class="summary-row"><span class="lbl">السعر الشهري</span><span class="val" id="sum-price">-</span></div>
+            <div class="summary-row total"><span class="lbl"><b>التكلفة التقديرية</b></span><span class="val" id="sum-total">-</span></div>
         </div>
     </div>
 
-    <!-- Actions -->
     <button class="btn-submit" id="submit-btn" type="button">
-        <i class="fas fa-paper-plane"></i> إرسال طلب الحجز
+        <i class="fas fa-paper-plane" id="submit-icon"></i>
+        <span id="submit-label">إرسال طلب الحجز</span>
     </button>
-    <button class="btn-back" onclick="history.back()">
-        <i class="fas fa-arrow-right me-1"></i> العودة
-    </button>
-
+    <button class="btn-back" onclick="history.back()"><i class="fas fa-arrow-right me-1"></i> العودة</button>
 </div>
 
 <script src="js/api.js?v=20260628-absolute-nav"></script>
 <script src="js/navbar.js?v=20260628-live-fixes"></script>
 <script>
-const params = new URLSearchParams(window.location.search);
-const propId = params.get('id');
+const params    = new URLSearchParams(window.location.search);
+const propId    = params.get('id');
+const isEdit    = params.get('edit') === 'true';
+const bookingId = params.get('booking_id');
 let property = null;
 
 if(!propId) window.location.href = 'properties.html';
 
-// Set min date to today
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('start_date').min = today;
 document.getElementById('end_date').min   = today;
@@ -204,7 +129,9 @@ async function loadProperty(){
     property = await r.json();
 
     const main = property.images?.find(i=>i.is_main && i.url)||property.images?.find(i=>i.url);
-    const img  = main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+    const img  = main?.url
+        ? `<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=\\'no-img\\'><i class=\\'fas fa-building\\'></i></div>'">`
+        : `<div class="no-img"><i class="fas fa-building"></i></div>`;
     const loc  = [property.governorate?.name, property.city?.name, property.neighborhood?.name].filter(Boolean).join(' - ')||'غير محدد';
 
     document.getElementById('prop-summary').innerHTML = `
@@ -214,133 +141,147 @@ async function loadProperty(){
             <div class="prop-summary-loc"><i class="fas fa-map-marker-alt me-1"></i>${loc}</div>
             <div class="prop-summary-price">${Number(property.price).toLocaleString('ar')} ₪ <span>/ شهر</span></div>
         </div>`;
-}
 
-function toDateInputValue(date){
-    if(!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
-    return date.toISOString().split('T')[0];
-}
+    if(isEdit && bookingId){
+        // ✅ وضع التعديل
+        document.getElementById('page-title').innerHTML = '<i class="fas fa-pen"></i><span>تعديل الحجز</span>';
+        document.getElementById('page-sub').textContent = 'يمكنك تعديل تواريخ الإقامة فقط';
+        document.getElementById('submit-label').textContent = 'حفظ التعديلات';
+        document.getElementById('submit-icon').className = 'fas fa-save';
+        document.getElementById('mode-note').innerHTML = `
+            <div class="edit-note">
+                <i class="fas fa-info-circle" style="margin-top:2px;flex-shrink:0;"></i>
+                <span>أنت في وضع تعديل الحجز — يمكنك تغيير <strong>تواريخ الإقامة فقط</strong>. سيُبلّغ المضيف بالتعديل تلقائياً.</span>
+            </div>`;
 
-function normalizeDateValue(value){
-    if(!value) return '';
-    const text = String(value).trim();
-    if(/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
-    if(/^\d{4}\/\d{2}\/\d{2}$/.test(text)) return text.split('/').join('-');
-    return '';
-}
-
-function syncDateInput(input){
-    const normalized = normalizeDateValue(input.value) || toDateInputValue(input.valueAsDate);
-    if(normalized){
-        input.dataset.selectedDate = normalized;
-    }
-    return normalized;
-}
-
-function getDateValue(id){
-    const input = document.getElementById(id);
-    return syncDateInput(input) || normalizeDateValue(input.dataset.selectedDate);
-}
-
-function calcSummary(){
-    const start = getDateValue('start_date');
-    const end   = getDateValue('end_date');
-    if(!start || !end || !property) return;
-
-    const s = new Date(start), e = new Date(end);
-    if(e <= s){ showErr('تاريخ النهاية يجب أن يكون بعد تاريخ البداية'); return; }
-    hideAlerts();
-
-    const days    = Math.ceil((e - s)/(1000*60*60*24));
-    const months  = Math.max(1, Math.round(days/30 * 10)/10);
-    const total   = Math.round(property.price * months);
-
-    document.getElementById('sum-duration').textContent = `${days} يوم (${months} شهر)`;
-    document.getElementById('sum-price').textContent    = `${Number(property.price).toLocaleString('ar')} ₪`;
-    document.getElementById('sum-total').textContent    = `${total.toLocaleString('ar')} ₪ (تقديري)`;
-    document.getElementById('summary-box').style.display = 'block';
-
-    // Update end min
-    document.getElementById('end_date').min = new Date(s.getTime()+86400000).toISOString().split('T')[0];
-}
-
-function showErr(msg){
-    const e=document.getElementById('err');
-    document.getElementById('err-msg').textContent=msg;
-    e.classList.add('show');
-    e.scrollIntoView({behavior:'smooth',block:'center'});
-}
-function showSuc(msg){
-    const s=document.getElementById('suc');
-    document.getElementById('suc-msg').textContent=msg;
-    s.classList.add('show');
-    s.scrollIntoView({behavior:'smooth',block:'center'});
-}
-function hideAlerts(){ document.getElementById('err').classList.remove('show'); document.getElementById('suc').classList.remove('show'); }
-
-function openDatePicker(id){
-    const input = document.getElementById(id);
-    input.focus();
-    try {
-        if(input.showPicker){
-            input.showPicker();
-        } else {
-            input.click();
+        // جلب التواريخ الحالية للحجز
+        const rb = await fetch(`${BASE_URL}/tenant/bookings/${bookingId}`,{headers:authHeaders()});
+        if(rb.ok){
+            const booking = await rb.json();
+            const s = booking.start_date?.split('T')[0] || booking.start_date;
+            const e = booking.end_date?.split('T')[0] || booking.end_date;
+            if(s){ document.getElementById('start_date').value = s; document.getElementById('start_date').dataset.selectedDate = s; }
+            if(e){ document.getElementById('end_date').value = e; document.getElementById('end_date').dataset.selectedDate = e; }
+            calcSummary();
         }
-    } catch (e) {
-        input.click();
+    } else {
+        document.getElementById('mode-note').innerHTML = `
+            <div class="info-note">
+                <i class="fas fa-info-circle" style="margin-top:2px;flex-shrink:0;"></i>
+                <span>طلب الحجز سيُرسل للمالك لمراجعته والموافقة عليه. ستستلم إشعاراً فور قبول أو رفض طلبك.</span>
+            </div>`;
     }
 }
+
+function toDateInputValue(date){ if(!(date instanceof Date)||Number.isNaN(date.getTime())) return ''; return date.toISOString().split('T')[0]; }
+function normalizeDateValue(value){ if(!value) return ''; const text=String(value).trim(); if(/^\d{4}-\d{2}-\d{2}$/.test(text)) return text; if(/^\d{4}\/\d{2}\/\d{2}$/.test(text)) return text.split('/').join('-'); return ''; }
+function syncDateInput(input){ const normalized=normalizeDateValue(input.value)||toDateInputValue(input.valueAsDate); if(normalized){ input.dataset.selectedDate=normalized; } return normalized; }
+function getDateValue(id){ const input=document.getElementById(id); return syncDateInput(input)||normalizeDateValue(input.dataset.selectedDate); }
+
+let calcTimer = null;
+function calcSummary(){
+    const start=getDateValue('start_date'), end=getDateValue('end_date');
+    if(!start||!end||!property) return;
+    const s=new Date(start), e=new Date(end);
+    if(e<=s){ showErr('تاريخ النهاية يجب أن يكون بعد تاريخ البداية'); return; }
+    hideAlerts();
+    document.getElementById('end_date').min=new Date(s.getTime()+86400000).toISOString().split('T')[0];
+
+    // ✅ debounce لتجنب طلبات متكررة
+    clearTimeout(calcTimer);
+    calcTimer = setTimeout(async () => {
+        document.getElementById('sum-duration').textContent='...'
+        document.getElementById('sum-price').textContent='...'
+        document.getElementById('sum-total').textContent='...'
+        document.getElementById('summary-box').style.display='block';
+
+        try {
+            const r = await fetch(BASE_URL+'/tenant/bookings/calculate', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({
+                    property_id: Number(propId),
+                    start_date: start,
+                    end_date: end
+                })
+            });
+            if(r.ok){
+                const data = await r.json();
+                document.getElementById('sum-duration').textContent = data.duration_text;
+                document.getElementById('sum-price').textContent = `${Number(data.price).toLocaleString('ar')} ₪`;
+                document.getElementById('sum-total').textContent = `${Number(data.total).toLocaleString('ar')} ₪ (تقديري)`;
+            } else {
+                // fallback: حساب محلي بسيط
+                const d = Math.ceil((e-s)/(1000*60*60*24));
+                document.getElementById('sum-duration').textContent = d + ' يوم';
+                document.getElementById('sum-price').textContent = Number(property.price).toLocaleString('ar') + ' ₪';
+                document.getElementById('sum-total').textContent = '—';
+            }
+        } catch(err) {
+            // fallback عند خطأ الشبكة
+            const d = Math.ceil((e-s)/(1000*60*60*24));
+            document.getElementById('sum-duration').textContent = d + ' يوم (تقديري)';
+            document.getElementById('sum-price').textContent = Number(property.price).toLocaleString('ar') + ' ₪';
+            document.getElementById('sum-total').textContent = '—';
+        }
+    }, 600);
+}
+
+function showErr(msg){ const e=document.getElementById('err'); document.getElementById('err-msg').textContent=msg; e.classList.add('show'); e.scrollIntoView({behavior:'smooth',block:'center'}); }
+function showSuc(msg){ const s=document.getElementById('suc'); document.getElementById('suc-msg').textContent=msg; s.classList.add('show'); s.scrollIntoView({behavior:'smooth',block:'center'}); }
+function hideAlerts(){ document.getElementById('err').classList.remove('show'); document.getElementById('suc').classList.remove('show'); }
+function openDatePicker(id){ const input=document.getElementById(id); input.focus(); try{ if(input.showPicker){ input.showPicker(); } else { input.click(); } }catch(e){ input.click(); } }
 
 async function submitBooking(){
     hideAlerts();
-    const start = getDateValue('start_date');
-    const end   = getDateValue('end_date');
-
+    const start=getDateValue('start_date'), end=getDateValue('end_date');
     if(!start||!end){ showErr('يرجى تحديد تواريخ الإقامة'); return; }
     if(new Date(end)<=new Date(start)){ showErr('تاريخ النهاية يجب أن يكون بعد تاريخ البداية'); return; }
+    if(localStorage.getItem('is_profile_complete')!=='true'){ localStorage.setItem('redirect_after_complete',window.location.href); window.location.href='complete-profile.html'; return; }
 
-    // Check profile
-    if(localStorage.getItem('is_profile_complete')!=='true'){
-        localStorage.setItem('redirect_after_complete', window.location.href);
-        window.location.href='complete-profile.html'; return;
-    }
-
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ الإرسال...';
+    const btn=document.getElementById('submit-btn');
+    btn.disabled=true;
+    btn.innerHTML=`<i class="fas fa-spinner fa-spin"></i> ${isEdit?'جارٍ الحفظ...':'جارٍ الإرسال...'}`;
 
     let r, data;
     try {
-        r = await fetch(BASE_URL+'/tenant/bookings',{
-            method:'POST', headers:authHeaders(),
-            body:JSON.stringify({ property_id:Number(propId), start_date:start, end_date:end })
-        });
+        if(isEdit && bookingId){
+            r = await fetch(`${BASE_URL}/tenant/bookings/${bookingId}`,{
+                method:'PUT', headers:authHeaders(),
+                body:JSON.stringify({start_date:start, end_date:end})
+            });
+        } else {
+            r = await fetch(BASE_URL+'/tenant/bookings',{
+                method:'POST', headers:authHeaders(),
+                body:JSON.stringify({property_id:Number(propId), start_date:start, end_date:end})
+            });
+        }
         data = await r.json();
-    } catch (e) {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال طلب الحجز';
-        showErr('تعذر إرسال الطلب. تأكدي أن الموقع مفتوح من الرابط المحلي وأن الخادم يعمل.');
+    } catch(e) {
+        btn.disabled=false;
+        btn.innerHTML=isEdit?'<i class="fas fa-save"></i> <span>حفظ التعديلات</span>':'<i class="fas fa-paper-plane"></i> <span>إرسال طلب الحجز</span>';
+        showErr('تعذر إرسال الطلب. تأكد من تشغيل الخادم.');
         return;
     }
 
-    btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال طلب الحجز';
+    btn.disabled=false;
+    btn.innerHTML=isEdit?'<i class="fas fa-save"></i> <span>حفظ التعديلات</span>':'<i class="fas fa-paper-plane"></i> <span>إرسال طلب الحجز</span>';
 
     if(r.ok){
-        showSuc('✅ تم إرسال طلب الحجز بنجاح! سيتم إشعارك عند الرد.');
-        setTimeout(()=>window.location.href='my-bookings.html', 2500);
-    } else if(r.status === 401) {
+        showSuc(isEdit?'✅ تم تعديل الحجز بنجاح!':'✅ تم إرسال طلب الحجز بنجاح! سيتم إشعارك عند الرد.');
+        setTimeout(()=>window.location.href=isEdit?`tenant-booking-details.html?id=${bookingId}`:'my-bookings.html', 2000);
+    } else if(r.status===401){
         localStorage.removeItem('token');
-        localStorage.setItem('redirect_after_login', `booking-form.html?id=${propId}`);
-        showErr('انتهت جلسة تسجيل الدخول. سجّلي الدخول مرة أخرى لإرسال طلب الحجز.');
+        showErr('انتهت جلسة تسجيل الدخول. سجّل الدخول مرة أخرى.');
         setTimeout(()=>goToPage('tenant-login.html'), 1400);
     } else {
-        showErr(Object.values(data.errors||{})[0]?.[0] || data.message || 'حدث خطأ');
+        showErr(Object.values(data.errors||{})[0]?.[0]||data.message||'حدث خطأ');
     }
 }
 
 requireAuth();
 document.getElementById('submit-btn').addEventListener('click', submitBooking);
-loadProperty();
+loadProperty().finally(()=>document.querySelector(".container").classList.add("ready"));
 </script>
 </body>
 </html>

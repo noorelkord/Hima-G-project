@@ -29,77 +29,40 @@
         .page-title { font-size:1.5rem; font-weight:900; color:#1B4332; margin-bottom:1.5rem; }
 
         .tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
-        .tab {
-            padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem;
-            font-weight:600; cursor:pointer; border:1.5px solid #E5E0D8;
-            background:white; color:#6B7280; font-family:'Cairo',sans-serif;
-            width:auto !important; flex:1 1 0; min-width:0;
-        }
+        .tab { padding:0.5rem 1.2rem; border-radius:20px; font-size:0.85rem; font-weight:600; cursor:pointer; border:1.5px solid #E5E0D8; background:white; color:#6B7280; font-family:'Cairo',sans-serif; width:auto !important; flex:1 1 0; min-width:0; }
         .tab.active { background:#1B4332; color:white; border-color:#1B4332; }
 
-        .prop-card {
-            background:#fff; border-radius:16px; border:1px solid #E9E4DB;
-            padding:1rem; margin-bottom:1rem; display:flex; gap:1.2rem;
-            align-items:stretch;
-            transition:box-shadow 0.2s, transform 0.2s, border-color 0.2s;
-        }
-        .prop-card:hover {
-            box-shadow:0 12px 30px rgba(27,67,50,0.10);
-            border-color:#D9D2C6; transform:translateY(-2px);
-        }
-        .prop-thumb {
-            width:160px; min-width:160px; height:120px; border-radius:12px;
-            background:linear-gradient(135deg,#1B4332,#2D6A4F);
-            overflow:hidden; flex-shrink:0;
-        }
+        .prop-card { background:#fff; border-radius:16px; border:1px solid #E9E4DB; padding:1rem; margin-bottom:1rem; display:flex; gap:1.2rem; align-items:stretch; transition:box-shadow 0.2s,transform 0.2s,border-color 0.2s; }
+        .prop-card:hover { box-shadow:0 12px 30px rgba(27,67,50,0.10); border-color:#D9D2C6; transform:translateY(-2px); }
+        .prop-thumb { width:160px; min-width:160px; height:120px; border-radius:12px; background:linear-gradient(135deg,#1B4332,#2D6A4F); overflow:hidden; flex-shrink:0; }
         .prop-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-        .prop-thumb .no-img {
-            display:flex; align-items:center; justify-content:center;
-            height:100%; font-size:2rem; color:rgba(255,255,255,0.25);
-        }
+        .prop-thumb .no-img { display:flex; align-items:center; justify-content:center; height:100%; font-size:2rem; color:rgba(255,255,255,0.25); }
 
         .prop-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:0.55rem; }
         .prop-name { font-weight:800; font-size:1.05rem; color:#16241C; line-height:1.35; }
 
         .prop-meta { display:flex; flex-wrap:wrap; gap:0.45rem; }
-        .meta-chip {
-            display:inline-flex; align-items:center; gap:0.35rem;
-            background:#F4F1EB; color:#4B5563; font-size:0.78rem; font-weight:600;
-            padding:0.32rem 0.72rem; border-radius:999px; white-space:nowrap;
-        }
+        .meta-chip { display:inline-flex; align-items:center; gap:0.4rem; background:#F4F1EB; color:#4B5563; font-size:0.78rem; font-weight:600; padding:0.32rem 0.72rem; border-radius:999px; white-space:nowrap; }
         .meta-chip i { font-size:0.72rem; color:#2D6A4F; }
         .meta-chip.price { background:#EAF5EF; color:#1B4332; }
-        .host-rating-chip { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; color:#92400E; background:#FEF3C7; padding:0.32rem 0.72rem; border-radius:999px; white-space:nowrap; }
-        .host-rating-chip i { color:#D4A853; font-size:0.72rem; }
-        .host-no-rating { font-size:0.75rem; color:#9CA3AF; }
-        .reject-note {
-            font-size:0.8rem; color:#B91C1C; background:#FEF2F2;
-            border:1px solid #FECACA; border-radius:9px; padding:0.45rem 0.65rem;
-            display:flex; gap:0.45rem; align-items:flex-start; line-height:1.5;
-        }
 
-        .prop-side {
-            display:flex; flex-direction:column; align-items:flex-start;
-            justify-content:space-between; gap:0.8rem; min-width:150px;
-            padding-right:1.2rem; border-right:1px solid #F0ECE4;
-        }
+        /* ✅ تقييم المضيف بجانب اسمه */
+        .host-chip { display:inline-flex; align-items:center; gap:0.4rem; background:#F4F1EB; color:#4B5563; font-size:0.78rem; font-weight:600; padding:0.32rem 0.72rem; border-radius:999px; white-space:nowrap; }
+        .host-chip i { font-size:0.72rem; color:#2D6A4F; }
+        .host-rating-inline { display:inline-flex; align-items:center; gap:0.25rem; background:#FEF3C7; color:#92400E; font-size:0.72rem; font-weight:700; padding:0.18rem 0.5rem; border-radius:999px; margin-right:0.25rem; }
+        .host-rating-inline i { color:#D4A853; font-size:0.65rem; }
 
-        .badge {
-            font-size:0.74rem; font-weight:800; padding:0.32rem 0.85rem;
-            border-radius:999px; white-space:nowrap;
-        }
+        .reject-note { font-size:0.8rem; color:#B91C1C; background:#FEF2F2; border:1px solid #FECACA; border-radius:9px; padding:0.45rem 0.65rem; display:flex; gap:0.45rem; align-items:flex-start; line-height:1.5; }
+
+        .prop-side { display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between; gap:0.8rem; min-width:150px; padding-right:1.2rem; border-right:1px solid #F0ECE4; }
+
+        .badge { font-size:0.74rem; font-weight:800; padding:0.32rem 0.85rem; border-radius:999px; white-space:nowrap; }
         .badge-pending  { background:#FEF3C7; color:#92400E; }
         .badge-accepted { background:#D1FAE5; color:#065F46; }
         .badge-rejected { background:#FEE2E2; color:#991B1B; }
 
         .prop-actions { display:flex; flex-wrap:wrap; gap:0.5rem; width:100%; }
-        .prop-actions button {
-            flex:0 0 auto; width:auto; border-radius:9px;
-            padding:0.45rem 0.95rem; font-family:'Cairo',sans-serif;
-            font-weight:700; font-size:0.82rem; cursor:pointer;
-            display:inline-flex; align-items:center; gap:0.35rem;
-            transition:all 0.2s;
-        }
+        .prop-actions button { flex:0 0 auto; width:auto; border-radius:9px; padding:0.45rem 0.95rem; font-family:'Cairo',sans-serif; font-weight:700; font-size:0.82rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; transition:all 0.2s; white-space:nowrap; }
         .btn-details { background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; }
         .btn-details:hover { background:#DBEAFE; }
         .btn-accept { background:#D1FAE5; color:#065F46; border:1px solid #BBF7D0; }
@@ -110,54 +73,21 @@
         .btn-archive:hover { background:#E9EAEC; color:#374151; }
 
         @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}}
-        @media(max-width:640px){
-            .main { padding:1.2rem; }
-            .tabs { flex-direction:column; }
-            .prop-card { flex-direction:column; }
-            .prop-thumb { width:100%; min-width:0; height:170px; }
-            .prop-side {
-                flex-direction:row; align-items:center; width:100%;
-                justify-content:space-between; border-right:none;
-                border-top:1px solid #F0ECE4; padding-right:0; padding-top:0.8rem;
-            }
-        }
+        @media(max-width:640px){ .main{padding:1.2rem;} .tabs{flex-direction:column;} .prop-card{flex-direction:column;} .prop-thumb{width:100%;min-width:0;height:170px;} .prop-side{flex-direction:row;align-items:center;width:100%;justify-content:space-between;border-right:none;border-top:1px solid #F0ECE4;padding-right:0;padding-top:0.8rem;} }
 
-        /* Reject Modal */
-        .modal-overlay {
-            position:fixed; inset:0; background:rgba(0,0,0,0.5);
-            display:none; align-items:center; justify-content:center; z-index:9999;
-        }
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:9999; }
         .modal-overlay.show { display:flex; }
         .modal { background:white; border-radius:16px; padding:1.5rem; width:90%; max-width:420px; }
         .modal h3 { font-size:1rem; font-weight:700; color:#C0392B; margin-bottom:0.8rem; }
-        .modal textarea {
-            width:100%; border:1.5px solid #E5E0D8; border-radius:10px;
-            padding:0.7rem; font-family:'Cairo',sans-serif; font-size:0.875rem;
-            resize:vertical; min-height:80px; margin-bottom:1rem;
-            box-sizing:border-box; outline:none;
-        }
+        .modal textarea { width:100%; border:1.5px solid #E5E0D8; border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif; font-size:0.875rem; resize:vertical; min-height:80px; margin-bottom:1rem; box-sizing:border-box; outline:none; }
         .modal textarea:focus { border-color:#C0392B; }
         .modal-actions { display:flex; gap:0.7rem; }
-        .btn-confirm-reject {
-            flex:1; background:#C0392B; color:white; border:none;
-            border-radius:10px; padding:0.7rem;
-            font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer;
-        }
-        .btn-cancel-modal {
-            background:transparent; color:#6B7280; border:1.5px solid #E5E0D8;
-            border-radius:10px; padding:0.7rem 1.2rem;
-            font-family:'Cairo',sans-serif; cursor:pointer;
-        }
+        .btn-confirm-reject { flex:1; background:#C0392B; color:white; border:none; border-radius:10px; padding:0.7rem; font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer; }
+        .btn-cancel-modal { background:transparent; color:#6B7280; border:1.5px solid #E5E0D8; border-radius:10px; padding:0.7rem 1.2rem; font-family:'Cairo',sans-serif; cursor:pointer; }
 
         .empty-state { text-align:center; padding:3rem; color:#6B7280; }
         .empty-state i { font-size:3rem; color:#E5E0D8; display:block; margin-bottom:1rem; }
-
-        .toast-suc {
-            position:fixed; bottom:2rem; left:2rem;
-            background:#1B4332; color:white; padding:0.9rem 1.4rem;
-            border-radius:10px; font-size:0.9rem; z-index:9999;
-            display:none; align-items:center; gap:0.5rem;
-        }
+        .toast-suc { position:fixed; bottom:2rem; left:2rem; background:#1B4332; color:white; padding:0.9rem 1.4rem; border-radius:10px; font-size:0.9rem; z-index:9999; display:none; align-items:center; gap:0.5rem; }
         .toast-suc.show { display:flex; }
     </style>
 </head>
@@ -184,20 +114,17 @@
     <main class="main">
         <div class="container">
             <div class="page-title"><i class="fas fa-shield-alt me-2"></i>إدارة العقارات</div>
-
             <div class="tabs">
                 <button class="tab active" onclick="filterTab('all',this)">كل العقارات</button>
                 <button class="tab" onclick="filterTab('pending',this)">بانتظار المراجعة</button>
                 <button class="tab" onclick="filterTab('accepted',this)">مقبولة</button>
                 <button class="tab" onclick="filterTab('rejected',this)">مرفوضة</button>
             </div>
-
             <div id="list"></div>
         </div>
     </main>
 </div>
 
-<!-- Reject Modal -->
 <div class="modal-overlay" id="reject-modal">
     <div class="modal">
         <h3><i class="fas fa-times-circle me-2"></i>سبب الرفض</h3>
@@ -213,64 +140,61 @@
 
 <script src="js/api.js?v=20260628-absolute-nav"></script>
 <script>
-const typeMap = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
+const typeMap     = {apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'};
 const statusLabel = {pending:'قيد المراجعة',accepted:'مقبول',rejected:'مرفوض'};
 const statusCls   = {pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected'};
-
-let allProps = [];
-let rejectId = null;
-let currentTab = 'all';
+let allProps=[],rejectId=null,currentTab='all';
 
 async function loadProperties(){
-    const r = await fetch(BASE_URL+'/admin/properties',{headers:authHeaders()});
-    allProps = await r.json();
+    const r=await fetch(BASE_URL+'/admin/properties',{headers:authHeaders()});
+    allProps=await r.json();
     render(allProps);
 }
 
-function filterTab(status, el){
-    currentTab = status;
+function filterTab(status,el){
+    currentTab=status;
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
-    const filtered = status==='all'?allProps:allProps.filter(p=>p.status===status);
-    render(filtered);
+    render(status==='all'?allProps:allProps.filter(p=>p.status===status));
 }
 
 function render(list){
-    const el = document.getElementById('list');
-    if(!list.length){
-        el.innerHTML=`<div class="empty-state"><i class="fas fa-check-double"></i><p>لا توجد عقارات في هذه الفئة</p></div>`;
-        return;
-    }
-    el.innerHTML = list.map(p=>{
-        const main = p.images?.find(i=>i.is_main && i.url)||p.images?.find(i=>i.url);
-        const img  = main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
-        const loc  = [p.governorate?.name,p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
-        const host = p.host?`${p.host.first_name||''} ${p.host.last_name||''}`.trim():'غير معروف';
-        const reviewBtns = p.status==='pending' ? `
-            <button class="btn-accept" onclick="acceptProp(${p.id})"><i class="fas fa-check"></i>قبول</button>
-            <button class="btn-reject" onclick="openReject(${p.id})"><i class="fas fa-times"></i>رفض</button>` : '';
+    const el=document.getElementById('list');
+    if(!list.length){el.innerHTML=`<div class="empty-state"><i class="fas fa-check-double"></i><p>لا توجد عقارات في هذه الفئة</p></div>`;return;}
+    el.innerHTML=list.map(p=>{
+        const main=p.images?.find(i=>i.is_main && i.url)||p.images?.find(i=>i.url);
+        const img=main?.url?`<img src="${main.url}" alt="" onerror="this.parentElement.innerHTML='<div class=&quot;no-img&quot;><i class=&quot;fas fa-building&quot;></i></div>'">`:`<div class="no-img"><i class="fas fa-building"></i></div>`;
+        const loc=[p.governorate?.name,p.city?.name].filter(Boolean).join(' - ')||'غير محدد';
+        const host=p.host?`${p.host.first_name||''} ${p.host.last_name||''}`.trim():'غير معروف';
+
+        // ✅ تقييم المضيف بجانب اسمه في نفس الـ chip
+        const ratingBadge = p.host_rating
+            ? `<span class="host-rating-inline"><i class="fas fa-star"></i>${p.host_rating}</span>`
+            : '';
+        const hostChip = `<span class="host-chip"><i class="fas fa-user"></i>${host} ${ratingBadge}</span>`;
+
+        const reviewBtns=p.status==='pending'?`
+            <button class="btn-accept" onclick="acceptProp(${p.id})"><i class="fas fa-check"></i> قبول</button>
+            <button class="btn-reject" onclick="openReject(${p.id})"><i class="fas fa-times"></i> رفض</button>`:'';
         return `
         <div class="prop-card" id="card-${p.id}">
             <div class="prop-thumb">${img}</div>
             <div class="prop-body">
                 <div class="prop-name">${p.title}</div>
                 <div class="prop-meta">
-                    <span class="meta-chip"><i class="fas fa-map-marker-alt"></i>${loc}</span>
-                    <span class="meta-chip"><i class="fas fa-tag"></i>${typeMap[p.type]||p.type}</span>
-                    <span class="meta-chip"><i class="fas fa-user"></i>${host||'غير معروف'}</span>
-                    <span class="meta-chip price"><i class="fas fa-money-bill-wave"></i>${Number(p.price).toLocaleString('ar')} ₪</span>
-                    ${p.host_rating ? `<span class="host-rating-chip"><i class="fas fa-star"></i>${p.host_rating} <span style="color:#6B7280;font-weight:400;">(${p.host_reviews_count} تقييم)</span></span>` : `<span class="host-no-rating"><i class="fas fa-star" style="color:#E5E0D8"></i> لا توجد تقييمات</span>`}
+                    <span class="meta-chip"><i class="fas fa-map-marker-alt"></i> ${loc}</span>
+                    <span class="meta-chip"><i class="fas fa-tag"></i> ${typeMap[p.type]||p.type}</span>
+                    ${hostChip}
+                    <span class="meta-chip price"><i class="fas fa-money-bill-wave"></i> ${Number(p.price).toLocaleString('ar')} ₪ / شهرياً</span>
                 </div>
                 ${p.status==='rejected'&&p.rejection_reason?`<div class="reject-note"><i class="fas fa-exclamation-circle" style="margin-top:0.15rem;"></i><span>${p.rejection_reason}</span></div>`:''}
             </div>
             <div class="prop-side">
                 <span class="badge ${statusCls[p.status]}">${statusLabel[p.status]}</span>
                 <div class="prop-actions">
-                    <button class="btn-details" onclick="window.location.href='admin-property-details.html?id=${p.id}'">
-                        <i class="fas fa-eye"></i>عرض التفاصيل
-                    </button>
+                    <button class="btn-details" onclick="window.location.href='admin-property-details.html?id=${p.id}'"><i class="fas fa-eye"></i> عرض</button>
                     ${reviewBtns}
-                    <button class="btn-archive" onclick="archiveProp(${p.id})"><i class="fas fa-archive"></i>أرشفة</button>
+                    <button class="btn-archive" onclick="archiveProp(${p.id})"><i class="fas fa-archive"></i> أرشفة</button>
                 </div>
             </div>
         </div>`;
@@ -278,53 +202,31 @@ function render(list){
 }
 
 async function acceptProp(id){
-    const r = await fetch(`${BASE_URL}/admin/properties/${id}/accept`,{method:'PATCH',headers:authHeaders()});
-    if(r.ok){
-        const p = allProps.find(x=>x.id===id);
-        if(p) p.status='accepted';
-        filterTab(currentTab,document.querySelector('.tab.active'));
-        showToast('✅ تم قبول العقار ونشره');
-    }
+    const r=await fetch(`${BASE_URL}/admin/properties/${id}/accept`,{method:'PATCH',headers:authHeaders()});
+    if(r.ok){const p=allProps.find(x=>x.id===id);if(p)p.status='accepted';filterTab(currentTab,document.querySelector('.tab.active'));showToast('✅ تم قبول العقار ونشره');}
 }
 
-function openReject(id){ rejectId=id; document.getElementById('reject-reason').value=''; document.getElementById('reject-modal').classList.add('show'); }
-function closeRejectModal(){ rejectId=null; document.getElementById('reject-modal').classList.remove('show'); }
+function openReject(id){rejectId=id;document.getElementById('reject-reason').value='';document.getElementById('reject-modal').classList.add('show');}
+function closeRejectModal(){rejectId=null;document.getElementById('reject-modal').classList.remove('show');}
 
 async function confirmReject(){
-    const reason = document.getElementById('reject-reason').value.trim();
-    if(!reason){ alert('يرجى كتابة سبب الرفض'); return; }
-    const r = await fetch(`${BASE_URL}/admin/properties/${rejectId}/reject`,{
-        method:'PATCH', headers:authHeaders(),
-        body:JSON.stringify({rejection_reason:reason})
-    });
+    const reason=document.getElementById('reject-reason').value.trim();
+    if(!reason){alert('يرجى كتابة سبب الرفض');return;}
+    const r=await fetch(`${BASE_URL}/admin/properties/${rejectId}/reject`,{method:'PATCH',headers:authHeaders(),body:JSON.stringify({rejection_reason:reason})});
     closeRejectModal();
-    if(r.ok){
-        const p = allProps.find(x=>x.id===rejectId);
-        if(p){ p.status='rejected'; p.rejection_reason=reason; }
-        filterTab(currentTab,document.querySelector('.tab.active'));
-        showToast('❌ تم رفض العقار');
-    }
+    if(r.ok){const p=allProps.find(x=>x.id===rejectId);if(p){p.status='rejected';p.rejection_reason=reason;}filterTab(currentTab,document.querySelector('.tab.active'));showToast('❌ تم رفض العقار');}
 }
 
 async function archiveProp(id){
     if(!confirm('هل تريد أرشفة هذا العقار؟')) return;
-    const r = await fetch(`${BASE_URL}/admin/properties/${id}`,{method:'DELETE',headers:authHeaders()});
-    if(r.ok){
-        allProps = allProps.filter(p=>p.id!==id);
-        filterTab(currentTab,document.querySelector('.tab.active'));
-        showToast('🗄️ تم أرشفة العقار');
-    }
+    const r=await fetch(`${BASE_URL}/admin/properties/${id}`,{method:'DELETE',headers:authHeaders()});
+    if(r.ok){allProps=allProps.filter(p=>p.id!==id);filterTab(currentTab,document.querySelector('.tab.active'));showToast('🗄️ تم أرشفة العقار');}
 }
 
-function showToast(msg){
-    const t=document.getElementById('toast');
-    document.getElementById('toast-msg').textContent=msg;
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),3000);
-}
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-requireRole('admin', 'admin-login.html');
-const adminName = localStorage.getItem('name')||'Admin';
+requireRole('admin','admin-login.html');
+const adminName=localStorage.getItem('name')||'Admin';
 document.getElementById('sidebar-name').textContent=adminName;
 document.getElementById('avatar').textContent=adminName.charAt(0)||'A';
 loadProperties();

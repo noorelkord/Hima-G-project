@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="css/style.css?v=20260628-live-fixes">
     <style>
         body { margin:0; background:#F8F5F0; }
-        .container { max-width:800px; margin:0 auto; padding:2rem 1.5rem; }
+        .container { max-width:800px; margin:0 auto; padding:2rem 1.5rem; visibility:hidden; }
+        .container.ready { visibility:visible; }
         .page-title { font-size:1.6rem; font-weight:900; color:#1B4332; margin-bottom:0.3rem; }
         .page-sub   { color:#6B7280; font-size:0.9rem; margin-bottom:2rem; }
 
@@ -190,6 +191,15 @@
 <div class="container">
     <div class="page-title" id="page-title"><i class="fas fa-plus-circle me-2"></i>إضافة عقار جديد</div>
     <div class="page-sub" id="page-sub">أضف تفاصيل عقارك ليتم مراجعته والموافقة عليه</div>
+    <script>
+        (function(){
+            const p = new URLSearchParams(window.location.search);
+            if(p.get('id')){
+                document.getElementById('page-title').innerHTML = '<i class="fas fa-edit me-2"></i>تعديل العقار';
+                document.getElementById('page-sub').textContent = 'عدّل تفاصيل عقارك — سيعود للمراجعة بعد الحفظ';
+            }
+        })();
+    </script>
 
     <div class="alert alert-error" id="err"><i class="fas fa-exclamation-circle"></i><span id="err-msg"></span></div>
     <div class="alert alert-success" id="suc"><i class="fas fa-check-circle"></i><span id="suc-msg"></span></div>
@@ -640,18 +650,11 @@ bindNumericInput('area_m2');
 
 loadGovernorates().then(async () => {
     if(isEditMode){
-        // تعديل عنوان الصفحة والزر
-        document.getElementById('page-title').innerHTML =
-            '<i class="fas fa-edit me-2"></i>تعديل العقار';
-        document.getElementById('page-sub').textContent =
-            'عدّل تفاصيل عقارك — سيعود للمراجعة بعد الحفظ';
         document.getElementById('btn-submit').innerHTML =
             '<i class="fas fa-save me-1"></i> حفظ التعديلات';
-
-        // جلب بيانات العقار وتعبئة الحقول
         await loadPropertyForEdit(editId);
     }
-});
+}).finally(()=>document.querySelector(".container").classList.add("ready"));
 </script>
 </body>
 </html>
