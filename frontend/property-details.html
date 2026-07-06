@@ -110,6 +110,21 @@
         }
         .btn-host-delete:hover { background:#FECACA; }
         .btn-host-delete:disabled { opacity:0.4; cursor:not-allowed; }
+
+        /* رسالة الحجز المعلق */
+        .pending-booking-notice {
+            width:100%; background:#FEF9EC; border:1px solid #FDE68A;
+            border-radius:12px; padding:0.9rem 1rem; margin-bottom:0.7rem;
+            display:flex; align-items:center; gap:0.7rem;
+            font-family:'Cairo',sans-serif; font-size:0.88rem;
+            color:#92400E; font-weight:600; text-decoration:none;
+        }
+        .pending-booking-notice i { color:#D4A853; font-size:1rem; flex-shrink:0; }
+        .pending-booking-notice span { flex:1; }
+        .pending-booking-notice .view-link {
+            font-size:0.8rem; color:#2D6A4F; font-weight:700;
+            white-space:nowrap; text-decoration:underline;
+        }
         .skeleton { background: linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
         @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
@@ -177,7 +192,7 @@
                     </button>
                 </div>
 
-                <button class="btn-book" id="btn-book" onclick="handleBook()">
+                <button class="btn-book" id="btn-book" onclick="handleBook()" style="display:none;">
                     <i class="fas fa-calendar-check"></i> احجز الآن
                 </button>
 
@@ -218,26 +233,35 @@ async function loadProperty(){
     // المضيف يجلب عقاره من endpoint خاص حتى يرى عقاراته pending/rejected
     const isHost = localStorage.getItem('role') === 'host';
     const token  = localStorage.getItem('token');
-    const url    = isHost && token
-        ? `${BASE_URL}/host/properties/${propId}`
-        : `${BASE_URL}/properties/${propId}`;
-    const headers = isHost && token
-        ? authHeaders()
-        : {'Accept':'application/json'};
 
-    const r = await fetch(url, {headers});
+    // ✅ المضيف يجرب endpoint خاص أولاً (لعقاراته)
+    // إذا فشل يجرب public endpoint (لعقارات المضيفين الآخرين)
+    let r, raw, isOwnProperty = false;
+    if(isHost && token){
+        r = await fetch(`${BASE_URL}/host/properties/${propId}`, {headers: authHeaders()});
+        if(r.ok){
+            isOwnProperty = true; // ✅ نجح → عقاره هو
+        } else {
+            // ليس عقاره → جرب public endpoint
+            r = await fetch(`${BASE_URL}/properties/${propId}`, {headers: {'Accept':'application/json'}});
+        }
+    } else {
+        r = await fetch(`${BASE_URL}/properties/${propId}`, {headers: {'Accept':'application/json'}});
+    }
+
     if(!r.ok){ window.location.href=browsePage; return; }
-    const raw = await r.json();
+    raw = await r.json();
     // host endpoint يرجع {property: {...}} أو مباشرة
     const p = raw.property || raw;
 
-    render(p);
+    render(p, isOwnProperty);
     document.querySelector('.price-card').classList.add('ready');
+    checkPendingBooking(p);
     loadReviews();
     loadWhatsapp();
 }
 
-function render(p){
+function render(p, isOwnProperty=false){
     document.title = `حمى | ${p.title}`;
     document.getElementById('breadcrumb-title').textContent = p.title;
     document.getElementById('title').textContent = p.title;
@@ -318,8 +342,10 @@ function render(p){
         btn.style.display = 'none';
         document.getElementById('btn-whatsapp').style.display = 'none';
 
-        // ✅ إظهار أزرار التعديل والحذف للمضيف
-        document.getElementById('host-actions').style.display = 'flex';
+        // ✅ أزرار التعديل والحذف فقط إذا كان العقار عقاره هو
+        if(isOwnProperty){
+            document.getElementById('host-actions').style.display = 'flex';
+        }
 
         // تعطيل التعديل والحذف إذا كان العقار محجوزاً
         const editBtn   = document.getElementById('btn-host-edit');
@@ -337,6 +363,8 @@ function render(p){
     } else if(roleLocal!=='tenant'){
         btn.disabled=true;
         btn.textContent='متاح للمستأجرين فقط';
+    } else if(roleLocal!=='tenant'){
+        // دور آخر غير مستأجر
     }
 }
 
@@ -362,6 +390,42 @@ function setMainImage(url, alt){
             holder.style.backgroundImage = `url("${url}")`;
         }
     };
+}
+
+async function checkPendingBooking(p){
+    // ✅ تحقق إذا كان المستأجر لديه حجز معلق على هذا العقار
+    const token = localStorage.getItem('token');
+    const roleLocal = localStorage.getItem('role');
+    const btn = document.getElementById('btn-book');
+
+    if(roleLocal !== 'tenant' || !token){
+        // ليس مستأجراً → render() يتحكم بالزر
+        return;
+    }
+
+    try{
+        const r = await fetch(`${BASE_URL}/tenant/bookings`, {headers: authHeaders()});
+        if(!r.ok){ btn.style.display = ''; return; } // fallback للمستأجر فقط
+        const bookings = await r.json();
+        const pending = bookings.find(b => b.property_id == propId && b.status === 'pending');
+        if(pending){
+            // ✅ يوجد حجز معلق → أظهر الرسالة بدلاً من الزر
+            const notice = document.createElement('a');
+            notice.href = `tenant-booking-details.html?id=${pending.id}`;
+            notice.className = 'pending-booking-notice';
+            notice.innerHTML = `
+                <i class="fas fa-clock"></i>
+                <span>لديك طلب حجز معلق على هذا العقار</span>
+                <span class="view-link">عرض الطلب ←</span>`;
+            btn.parentNode.insertBefore(notice, btn);
+        } else {
+            // ✅ لا يوجد حجز معلق → أظهر زر الحجز
+            btn.style.display = '';
+        }
+    } catch(e){
+        // عند خطأ → أظهر الزر كـ fallback
+        btn.style.display = '';
+    }
 }
 
 async function loadReviews(){

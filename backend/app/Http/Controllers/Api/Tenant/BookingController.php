@@ -175,7 +175,7 @@ class BookingController extends Controller
     {
         $booking = Booking::where('tenant_id', $request->user()->id)
             ->with([
-                'property:id,title,type,price,host_id,governorate_id,city_id,neighborhood_id,street',
+                'property:id,title,type,price,host_id,governorate_id,city_id,neighborhood_id,street,rooms,area_m2,damage_status,has_water,has_electricity,is_ready,availability,status',
                 'property.governorate:id,name',
                 'property.city:id,name',
                 'property.neighborhood:id,name',

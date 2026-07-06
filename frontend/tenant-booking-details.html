@@ -206,8 +206,9 @@ function render(b){
     // ✅ بناء الـ hero بشكل منفصل لتجنب تعارض الـ backticks
     const imgs = p.images||[];
     const mainImg = imgs.find(i=>i.is_main&&i.url)||imgs.find(i=>i.url);
-    const viewLink = '<a href="property-details.html?id='+p.id+'" style="margin-right:0.6rem;background:rgba(255,255,255,0.15);color:white;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:20px;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;"><i class="fas fa-external-link-alt"></i> عرض العقار</a>';
-    const heroContent = '<div class="hero-info"><h1><i class="fas fa-receipt"></i> حجز #'+b.id+'</h1><p><i class="fas fa-home"></i> '+(p.title||'عقار')+' '+viewLink+'</p><p><i class="fas fa-map-marker-alt"></i> '+loc+'</p></div><span class="badge '+(statusCls[b.status]||'')+'">'+( statusMap[b.status]||b.status)+'</span>';
+    // ✅ إظهار رابط "عرض العقار" فقط إذا كان العقار متاح للعموم
+
+    const heroContent = '<div class="hero-info"><h1><i class="fas fa-receipt"></i> حجز #'+b.id+'</h1><p><i class="fas fa-home"></i> '+(p.title||'عقار')+'</p><p><i class="fas fa-map-marker-alt"></i> '+loc+'</p></div><span class="badge '+(statusCls[b.status]||'')+'">'+( statusMap[b.status]||b.status)+'</span>';
     const heroHtml = mainImg?.url
         ? '<div class="hero hero-with-img"><img class="hero-img" src="'+mainImg.url+'" alt="" onerror="this.style.display=\'none\'"><div class="hero-overlay" style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap;">'+heroContent+'</div></div>'
         : '<div class="hero">'+heroContent+'</div>';
@@ -289,6 +290,16 @@ function render(b){
                     ` : '<p style="color:#9CA3AF;font-size:0.85rem;">لا تتوفر بيانات المضيف</p>'}
                 </div>
 
+                <div class="card">
+                    <h3><i class="fas fa-home"></i> بيانات العقار</h3>
+                    <div class="info-row"><span class="info-label"><i class="fas fa-shapes"></i>النوع</span><span class="info-value">${{apartment:'شقة',villa:'فيلا',land:'أرض',chalet:'شاليه',commercial:'تجاري',parking:'موقف'}[p.type]||p.type||'—'}</span></div>
+                    <div class="info-row"><span class="info-label"><i class="fas fa-map-marker-alt"></i>الموقع</span><span class="info-value">${loc}</span></div>
+                    ${p.rooms ? `<div class="info-row"><span class="info-label"><i class="fas fa-door-open"></i>الغرف</span><span class="info-value">${p.rooms} غرفة</span></div>` : ''}
+                    ${p.area_m2 ? `<div class="info-row"><span class="info-label"><i class="fas fa-ruler-combined"></i>المساحة</span><span class="info-value">${p.area_m2} م²</span></div>` : ''}
+                    ${p.damage_status ? `<div class="info-row"><span class="info-label"><i class="fas fa-hard-hat"></i>الحالة</span><span class="info-value">${{intact:'سليم',partial:'أضرار جزئية',renovated:'مرمم'}[p.damage_status]||p.damage_status}</span></div>` : ''}
+                    ${p.has_water !== undefined ? `<div class="info-row"><span class="info-label"><i class="fas fa-tint"></i>ماء</span><span class="info-value">${p.has_water ? 'متاح' : 'غير متاح'}</span></div>` : ''}
+                    ${p.has_electricity !== undefined ? `<div class="info-row"><span class="info-label"><i class="fas fa-bolt"></i>كهرباء</span><span class="info-value">${p.has_electricity ? 'متاحة' : 'غير متاحة'}</span></div>` : ''}
+                </div>
 
             </div>
         </div>`;
