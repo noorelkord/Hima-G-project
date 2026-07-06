@@ -206,6 +206,8 @@ const _authPages = ['tenant-login.html','host-login.html','admin-login.html','lo
 (function redirectIfLoggedIn(){
     const page = window.location.pathname.split('/').pop();
     if (!_authPages.includes(page)) return;
+    // Signup links such as "كن مضيفاً" must stay on the requested signup tab even if another role is already stored locally.
+    if (new URLSearchParams(window.location.search).get('mode') === 'signup') return;
     const token = localStorage.getItem('token');
     const role  = localStorage.getItem('role');
     if (!token || !role) return;
