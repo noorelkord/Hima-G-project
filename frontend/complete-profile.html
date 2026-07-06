@@ -197,9 +197,11 @@
       }
       .actions {
         margin-top: 1.35rem;
+        display: flex;
+        gap: 0.75rem;
       }
       .btn-primary {
-        width: 100%;
+        flex: 1;
         background: #1b4332;
         color: white;
         border: none;
@@ -217,6 +219,26 @@
       .btn-primary:hover {
         background: #2d6a4f;
       }
+      .btn-secondary {
+        flex: 1;
+        background: white;
+        color: #1b4332;
+        border: 1.5px solid #d9d2c6;
+        border-radius: 12px;
+        padding: 0.9rem;
+        font-family: "Cairo", sans-serif;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .btn-secondary:hover {
+        background: #f8f5f0;
+        border-color: #bfb5a5;
+      }
       @media (max-width: 850px) {
         .profile-shell {
           grid-template-columns: 1fr;
@@ -232,6 +254,9 @@
         }
         .form-grid {
           grid-template-columns: 1fr;
+        }
+        .actions {
+          flex-direction: column;
         }
       }
     </style>
@@ -322,6 +347,10 @@
               <i class="fas fa-check"></i>
               <span>حفظ ومتابعة</span>
             </button>
+            <button class="btn-secondary" type="button" onclick="skipProfile()">
+              <i class="fas fa-forward"></i>
+              <span>تخطي</span>
+            </button>
           </div>
         </section>
       </main>
@@ -388,6 +417,12 @@
           const data = await res.json();
           msg.innerHTML = `<div class="error">${Object.values(data.errors || {})[0]?.[0] || data.message || "فشل الحفظ"}</div>`;
         }
+      }
+
+      function skipProfile() {
+        // Skipping keeps the profile incomplete, so clear the protected-action redirect to avoid sending users back into a blocked booking or listing flow.
+        localStorage.removeItem("redirect_after_complete");
+        redirectToDashboard(localStorage.getItem("role"));
       }
     </script>
   </body>
