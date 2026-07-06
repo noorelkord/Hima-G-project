@@ -41,11 +41,20 @@ class User extends Authenticatable implements MustVerifyEmail
     // هل المستخدم أكمل بياناته؟
     public function isProfileComplete(): bool
     {
-        return !empty($this->second_name)
-            && !empty($this->third_name)
-            && !empty($this->last_name)
-            && !empty($this->national_id)
-            && !empty($this->phone);
+        $requiredNames = [
+            $this->second_name,
+            $this->third_name,
+            $this->last_name,
+        ];
+
+        foreach ($requiredNames as $name) {
+            if (trim((string) $name) === '') {
+                return false;
+            }
+        }
+
+        return preg_match('/^[0-9]{9}$/', (string) $this->national_id) === 1
+            && preg_match('/^\+(970|972)[0-9]{9}$/', (string) $this->phone) === 1;
     }
 
     public function isHostReady(): bool
