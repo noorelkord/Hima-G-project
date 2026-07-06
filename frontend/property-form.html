@@ -589,6 +589,41 @@ function buildPropertyFormData(){
     return fd;
 }
 
+async function ensureHostProfileCompleteBeforeAdd(){
+    // Refresh profile completion from the API before adding a property so stale localStorage cannot bypass the host readiness check.
+    let profile;
+    try {
+        const profileRes = await fetch(BASE_URL+'/me', {headers:authHeaders()});
+        profile = await profileRes.json();
+
+        if(profileRes.status === 401){
+            localStorage.removeItem('token');
+            localStorage.setItem('redirect_after_login', 'property-form.html');
+            showErr('انتهت جلسة تسجيل الدخول. سجّل الدخول مرة أخرى لإضافة عقار.');
+            setTimeout(()=>goToPage('host-login.html'), 1400);
+            return false;
+        }
+
+        if(!profileRes.ok){
+            showErr(profile.message || 'تعذر التحقق من اكتمال الملف الشخصي.');
+            return false;
+        }
+
+        localStorage.setItem('is_profile_complete', profile.is_profile_complete);
+    } catch (e) {
+        showErr('تعذر التحقق من اكتمال الملف الشخصي. تأكد أن الخادم يعمل ثم حاول مرة أخرى.');
+        return false;
+    }
+
+    if(!profile.is_profile_complete){
+        localStorage.setItem('redirect_after_complete', 'property-form.html');
+        goToPage('complete-profile.html');
+        return false;
+    }
+
+    return true;
+}
+
 // ─── حفظ العقار (إضافة أو تعديل) ───
 async function submitProperty(){
     hideAlerts();
@@ -604,6 +639,11 @@ async function submitProperty(){
     }
     if(!/^\d+$/.test(price) || Number(price) <= 0){
         showErr('يرجى إدخال سعر شهري صحيح'); return;
+    }
+
+    const hostProfileReady = isEditMode || await ensureHostProfileCompleteBeforeAdd();
+    if(!hostProfileReady){
+        return;
     }
 
     // POST للإضافة — PUT للتعديل
@@ -623,8 +663,12 @@ async function submitProperty(){
             : 'تم إرسال العقار للمراجعة بنجاح ✅'
         );
         setTimeout(() => window.location.href = 'my-properties.html', 2000);
+    } else if(r.status === 403 && data.redirect === 'profile/complete'){
+        localStorage.setItem('is_profile_complete', 'false');
+        localStorage.setItem('redirect_after_complete', 'property-form.html');
+        goToPage('complete-profile.html');
     } else if(r.status === 403){
-        window.location.href = 'complete-profile.html';
+        showErr(data.message || 'غير مسموح بتنفيذ هذا الإجراء.');
     } else {
         showErr(Object.values(data.errors||{})[0]?.[0] || data.message || 'حدث خطأ');
     }
