@@ -123,6 +123,4 @@ Full endpoint details are documented in [`backend/API_DOCUMENTATION.md`](backend
 - **Backend** is containerized (see `backend/Dockerfile`) and deployed on Render, using S3 for persistent property image storage.
 - **Frontend** is deployed on Vercel at [hima-g-project.vercel.app](https://hima-g-project.vercel.app).
 
-## Contributors
 
-Built as a graduation project by a 5-person team (3 backend developers, 2 frontend developers).
